@@ -2936,7 +2936,7 @@ export const BUSINESS_TERMS: Record<string, IBusinessTermXpath> = {
             "hrextac:HRFISK20Data",
             "hrextac:HRTaxTotal",
             "hrextac:HRTaxSubtotal",
-            "cac:TaxCategory",
+            "hrextac:HRTaxCategory",
             "cbc:ID"
         ],
         CreditNote: [
@@ -2946,7 +2946,7 @@ export const BUSINESS_TERMS: Record<string, IBusinessTermXpath> = {
             "hrextac:HRFISK20Data",
             "hrextac:HRTaxTotal",
             "hrextac:HRTaxSubtotal",
-            "cac:TaxCategory",
+            "hrextac:HRTaxCategory",
             "cbc:ID"
         ]
     }
@@ -2962,7 +2962,7 @@ export const BUSINESS_TERMS: Record<string, IBusinessTermXpath> = {
             "hrextac:HRFISK20Data",
             "hrextac:HRTaxTotal",
             "hrextac:HRTaxSubtotal",
-            "cac:TaxCategory",
+            "hrextac:HRTaxCategory",
             "cbc:Percent"
         ],
         CreditNote: [
@@ -2972,7 +2972,7 @@ export const BUSINESS_TERMS: Record<string, IBusinessTermXpath> = {
             "hrextac:HRFISK20Data",
             "hrextac:HRTaxTotal",
             "hrextac:HRTaxSubtotal",
-            "cac:TaxCategory",
+            "hrextac:HRTaxCategory",
             "cbc:Percent"
         ]
     }
@@ -2988,7 +2988,7 @@ export const BUSINESS_TERMS: Record<string, IBusinessTermXpath> = {
             "hrextac:HRFISK20Data",
             "hrextac:HRTaxTotal",
             "hrextac:HRTaxSubtotal",
-            "cac:TaxCategory",
+            "hrextac:HRTaxCategory",
             "cbc:TaxExemptionReason"
         ],
         CreditNote: [
@@ -2998,7 +2998,7 @@ export const BUSINESS_TERMS: Record<string, IBusinessTermXpath> = {
             "hrextac:HRFISK20Data",
             "hrextac:HRTaxTotal",
             "hrextac:HRTaxSubtotal",
-            "cac:TaxCategory",
+            "hrextac:HRTaxCategory",
             "cbc:TaxExemptionReason"
         ]
     }
@@ -3014,7 +3014,7 @@ export const BUSINESS_TERMS: Record<string, IBusinessTermXpath> = {
             "hrextac:HRFISK20Data",
             "hrextac:HRTaxTotal",
             "hrextac:HRTaxSubtotal",
-            "cac:TaxCategory",
+            "hrextac:HRTaxCategory",
             "cbc:TaxExemptionReasonCode"
         ],
         CreditNote: [
@@ -3024,7 +3024,7 @@ export const BUSINESS_TERMS: Record<string, IBusinessTermXpath> = {
             "hrextac:HRFISK20Data",
             "hrextac:HRTaxTotal",
             "hrextac:HRTaxSubtotal",
-            "cac:TaxCategory",
+            "hrextac:HRTaxCategory",
             "cbc:TaxExemptionReasonCode"
         ]
     }
@@ -3040,7 +3040,7 @@ export const BUSINESS_TERMS: Record<string, IBusinessTermXpath> = {
             "hrextac:HRFISK20Data",
             "hrextac:HRTaxTotal",
             "hrextac:HRTaxSubtotal",
-            "cac:TaxCategory",
+            "hrextac:HRTaxCategory",
             "cbc:Name"
         ],
         CreditNote: [
@@ -3050,7 +3050,7 @@ export const BUSINESS_TERMS: Record<string, IBusinessTermXpath> = {
             "hrextac:HRFISK20Data",
             "hrextac:HRTaxTotal",
             "hrextac:HRTaxSubtotal",
-            "cac:TaxCategory",
+            "hrextac:HRTaxCategory",
             "cbc:Name"
         ]
     }
