@@ -1,9 +1,10 @@
 import {describe, it, expect, beforeEach} from 'vitest';
 import {XmlDocument} from 'libxml2-wasm';
 import {XmlTestProvider} from "../fixtures/XmlTestProvider";
-import {ERacun, EvidentirajERacunZahtjev, FiskalizacijaClient, FiskalizacijaService, IEvidentirajERacunZahtjev, IEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev} from "../../src";
+import {ERacun, EvidentirajERacunZahtjev} from "../../src/models";
 import {XmlTestValidator} from "../fixtures/XmlTestValidator";
 import {EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev, EvidentirajNaplatuZahtjev, EvidentirajOdbijanjeZahtjev} from "../../src/models/xml/izvjestavanje";
+import {IEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev} from "../../src";
 
 describe('ERacun', () => {
     describe('fromUbl', () => {
@@ -12,7 +13,7 @@ describe('ERacun', () => {
 
             try {
                 const root = doc.root;
-                const eracun = ERacun.fromUbl(root, 'Invoice');
+                const eracun = ERacun.fromUblElement(root, 'Invoice');
 
                 XmlTestValidator.validateFullUblInvoice(eracun)
 
@@ -26,7 +27,7 @@ describe('ERacun', () => {
 
             try {
                 const root = doc.root;
-                const eracun = ERacun.fromUbl(root, 'Invoice');
+                const eracun = ERacun.fromUblElement(root, 'Invoice');
 
                 XmlTestValidator.validateMinimalUblInvoice(eracun);
 
@@ -40,7 +41,7 @@ describe('ERacun', () => {
 
             try {
                 const root = doc.root;
-                const eracun = ERacun.fromUbl(root, 'Invoice');
+                const eracun = ERacun.fromUblElement(root, 'Invoice');
 
                 // Test that optional fields are undefined when not present
                 expect(eracun.datumIsporuke).toBeUndefined();
@@ -61,7 +62,7 @@ describe('ERacun', () => {
                 const root = doc.root;
 
                 expect(() => {
-                    ERacun.fromUbl(root, 'Invoice');
+                    ERacun.fromUblElement(root, 'Invoice');
                 }).toThrow();
 
             } finally {

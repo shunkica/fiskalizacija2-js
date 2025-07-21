@@ -1,7 +1,7 @@
 import {describe, it, expect, vi, beforeEach} from 'vitest';
 import * as fs from "node:fs";
-import {FiskalizacijaClient, FiskalizacijaService, IEvidentirajERacunZahtjev, IEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev} from "../../src";
-import {EvidentirajERacunZahtjev} from "../../src";
+import {FiskalizacijaClient} from "../../src";
+import {EvidentirajERacunZahtjev, FiskalizacijaService} from "../../src/models";
 import {XmlTestProvider} from "../fixtures/XmlTestProvider";
 import {EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev, EvidentirajNaplatuZahtjev, EvidentirajOdbijanjeZahtjev} from "../../src/models/xml/izvjestavanje";
 
