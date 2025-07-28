@@ -595,7 +595,7 @@ export class EvidentirajNaplatuOdgovor implements EvidentirajNaplatuOdgovorSeria
     static fromXmlElement(el: XmlElement): IEvidentirajNaplatuOdgovor {
         return {
             _id: getAttributeValue(el, "id", "eizv"),
-            Odgovor: Odgovor.fromXmlElement(el)
+            Odgovor: extractElement(el, "eizv:Odgovor", FISK_NS, Odgovor.fromXmlElement)
         }
     }
 }
@@ -624,7 +624,7 @@ export class EvidentirajOdbijanjeOdgovor implements EvidentirajOdbijanjeOdgovorS
         return {
             _id: getAttributeValue(el, "id", "eizv"),
             datumVrijemeSlanja: getElementContent(el, "eizv:datumVrijemeSlanja", FISK_NS, "datumVrijeme"),
-            Odgovor: Odgovor.fromXmlElement(el)
+            Odgovor: extractElement(el, "eizv:Odgovor", FISK_NS, Odgovor.fromXmlElement)
         }
     }
 }
@@ -654,7 +654,7 @@ export class EvidentirajIsporukuZaKojuNijeIzdanERacunOdgovor implements Evidenti
         return {
             _id: getAttributeValue(el, "id", "eizv"),
             datumVrijemeSlanja: getElementContent(el, "eizv:datumVrijemeSlanja", FISK_NS, "datumVrijeme"),
-            Odgovor: Odgovor.fromXmlElement(el)
+            Odgovor: extractElement(el, "eizv:Odgovor", FISK_NS, Odgovor.fromXmlElement)
         }
     }
 }

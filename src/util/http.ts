@@ -1,58 +1,56 @@
-import {Agent, RequestOptions, request} from "node:https";
-import {IncomingMessage} from "http";
-import {FiskalizacijaOptions} from "../types";
+import https from 'node:https';
+import { URL } from 'node:url';
+import { FiskalizacijaOptions } from '../types';
 
 const defaultOptions: Partial<FiskalizacijaOptions> = {
     timeout: 30000,
     allowSelfSigned: false
-}
+};
 
-export function postRequest(data: string, userOptions: FiskalizacijaOptions): Promise<{ statusCode: number, data: string }> {
+export async function postRequest(data: string, userOptions: FiskalizacijaOptions): Promise<{ statusCode: number, data: string }> {
+    const options = { ...defaultOptions, ...userOptions };
+    const url = new URL(options.service);
+
+    const agentOptions: https.AgentOptions = {
+        rejectUnauthorized: !options.allowSelfSigned
+    };
+
+    if (options.ca) {
+        agentOptions.ca = options.ca;
+    }
+
+    const httpsAgent = new https.Agent(agentOptions);
+
     return new Promise((resolve, reject) => {
-        const options = {...defaultOptions, ...userOptions};
-        const url = new URL(options.service);
-        const postData = Buffer.from(data, 'utf8');
-
-        const requestOptions: RequestOptions = {
+        const req = https.request({
             hostname: url.hostname,
-            port: url.port || (url.protocol === 'https:' ? 443 : 80),
+            port: url.port || 443,
             path: url.pathname + url.search,
             method: 'POST',
             headers: {
                 ...options.headers,
-                'Content-Length': postData.length
+                'Content-Length': Buffer.byteLength(data)
             },
-            timeout: options.timeout,
-            agent: new Agent({rejectUnauthorized: !options.allowSelfSigned})
-        };
-
-        const req = request(requestOptions, (res: IncomingMessage) => {
-            let data = '';
-
+            agent: httpsAgent,
+            timeout: options.timeout
+        }, (res) => {
+            let body = '';
             res.setEncoding('utf8');
-            res.on('data', (chunk: string) => {
-                data += chunk;
-            });
-
+            res.on('data', chunk => body += chunk);
             res.on('end', () => {
-                if (typeof res.statusCode !== 'number') {
-                    reject("Invalid response status code received");
-                    return;
-                }
-                resolve({statusCode: res.statusCode, data: data});
+                resolve({
+                    statusCode: res.statusCode ?? 0,
+                    data: body
+                });
             });
         });
 
-        req.on('error', (err: Error) => {
-            reject(new Error(`Request failed: ${err.message}`));
-        });
-
+        req.on('error', reject);
         req.on('timeout', () => {
-            req.destroy();
-            reject(new Error(`Request timeout after ${options.timeout}ms`));
+            req.destroy(new Error('Request timed out'));
         });
 
-        req.write(postData);
+        req.write(data);
         req.end();
     });
 }

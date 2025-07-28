@@ -1,9 +1,11 @@
 export const REGEX = {
     decimal: /^[\-+]?[0-9]+(\.[0-9]+)?$/,
-    // TODO: NA TESTOM OKRUZENJU VRACAJU SE REZULTATI TIPA "2025-06-23T14:22:11+02:00" PA TREBA MODIFICIRATI OVAJ REGEX
+    // TODO: ovaj regex nije isti kao u dokumentaciji jer servis na testnom okruženju vraća datum u formatu "2025-06-23T14:22:11+02:00"
     //datumVrijemeDeci: /^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{4}$/,
     datumVrijemeDeci: /^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?([+-][0-9]{2}:[0-9]{2}|Z)?$/,
-    datumVrijeme: /^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}$/,
+    // TODO: ovaj regex nije isti kao u dokumentaciji jer servis na testnom okruženju vraća datum u formatu "2025-06-23T14:22:11+02:00"
+    // datumVrijeme: /^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}$/,
+    datumVrijeme: /^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?([+-][0-9]{2}:[0-9]{2}|Z)?$/,
     datum: /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/,
     vrstaERacuna: /^(I|U|IR)$/,
     uuid: /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/,

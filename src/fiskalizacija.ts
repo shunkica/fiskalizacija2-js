@@ -41,7 +41,7 @@ export class FiskalizacijaClient {
 
             result.reqObject = zahtjev;
 
-            const signedXml = this.signer.signFiscalizationRequest((zahtjev as any).toXmlString());
+            const signedXml = await this.signer.signFiscalizationRequest((zahtjev as any).toXmlString(), (zahtjev as any)._id);
             const soap = this.generateSoapEnvelope(signedXml);
 
             result.soapReqRaw = soap;
@@ -53,7 +53,7 @@ export class FiskalizacijaClient {
 
             // Neka korisnik odluči što se događa ako potpis odgovora nije valjan
             try {
-                result.soapResSignatureValid = XmlSigner.isValidSignature(result.soapResRaw);
+                result.soapResSignatureValid = await XmlSigner.isValidSignature(result.soapResRaw);
             } catch (error) {
                 result.soapResSignatureValid = false;
                 result.error = parseError(error);

@@ -2,10 +2,14 @@
   "name": "fiskalizacija",
   "version": "0.1.0",
   "description": "Croatian e-invoicing and fiscalization library",
+  "types": "dist/index.d.ts",
   "type": "module",
+  "exports": {
+    ".": "./dist/index.js"
+  },
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
+    "build": "tsup",
+    "dev": "tsup --watch",
     "clean": "rm -rf dist",
     "test": "vitest --exclude tests/external",
     "test:watch": "vitest --watch --exclude tests/external",
@@ -13,12 +17,16 @@
     "test:external": "vitest run tests/external"
   },
   "dependencies": {
-    "libxml2-wasm": "git+https://github.com/shunkica/libxml2-wasm.git#c7092fb",
-    "xml-crypto": "git+https://github.com/shunkica/xml-crypto.git#014b0fb"
+    "libxml2-wasm": "^0.6.0",
+    "xadesjs": "^2.0.16",
+    "@peculiar/webcrypto": "^1.4.3",
+    "@xmldom/xmldom": "^0.8.10"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
+    "@types/xmldom": "^0.1.31",
     "@vitest/coverage-v8": "^2.0.0",
+    "tsup": "^8.5.0",
     "typescript": "^5.0.0",
     "vitest": "^2.0.0"
   }

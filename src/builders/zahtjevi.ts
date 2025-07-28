@@ -1,4 +1,5 @@
 import {IERacun, IEvidentirajERacunZahtjev, IEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev, IEvidentirajNaplatuZahtjev, IEvidentirajOdbijanjeZahtjev, INaplata, IOdbijanje, IRacun} from "../types";
+import {getCurrentDateTimeString} from "../util/time";
 
 export function getEvidentirajERacunZahtjev(
     vrsta: "I" | "U",
@@ -7,7 +8,7 @@ export function getEvidentirajERacunZahtjev(
     return {
         _id: crypto.randomUUID(),
         Zaglavlje: {
-            datumVrijemeSlanja: new Date().toISOString(),
+            datumVrijemeSlanja: getCurrentDateTimeString(),
             vrstaERacuna: vrsta
         },
         ERacun: Array.isArray(eracun) ? eracun : [eracun]
@@ -20,7 +21,7 @@ export function getEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev(
     return {
         _id: crypto.randomUUID(),
         Zaglavlje: {
-            datumVrijemeSlanja: new Date().toISOString(),
+            datumVrijemeSlanja: getCurrentDateTimeString(),
             vrstaRacuna: "IR"
         },
         Racun: Array.isArray(racun) ? racun : [racun]
@@ -33,7 +34,7 @@ export function getEvidentirajNaplatuZahtjev(
     return {
         _id: crypto.randomUUID(),
         Zaglavlje: {
-            datumVrijemeSlanja: new Date().toISOString()
+            datumVrijemeSlanja: getCurrentDateTimeString()
         },
         Naplata: Array.isArray(naplata) ? naplata : [naplata]
     };
@@ -45,7 +46,7 @@ export function getEvidentirajOdbijanjeZahtjev(
     return {
         _id: crypto.randomUUID(),
         Zaglavlje: {
-            datumVrijemeSlanja: new Date().toISOString(),
+            datumVrijemeSlanja: getCurrentDateTimeString(),
         },
         Odbijanje: Array.isArray(odbijanje) ? odbijanje : [odbijanje]
     };

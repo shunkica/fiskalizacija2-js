@@ -1,4 +1,4 @@
-import {describe, it, expect, beforeEach} from 'vitest';
+import {describe, it, expect,} from 'vitest';
 import {XmlDocument} from 'libxml2-wasm';
 import {XmlTestProvider} from "../fixtures/XmlTestProvider";
 import {ERacun, EvidentirajERacunZahtjev} from "../../src/models";
@@ -76,12 +76,14 @@ describe('Model serialization and deserialization', () => {
 
     describe('EvidentirajERacun', () => {
         const xml = XmlTestProvider.EvidentirajERacunZahtjev;
-        const data = XmlTestProvider.mockEvidentirajERacunZahtjev;
+        const id = XmlTestProvider.EvidentirajERacunZahtjev_ID;
+        const data = XmlTestProvider.mockEvidentirajERacunZahtjev(id, '00000000001');
         const zahtjev = new EvidentirajERacunZahtjev(data);
 
         it('should deserialize XML without throwing', () => {
             expect(() => {
-                EvidentirajERacunZahtjev.fromXml(xml);
+                const res = EvidentirajERacunZahtjev.fromXml(xml);
+                expect(res.ERacun[0].brojDokumenta).toBe(id);
             }).not.toThrow();
         });
 
@@ -94,13 +96,13 @@ describe('Model serialization and deserialization', () => {
 
     describe('EvidentirajIsporukuZaKojuNijeIzdanERacun', () => {
         const xml = XmlTestProvider.EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev;
-        const data: IEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev = XmlTestProvider.mockEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev;
+        const id = XmlTestProvider.EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev_ID;
+        const data: IEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev = XmlTestProvider.mockEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev(id, '00000000001');
         const zahtjev = new EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev(data);
 
-        it('should deserialize XML without throwing', () => {
-            expect(() => {
-                EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev.fromXml(xml);
-            }).not.toThrow();
+        it('should deserialize XML correctly', () => {
+            const res = EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev.fromXml(xml);
+            expect(res.Racun[0].brojDokumenta).toBe(id);
         });
 
         it('should serialize mock object and deserialize without throwing', () => {
@@ -113,13 +115,13 @@ describe('Model serialization and deserialization', () => {
 
     describe('EvidentirajNaplatuZahtjev', () => {
         const xml = XmlTestProvider.EvidentirajNaplatuZahtjev;
-        const data = XmlTestProvider.mockEvidentirajNaplatuZahtjev;
+        const id = XmlTestProvider.EvidentirajNaplatuZahtjev_ID;
+        const data = XmlTestProvider.mockEvidentirajNaplatuZahtjev(id, '00000000001');
         const zahtjev = new EvidentirajNaplatuZahtjev(data);
 
-        it('should deserialize XML without throwing', () => {
-            expect(() => {
-                EvidentirajNaplatuZahtjev.fromXml(xml);
-            }).not.toThrow();
+        it('should deserialize XML correcly', () => {
+            const res = EvidentirajNaplatuZahtjev.fromXml(xml);
+            expect(res.Naplata[0].brojDokumenta).toBe(id);
         });
 
         it('should serialize mock object and deserialize without throwing', () => {
@@ -132,13 +134,13 @@ describe('Model serialization and deserialization', () => {
 
     describe('EvidentirajOdbijanjeZahtjev', () => {
         const xml = XmlTestProvider.EvidentirajOdbijanjeZahtjev;
-        const data = XmlTestProvider.mockEvidentirajOdbijanjeZahtjev;
+        const id = XmlTestProvider.EvidentirajOdbijanjeZahtjev_ID;
+        const data = XmlTestProvider.mockEvidentirajOdbijanjeZahtjev(id, '00000000001');
         const zahtjev = new EvidentirajOdbijanjeZahtjev(data);
 
-        it('should deserialize XML without throwing', () => {
-            expect(() => {
-                EvidentirajOdbijanjeZahtjev.fromXml(xml);
-            }).not.toThrow();
+        it('should deserialize XML correctly', () => {
+            const res = EvidentirajOdbijanjeZahtjev.fromXml(xml);
+            expect(res.Odbijanje[0].brojDokumenta).toBe(id);
         });
 
         it('should serialize mock object and deserialize without throwing', () => {

@@ -12,6 +12,7 @@ export interface SigningOptions {
 }
 
 export interface FiskalizacijaOptions extends SigningOptions {
+    ca?: string | Buffer;
     service: string;
     allowSelfSigned?: boolean;
     timeout?: number;

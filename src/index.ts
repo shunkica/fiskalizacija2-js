@@ -12,3 +12,6 @@ export {
 export {
     FiskalizacijaClient
 } from './fiskalizacija';
+export {
+    FiskalizacijaService
+} from './models/api';

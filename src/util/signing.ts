@@ -1,13 +1,17 @@
-import {pemToDer, SignedXml} from 'xml-crypto';
-import {Sha256} from "xml-crypto/lib/hash-algorithms";
 import {SigningOptions} from "../types";
 import {randomUUID} from "node:crypto";
-import {usingXmlDocument} from "./xml";
 import {XmlElement} from "libxml2-wasm";
-import {FISK_NS} from "../models/xml/const";
+import * as XAdES from "xadesjs";
+import {Crypto} from "@peculiar/webcrypto";
+import {XMLSerializer} from "@xmldom/xmldom";
+import * as nodecrypto from "node:crypto";
 
 export class XmlSigner {
     private options: SigningOptions;
+    private crypto: Crypto;
+    private privateKey: CryptoKey | null = null;
+    private publicKey: CryptoKey | null = null;
+    private certificate: string;
 
     private defaultOptions = {
         signatureAlgorithm: 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
@@ -17,32 +21,60 @@ export class XmlSigner {
 
     constructor(options: SigningOptions) {
         this.options = {...this.defaultOptions, ...options};
+        this.crypto = new Crypto();
+        XAdES.Application.setEngine("NodeJS", this.crypto);
+
+        this.certificate = extractPemCertificate(this.options.publicCert);
+        this.initializeKeys();
+    }
+
+    private async initializeKeys(): Promise<void> {
+        const privateKeyPem = extractPemPrivateKey(this.options.privateKey);
+        const privateKeyDer = pemToDer(privateKeyPem);
+
+        // Import private key
+        const hashAlgorithm = this.getHashAlgorithmFromSignatureAlgorithm(this.options.signatureAlgorithm);
+        this.privateKey = await this.crypto.subtle.importKey(
+            "pkcs8",
+            privateKeyDer,
+            {
+                name: "RSASSA-PKCS1-v1_5",
+                hash: hashAlgorithm
+            },
+            false,
+            ["sign"]
+        );
+
+        // For verification, we'll extract the public key from the certificate when needed
+        // The certificate itself will be used in the signing process
+        this.publicKey = null;
+    }
+
+    private preparePemForXAdES(pem: string): string {
+        return pem
+            .replace(/-----(BEGIN|END)[\w\d\s]+-----/g, "")
+            .replace(/[\r\n]/g, "");
+    }
+
+    private getHashAlgorithmFromSignatureAlgorithm(signatureAlgorithm: string | undefined): string {
+        // Map XML signature algorithm URIs to WebCrypto hash algorithm names
+        switch (signatureAlgorithm) {
+            case 'http://www.w3.org/2000/09/xmldsig#rsa-sha1':
+                return 'SHA-1';
+            case 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256':
+                return 'SHA-256';
+            case 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha384':
+                return 'SHA-384';
+            case 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha512':
+                return 'SHA-512';
+            default:
+                // Default to SHA-256 if unknown algorithm
+                return 'SHA-256';
+        }
     }
 
     static generateId(prefix?: string): string {
         return prefix ? `${prefix}-${randomUUID()}` : randomUUID();
-    }
-
-    private getXAdESContent(signatureId: string, signedPropertiesId: string, signingTime: string): string {
-        let publicCertPem = this.options.publicCert;
-        if (Buffer.isBuffer(publicCertPem)) {
-            publicCertPem = publicCertPem.toString('utf8');
-        }
-        const publicCertDer = pemToDer(publicCertPem)
-        const publicCertDigest = new Sha256().getHash(publicCertDer)
-        let res = '';
-        res += `<xades:QualifyingProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Target="#${signatureId}">`
-        res += `<xades:SignedProperties Id="${signedPropertiesId}">`
-        res += `<xades:SignedSignatureProperties>`
-        res += `<xades:SigningTime>${signingTime}</xades:SigningTime>`
-        res += `<xades:SigningCertificateV2><xades:Cert><xades:CertDigest>`
-        res += `<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>`
-        res += `<ds:DigestValue>${publicCertDigest}</ds:DigestValue>`
-        res += `</xades:CertDigest></xades:Cert></xades:SigningCertificateV2>`
-        res += `</xades:SignedSignatureProperties>`
-        res += `</xades:SignedProperties>`
-        res += `</xades:QualifyingProperties>`
-        return res;
     }
 
     /**
@@ -50,89 +82,138 @@ export class XmlSigner {
      * @param xml - The XML string to sign
      * @returns The signed XML string
      */
-    signFiscalizationRequest(xml: string): string {
-        const signatureId = XmlSigner.generateId("Sig");
-        const signedPropertiesId = XmlSigner.generateId("xades");
-        const signingTime = new Date().toISOString(); // TODO: provjeriti da li treba biti lokalno vrijeme ili može biti UTC
+    async signFiscalizationRequest(xml: string, referenceUri: string): Promise<string> {
+        if (!this.privateKey) {
+            await this.initializeKeys();
+        }
 
-        // Create SignedXml instance
-        const sig = new SignedXml({
-            publicCert: this.options.publicCert,
-            privateKey: this.options.privateKey,
-            signatureAlgorithm: this.options.signatureAlgorithm,
-            canonicalizationAlgorithm: this.options.canonicalizationAlgorithm,
-            getObjectContent: () => [
-                {content: this.getXAdESContent(signatureId, signedPropertiesId, signingTime)}
-            ]
-        });
+        if (!this.privateKey) {
+            throw new Error("Failed to initialize private key");
+        }
 
-        // Add reference to the entire document
-        sig.addReference({
-            xpath: "/*",
-            isEmptyUri: true,
-            digestAlgorithm: this.options.digestAlgorithm,
-            transforms: [
-                'http://www.w3.org/2000/09/xmldsig#enveloped-signature',
-                "http://www.w3.org/2001/10/xml-exc-c14n#"
-            ]
-        });
+        const xmlDoc = XAdES.Parse(xml);
+        const signedXml = new XAdES.SignedXml();
 
-        // Add reference to the SignedProperties
-        sig.addReference({
-            xpath: `//*[@Id='${signedPropertiesId}']`,
-            type: "http://uri.etsi.org/01903#SignedProperties",
-            digestAlgorithm: "http://www.w3.org/2001/04/xmlenc#sha256",
-            transforms: ["http://www.w3.org/2001/10/xml-exc-c14n#"],
-            isSignatureReference: true,
-        });
+        // Extract hash algorithm from signature algorithm URI
+        const hashAlgorithm = this.getHashAlgorithmFromSignatureAlgorithm(this.options.signatureAlgorithm);
 
-        // Compute signature and insert it into the document
-        sig.computeSignature(xml, {
-            prefix: 'ds',
-            location: {
-                reference: "/*",
-                action: 'append'
-            },
-            attrs: {
-                Id: signatureId
+        const algorithm = {
+            name: "RSASSA-PKCS1-v1_5",
+            hash: hashAlgorithm
+        };
+
+        const signature = await signedXml.Sign(
+            algorithm,
+            this.privateKey,
+            xmlDoc,
+            {
+                x509: [this.preparePemForXAdES(this.certificate)],
+                references: [
+                    {
+                        uri: referenceUri,
+                        hash: hashAlgorithm,
+                        transforms: ["enveloped", "exc-c14n"]
+                    }
+                ],
+                signingCertificateV2: this.preparePemForXAdES(this.certificate),
+                signingTime: {
+                    value: new Date()
+                }
             }
-        });
+        );
 
-        return sig.getSignedXml();
+        const elSignature = signature.GetXml();
+
+        if (!elSignature) {
+            throw new Error("Failed to create signature XML element");
+        }
+
+        // Append signature to the document
+        xmlDoc.documentElement.appendChild(elSignature);
+
+        // Serialize the signed document
+        return new XMLSerializer().serializeToString(xmlDoc);
     }
 
-    static isValidSignature(signedXml: string | Buffer): boolean;
-    static isValidSignature(signedXml: string | Buffer, publicCert: string | Buffer): boolean;
-    static isValidSignature(signedXml: string | Buffer, publicCert: string | Buffer, signature: XmlElement): boolean
-    static isValidSignature(signedXml: string | Buffer, publicCert?: string | Buffer, signature?: XmlElement): boolean {
+    static async isValidSignature(signedXml: string | Buffer): Promise<boolean>;
+    static async isValidSignature(signedXml: string | Buffer, publicCert: string | Buffer): Promise<boolean>;
+    static async isValidSignature(signedXml: string | Buffer, publicCert: string | Buffer, signature: XmlElement): Promise<boolean>
+    static async isValidSignature(signedXml: string | Buffer, publicCert?: string | Buffer, signature?: XmlElement): Promise<boolean> {
         if (!signedXml) {
             throw new Error("Signed XML is required for signature validation");
         }
-        if (signature == undefined) {
-            return usingXmlDocument(signedXml, (doc) => {
-                const signature = doc.get("//ds:Signature", FISK_NS) as XmlElement | null;
-                if (!signature) {
-                    throw new Error("No signature found in the signed XML");
-                }
-                if (publicCert == undefined) {
-                    const certElement = signature.get("ds:KeyInfo/ds:X509Data/ds:X509Certificate", FISK_NS);
-                    if (!certElement) {
-                        throw new Error("No public certificate found in the signature");
-                    }
-                    publicCert = certElement.content.trim();
-                    const pemCert = `-----BEGIN CERTIFICATE-----\n${publicCert}\n-----END CERTIFICATE-----`;
-                    return this.isValidSignature(signedXml, pemCert, signature);
-                }
-                return this.isValidSignature(signedXml, publicCert, signature);
-            });
-        }
+
+        const crypto = new Crypto();
+        XAdES.Application.setEngine("NodeJS", crypto);
+
         if (Buffer.isBuffer(signedXml)) {
             signedXml = signedXml.toString('utf8');
         }
-        const sig = new SignedXml({
-            publicCert: publicCert,
-        });
-        sig.loadSignature(signature.toString({format: false, noDeclaration: true}));
-        return sig.checkSignature(signedXml);
+
+        const xmlDoc = XAdES.Parse(signedXml);
+        const xmlSignatures = xmlDoc.getElementsByTagNameNS("http://www.w3.org/2000/09/xmldsig#", "Signature");
+
+        if (xmlSignatures.length === 0) {
+            throw new Error("No signature found in the signed XML");
+        }
+
+        const signedXmlInstance = new XAdES.SignedXml(xmlDoc);
+        signedXmlInstance.LoadXml(xmlSignatures[0]);
+
+        if (publicCert) {
+            const cert = new nodecrypto.X509Certificate(publicCert);
+            const publicKeyPem = cert.publicKey.export({ type: 'spki', format: 'pem' }) as string;
+
+            // Remove PEM headers/footers and newlines
+            const pemContents = publicKeyPem
+                .replace(/-----BEGIN PUBLIC KEY-----/, '')
+                .replace(/-----END PUBLIC KEY-----/, '')
+                .replace(/\s+/g, '');
+
+            const publicKeyDer = Buffer.from(pemContents, 'base64');
+
+            const cryptoKey = await crypto.subtle.importKey(
+                'spki',
+                publicKeyDer,
+                {
+                    name: 'RSASSA-PKCS1-v1_5',
+                    hash: 'SHA-256',
+                },
+                true,
+                ['verify']
+            );
+
+            return await signedXmlInstance.Verify(cryptoKey);
+        }
+
+        return await signedXmlInstance.Verify();
+
     }
+}
+
+function pemToDer(pem: string): ArrayBuffer {
+    const pemContent = pem
+        .replace(/-----(BEGIN|END)[\w\d\s]+-----/g, "")
+        .replace(/[\r\n]/g, "");
+    return new Uint8Array(Buffer.from(pemContent, "base64")).buffer;
+}
+
+function extractPemCertificate(input: string | Buffer): string {
+    const startTag = '-----BEGIN CERTIFICATE-----';
+    const endTag = '-----END CERTIFICATE-----';
+    const str = Buffer.isBuffer(input) ? input.toString('utf8') : input;
+    const beginIndex = str.indexOf(startTag);
+    const endIndex = str.indexOf(endTag, beginIndex) + endTag.length;
+    if (beginIndex === -1 || endIndex === -1) throw "No PEM certificate found in the input";
+    return str.substring(beginIndex, endIndex);
+}
+
+function extractPemPrivateKey(input: string | Buffer): string {
+    const startTag = '-----BEGIN PRIVATE KEY-----';
+    const endTag = '-----END PRIVATE KEY-----';
+    const str = Buffer.isBuffer(input) ? input.toString('utf8') : input
+    const beginIndex = str.indexOf(startTag);
+    const endIndex = str.indexOf(endTag, beginIndex) + endTag.length;
+    if (beginIndex === -1 || endIndex === -1) throw "No PEM private key found in the input";
+    return str.substring(beginIndex, endIndex);
 }

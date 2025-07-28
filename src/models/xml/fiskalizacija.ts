@@ -1,7 +1,7 @@
 import {ERacunSerializable, EvidentirajERacunOdgovorSerializable, EvidentirajERacunZahtjevSerializable, IERacun, IEvidentirajERacunOdgovor, IEvidentirajERacunZahtjev, IEvidentirajNaplatuZahtjev, IGreska, IOdgovor, IPrethodniERacun, IStavkaERacuna, IZaglavljeFiskalizacija, OdgovorSerializable, PrethodniERacunSerializable, StavkaERacunaSerializable, ValidationError, ZaglavljeFiskalizacijaSerializable} from "../../types";
-import {FISK_NS, getUblNsPrefix, UBL_NS} from "./const";
+import {FISK_NS, UBL_NS} from "./const";
 import {extractElement, extractElements, extractOptionalElements, getAttributeValue, getBusinessGroupXpath, getBusinessTermXpath, getElementContent, getElementContentNumber, getOptionalElementContent, getOptionalElementContentNumber, usingXmlDocument, xmlEscape} from "../../util/xml";
-import {XmlAttribute, XmlDocument, XmlElement} from "libxml2-wasm";
+import { XmlDocument, XmlElement} from "libxml2-wasm";
 import {ArtiklIdentifikatorKlasifikacija, DokumentUkupanIznos, Izdavatelj, PrijenosSredstava, Primatelj, RaspodjelaPdv, Odgovor} from "./common";
 
 export class EvidentirajERacunZahtjev implements EvidentirajERacunZahtjevSerializable {
