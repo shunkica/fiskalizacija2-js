@@ -2,6 +2,10 @@
 
 TypeScript library za fiskalizaciju 2.0 omogućava jednostavno slanje zahtjeva za evidenciju eRačuna i eIzvještavanje.
 
+## Instalacija
+
+```npm i fiskalizacija2```
+
 ## Korištenje
 
 Library pruža klasu `FiskalizacijaClient` koja prima objekt konfiguracije:
