@@ -1,6 +1,6 @@
 {
   "name": "fiskalizacija2",
-  "version": "0.1.0-rc.1",
+  "version": "0.2.0-rc.1",
   "description": "Croatian e-invoicing and fiscalization library",
   "types": "dist/index.d.ts",
   "type": "module",
