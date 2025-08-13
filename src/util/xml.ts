@@ -174,6 +174,7 @@ export function getAttributeValue(
 }
 
 export function xmlEscape(val: string): string {
+    if (!val) return '';
     return val.replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")

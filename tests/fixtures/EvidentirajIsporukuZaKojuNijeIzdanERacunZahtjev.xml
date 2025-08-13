@@ -14,6 +14,7 @@
     <eizv:Izdavatelj>
       <eizv:ime>Tvrtka A d.o.o.</eizv:ime>
       <eizv:oibPorezniBroj>02994650199</eizv:oibPorezniBroj>
+      <eizv:oibOperatera>12345678902</eizv:oibOperatera>
     </eizv:Izdavatelj>
     <eizv:Primatelj>
       <eizv:ime>Tvrtka B d.o.o.</eizv:ime>

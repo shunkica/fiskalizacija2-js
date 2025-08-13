@@ -7,11 +7,13 @@ export class Izdavatelj implements IzdavateljSerializable {
     private readonly _prefix: "efis" | "eizv";
     ime: string;
     oibPorezniBroj: string;
+    oibOperatera: string;
 
     constructor(args: IIzdavatelj, prefix: "efis" | "eizv") {
         this._prefix = prefix;
         this.ime = args.ime;
         this.oibPorezniBroj = args.oibPorezniBroj;
+        this.oibOperatera = args.oibOperatera;
     }
 
     toXmlString(): string {
@@ -19,6 +21,7 @@ export class Izdavatelj implements IzdavateljSerializable {
         res += `<${this._prefix}:Izdavatelj>`;
         res += `<${this._prefix}:ime>${xmlEscape(this.ime)}</${this._prefix}:ime>`;
         res += `<${this._prefix}:oibPorezniBroj>${xmlEscape(this.oibPorezniBroj)}</${this._prefix}:oibPorezniBroj>`;
+        res += `<${this._prefix}:oibOperatera>${xmlEscape(this.oibOperatera)}</${this._prefix}:oibOperatera>`;
         res += `</${this._prefix}:Izdavatelj>`;
         return res;
     }
@@ -27,7 +30,8 @@ export class Izdavatelj implements IzdavateljSerializable {
         const prefix = getFiskNsPrefix(el.namespaceUri)
         return {
             ime: getElementContent(el, `${prefix}:ime`, FISK_NS, "tekst500"),
-            oibPorezniBroj: getElementContent(el, `${prefix}:oibPorezniBroj`, FISK_NS, "tekst20")
+            oibPorezniBroj: getElementContent(el, `${prefix}:oibPorezniBroj`, FISK_NS, "tekst20"),
+            oibOperatera: getElementContent(el, `${prefix}:oibOperatera`, FISK_NS, "tekst20")
         };
     }
 
@@ -38,7 +42,8 @@ export class Izdavatelj implements IzdavateljSerializable {
         }
         return {
             ime: getElementContent(groupEl, getBusinessTermXpath("BT-27", type, "BG-4"), UBL_NS, "tekst500"),
-            oibPorezniBroj: getElementContent(groupEl, getBusinessTermXpath("BT-31", type, "BG-4"), UBL_NS, "tekst20")
+            oibPorezniBroj: getElementContent(groupEl, getBusinessTermXpath("BT-31", type, "BG-4"), UBL_NS, "tekst20"),
+            oibOperatera: getElementContent(groupEl, getBusinessTermXpath("HR-BT-5", type, "BG-4"), UBL_NS, "tekst20")
         };
     }
 }

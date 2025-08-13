@@ -150,6 +150,13 @@ export interface IIzdavatelj {
      * @regex tekst20
      */
     oibPorezniBroj: string;
+
+    /**
+     * OIB operatera sukladno Zakonu o fiskalizaciji.
+     * @bt HR-BT-5
+     * @regex tekst20
+     */
+    oibOperatera: string;
 }
 
 export type IzdavateljSerializable = XmlSerializable<IIzdavatelj>

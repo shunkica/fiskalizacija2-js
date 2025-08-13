@@ -88,8 +88,13 @@ describe('Model serialization and deserialization', () => {
         });
 
         it('should serialize and deserialize without throwing', () => {
+            let stringXml = '';
             expect(() => {
-                EvidentirajERacunZahtjev.fromXml(zahtjev.toXmlString());
+                stringXml = zahtjev.toXmlString();
+            }).not.toThrow();
+
+            expect(() => {
+                EvidentirajERacunZahtjev.fromXml(stringXml);
             }).not.toThrow();
         });
     });
@@ -106,8 +111,13 @@ describe('Model serialization and deserialization', () => {
         });
 
         it('should serialize mock object and deserialize without throwing', () => {
+            let stringXml = '';
             expect(() => {
-                EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev.fromXml(zahtjev.toXmlString());
+                stringXml = zahtjev.toXmlString();
+            }).not.toThrow();
+
+            expect(() => {
+                EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev.fromXml(stringXml);
             }).not.toThrow();
         });
 

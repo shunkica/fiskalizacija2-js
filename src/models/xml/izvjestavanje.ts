@@ -577,16 +577,19 @@ export class Racun implements RacunSerializable {
 
 export class EvidentirajNaplatuOdgovor implements EvidentirajNaplatuOdgovorSerializable {
     _id: string;
+    datumVrijemeSlanja: string;
     Odgovor: Odgovor;
 
     constructor(props: IEvidentirajNaplatuOdgovor) {
         this._id = props._id;
+        this.datumVrijemeSlanja = props.datumVrijemeSlanja;
         this.Odgovor = new Odgovor(props.Odgovor, "eizv");
     }
 
     toXmlString(): string {
         let res = '';
         res += `<eizv:EvidentirajNaplatuOdgovor xmlns:eizv="${FISK_NS.eizv}" eizv:id="${xmlEscape(this._id)}">`;
+        res += `<eizv:datumVrijemeSlanja>${xmlEscape(this.datumVrijemeSlanja)}</eizv:datumVrijemeSlanja>`;
         res += this.Odgovor.toXmlString();
         res += '</eizv:EvidentirajNaplatuOdgovor>';
         return res;
@@ -595,6 +598,7 @@ export class EvidentirajNaplatuOdgovor implements EvidentirajNaplatuOdgovorSeria
     static fromXmlElement(el: XmlElement): IEvidentirajNaplatuOdgovor {
         return {
             _id: getAttributeValue(el, "id", "eizv"),
+            datumVrijemeSlanja: getElementContent(el, "eizv:datumVrijemeSlanja", FISK_NS, "datumVrijemeDeci"),
             Odgovor: extractElement(el, "eizv:Odgovor", FISK_NS, Odgovor.fromXmlElement)
         }
     }

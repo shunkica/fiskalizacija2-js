@@ -29,6 +29,9 @@ urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2 http://
         <cbc:RegistrationName>Minimal Supplier</cbc:RegistrationName>
       </cac:PartyLegalEntity>
     </cac:Party>
+    <cac:SellerContact>
+      <cbc:ID>12345678900</cbc:ID>
+    </cac:SellerContact>
   </cac:AccountingSupplierParty>
   <cac:AccountingCustomerParty>
     <cac:Party>

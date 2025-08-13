@@ -15,6 +15,7 @@
     <efis:Izdavatelj>
       <efis:ime>TVRTKA A d.o.o.</efis:ime>
       <efis:oibPorezniBroj>12345678901</efis:oibPorezniBroj>
+      <efis:oibOperatera>12345678902</efis:oibOperatera>
     </efis:Izdavatelj>
     <efis:Primatelj>
       <efis:ime>Tvrtka B d.o.o.</efis:ime>

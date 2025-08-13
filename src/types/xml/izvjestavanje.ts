@@ -360,6 +360,11 @@ export interface IEvidentirajNaplatuOdgovor {
     _id: string;
 
     /**
+     * Datum i vrijeme slanja odgovora
+     */
+    datumVrijemeSlanja: string;
+
+    /**
      * Odgovor na zahtjev
      */
     Odgovor: IOdgovor;

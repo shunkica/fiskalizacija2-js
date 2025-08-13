@@ -49,7 +49,8 @@ export class XmlTestProvider {
                 vrstaPoslovnogProcesa: "P1",
                 Izdavatelj: {
                     ime: "IZDAVATELJ",
-                    oibPorezniBroj: oib
+                    oibPorezniBroj: oib,
+                    oibOperatera: "12345678901"
                 },
                 Primatelj: {
                     ime: "PRIMATELJ",
@@ -110,7 +111,8 @@ export class XmlTestProvider {
                 vrstaPoslovnogProcesa: "P1",
                 Izdavatelj: {
                     ime: "IZDAVATELJ",
-                    oibPorezniBroj: oib
+                    oibPorezniBroj: oib,
+                    oibOperatera: "12345678901"
                 },
                 Primatelj: {
                     ime: "PRIMATELJ",
