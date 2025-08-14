@@ -10,22 +10,22 @@ function removePrefix(str: string, prefix: string) {
 
 export function getBusinessTermXpath(
     id: keyof typeof BUSINESS_TERMS,
-    type: 'Invoice' | 'CreditNote',
+    type: "Invoice" | "CreditNote",
     group: keyof typeof BUSINESS_GROUPS | null = null
 ): string {
     const term = BUSINESS_TERMS[id];
     if (group) {
-        return removePrefix(term.xpath[type].join('/'), getBusinessGroupXpath(group, type))
+        return removePrefix(term.xpath[type].join("/"), getBusinessGroupXpath(group, type))
     }
-    return term.xpath[type].join('/');
+    return term.xpath[type].join("/");
 }
 
 export function getBusinessGroupXpath(
     id: keyof typeof BUSINESS_GROUPS,
-    type: 'Invoice' | 'CreditNote',
+    type: "Invoice" | "CreditNote",
 ): string {
     const term = BUSINESS_GROUPS[id];
-    return term.xpath[type].join('/');
+    return term.xpath[type].join("/");
 }
 
 export function getElementContentNumber(parentEl: XmlElement,
@@ -174,7 +174,7 @@ export function getAttributeValue(
 }
 
 export function xmlEscape(val: string): string {
-    if (!val) return '';
+    if (!val) return "";
     return val.replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
@@ -186,7 +186,7 @@ export function usingXmlDocument<T>(doc: string | Uint8Array | XmlDocument, fn: 
     if (!doc) {
         throw new Error("XML document is required for processing");
     }
-    if (typeof doc === 'string') {
+    if (typeof doc === "string") {
         doc = XmlDocument.fromString(doc);
     } else if (doc instanceof Uint8Array) {
         doc = XmlDocument.fromBuffer(doc);

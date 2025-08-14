@@ -1,7 +1,7 @@
-import {ERacunSerializable, EvidentirajERacunOdgovorSerializable, EvidentirajERacunZahtjevSerializable, IERacun, IEvidentirajERacunOdgovor, IEvidentirajERacunZahtjev, IEvidentirajNaplatuZahtjev, IGreska, IOdgovor, IPrethodniERacun, IStavkaERacuna, IZaglavljeFiskalizacija, OdgovorSerializable, PrethodniERacunSerializable, StavkaERacunaSerializable, ValidationError, ZaglavljeFiskalizacijaSerializable} from "../../types";
+import {ERacunSerializable, EvidentirajERacunOdgovorSerializable, EvidentirajERacunZahtjevSerializable, IERacun, IEvidentirajERacunOdgovor, IEvidentirajERacunZahtjev, IPrethodniERacun, IStavkaERacuna, IZaglavljeFiskalizacija, PrethodniERacunSerializable, StavkaERacunaSerializable, ValidationError, ZaglavljeFiskalizacijaSerializable} from "../../types";
 import {FISK_NS, UBL_NS} from "./const";
 import {extractElement, extractElements, extractOptionalElements, getAttributeValue, getBusinessGroupXpath, getBusinessTermXpath, getElementContent, getElementContentNumber, getOptionalElementContent, getOptionalElementContentNumber, usingXmlDocument, xmlEscape} from "../../util/xml";
-import { XmlDocument, XmlElement} from "libxml2-wasm";
+import {XmlDocument, XmlElement} from "libxml2-wasm";
 import {ArtiklIdentifikatorKlasifikacija, DokumentUkupanIznos, Izdavatelj, PrijenosSredstava, Primatelj, RaspodjelaPdv, Odgovor} from "./common";
 
 export class EvidentirajERacunZahtjev implements EvidentirajERacunZahtjevSerializable {
@@ -16,7 +16,7 @@ export class EvidentirajERacunZahtjev implements EvidentirajERacunZahtjevSeriali
     }
 
     public static fromXml(xml: string | Uint8Array | XmlDocument | XmlElement): IEvidentirajERacunZahtjev {
-        if (typeof xml === 'string') {
+        if (typeof xml === "string") {
             return usingXmlDocument(XmlDocument.fromString(xml), doc => {
                 return EvidentirajERacunZahtjev.fromXml(doc);
             });
@@ -28,14 +28,14 @@ export class EvidentirajERacunZahtjev implements EvidentirajERacunZahtjevSeriali
             return EvidentirajERacunZahtjev.fromXml(xml.root)
         } else {
             let el = xml as XmlElement;
-            if (el.name === 'Envelope' && el.namespaceUri === FISK_NS.soapenv) {
-                let el2 = el.get('/soapenv:Envelope/soapenv:Body/efis:EvidentirajERacunZahtjev', FISK_NS) as XmlElement | null;
+            if (el.name === "Envelope" && el.namespaceUri === FISK_NS.soapenv) {
+                let el2 = el.get("/soapenv:Envelope/soapenv:Body/efis:EvidentirajERacunZahtjev", FISK_NS) as XmlElement | null;
                 if (!el2) {
-                    throw new ValidationError(`Expected 'EvidentirajERacunZahtjev' element in SOAP body`, xml);
+                    throw new ValidationError("Expected 'EvidentirajERacunZahtjev' element in SOAP body", xml);
                 }
                 el = el2;
             }
-            if (el.name !== 'EvidentirajERacunZahtjev' || el.namespaceUri != FISK_NS.efis) {
+            if (el.name !== "EvidentirajERacunZahtjev" || el.namespaceUri != FISK_NS.efis) {
                 throw new ValidationError(`Expected 'EvidentirajERacunZahtjev' element with namespace '${FISK_NS.efis}'`, xml);
             }
             return EvidentirajERacunZahtjev.fromXmlElement(el);
@@ -51,11 +51,11 @@ export class EvidentirajERacunZahtjev implements EvidentirajERacunZahtjevSeriali
     }
 
     public toXmlString() {
-        let res = '';
+        let res = "";
         res += `<efis:EvidentirajERacunZahtjev xmlns:ds="${FISK_NS["ds"]}" xmlns:efis="${FISK_NS["efis"]}" efis:id="${xmlEscape(this._id)}">`;
         res += this.Zaglavlje.toXmlString();
         this.ERacun.forEach(eracun => res += eracun.toXmlString());
-        res += `</efis:EvidentirajERacunZahtjev>`;
+        res += "</efis:EvidentirajERacunZahtjev>";
         return res;
     }
 }
@@ -70,11 +70,11 @@ export class ZaglavljeFiskalizacija implements ZaglavljeFiskalizacijaSerializabl
     }
 
     public toXmlString() {
-        let res = '';
-        res += `<efis:Zaglavlje>`;
+        let res = "";
+        res += "<efis:Zaglavlje>";
         res += `<efis:datumVrijemeSlanja>${xmlEscape(this.datumVrijemeSlanja)}</efis:datumVrijemeSlanja>`;
         res += `<efis:vrstaERacuna>${xmlEscape(this.vrstaERacuna)}</efis:vrstaERacuna>`;
-        res += `</efis:Zaglavlje>`;
+        res += "</efis:Zaglavlje>";
         return res;
     }
 
@@ -124,21 +124,21 @@ export class ERacun implements ERacunSerializable {
     }
 
     toXmlString(): string {
-        let res = '';
-        res += '<efis:ERacun>';
-        res += '<efis:brojDokumenta>' + xmlEscape(this.brojDokumenta) + '</efis:brojDokumenta>';
-        res += '<efis:datumIzdavanja>' + xmlEscape(this.datumIzdavanja) + '</efis:datumIzdavanja>';
-        res += '<efis:vrstaDokumenta>' + xmlEscape(this.vrstaDokumenta) + '</efis:vrstaDokumenta>';
-        res += '<efis:valutaERacuna>' + xmlEscape(this.valutaERacuna) + '</efis:valutaERacuna>';
+        let res = "";
+        res += "<efis:ERacun>";
+        res += "<efis:brojDokumenta>" + xmlEscape(this.brojDokumenta) + "</efis:brojDokumenta>";
+        res += "<efis:datumIzdavanja>" + xmlEscape(this.datumIzdavanja) + "</efis:datumIzdavanja>";
+        res += "<efis:vrstaDokumenta>" + xmlEscape(this.vrstaDokumenta) + "</efis:vrstaDokumenta>";
+        res += "<efis:valutaERacuna>" + xmlEscape(this.valutaERacuna) + "</efis:valutaERacuna>";
         if (this.datumDospijecaPlacanja) {
-            res += '<efis:datumDospijecaPlacanja>' + xmlEscape(this.datumDospijecaPlacanja) + '</efis:datumDospijecaPlacanja>';
+            res += "<efis:datumDospijecaPlacanja>" + xmlEscape(this.datumDospijecaPlacanja) + "</efis:datumDospijecaPlacanja>";
         }
         if (this.datumIsporuke) {
-            res += '<efis:datumIsporuke>' + xmlEscape(this.datumIsporuke) + '</efis:datumIsporuke>';
+            res += "<efis:datumIsporuke>" + xmlEscape(this.datumIsporuke) + "</efis:datumIsporuke>";
         }
-        res += '<efis:vrstaPoslovnogProcesa>' + xmlEscape(this.vrstaPoslovnogProcesa) + '</efis:vrstaPoslovnogProcesa>';
+        res += "<efis:vrstaPoslovnogProcesa>" + xmlEscape(this.vrstaPoslovnogProcesa) + "</efis:vrstaPoslovnogProcesa>";
         if (this.referencaNaUgovor) {
-            res += '<efis:referencaNaUgovor>' + xmlEscape(this.referencaNaUgovor) + '</efis:referencaNaUgovor>';
+            res += "<efis:referencaNaUgovor>" + xmlEscape(this.referencaNaUgovor) + "</efis:referencaNaUgovor>";
         }
         if (this.PrethodniERacun) {
             this.PrethodniERacun.forEach(i => res += i.toXmlString());
@@ -152,7 +152,7 @@ export class ERacun implements ERacunSerializable {
         this.RaspodjelaPdv.forEach(i => res += i.toXmlString());
         this.StavkaERacuna.forEach(i => res += i.toXmlString());
         res += `<efis:indikatorKopije>${xmlEscape(String(this.indikatorKopije))}</efis:indikatorKopije>`;
-        res += '</efis:ERacun>';
+        res += "</efis:ERacun>";
         return res;
     }
 
@@ -209,11 +209,11 @@ export class PrethodniERacun implements PrethodniERacunSerializable {
     }
 
     toXmlString(): string {
-        let res = '';
-        res += `<efis:PrethodniERacun>`;
+        let res = "";
+        res += "<efis:PrethodniERacun>";
         res += `<efis:brojDokumenta>${xmlEscape(this.brojDokumenta)}</efis:brojDokumenta>`;
         res += `<efis:datumIzdavanja>${xmlEscape(this.datumIzdavanja)}</efis:datumIzdavanja>`;
-        res += `</efis:PrethodniERacun>`;
+        res += "</efis:PrethodniERacun>";
         return res;
     }
 
@@ -261,10 +261,9 @@ export class StavkaERacuna implements StavkaERacunaSerializable {
         this.ArtiklIdentifikatorKlasifikacija = args.ArtiklIdentifikatorKlasifikacija?.map(i => new ArtiklIdentifikatorKlasifikacija(i, "efis"));
     }
 
-
     toXmlString(): string {
-        let res = '';
-        res += `<efis:StavkaERacuna>`;
+        let res = "";
+        res += "<efis:StavkaERacuna>";
         res += `<efis:kolicina>${this.kolicina.toFixed(2)}</efis:kolicina>`;
         res += `<efis:jedinicaMjere>${xmlEscape(this.jedinicaMjere)}</efis:jedinicaMjere>`;
         res += `<efis:artiklNetoCijena>${this.artiklNetoCijena.toFixed(2)}</efis:artiklNetoCijena>`;
@@ -280,7 +279,7 @@ export class StavkaERacuna implements StavkaERacunaSerializable {
         if (this.ArtiklIdentifikatorKlasifikacija) {
             this.ArtiklIdentifikatorKlasifikacija.forEach(a => res += a.toXmlString());
         }
-        res += `</efis:StavkaERacuna>`;
+        res += "</efis:StavkaERacuna>";
         return res;
     }
 

@@ -1,15 +1,15 @@
 export {
     EvidentirajERacunZahtjev,
     ERacun
-} from './xml/fiskalizacija'
+} from "./xml/fiskalizacija"
 
 export {
     EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev,
     EvidentirajNaplatuZahtjev,
     EvidentirajOdbijanjeZahtjev,
     Racun
-} from './xml/izvjestavanje'
+} from "./xml/izvjestavanje"
 
 export {
     FiskalizacijaService
-} from './api'
+} from "./api"

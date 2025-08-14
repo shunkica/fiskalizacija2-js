@@ -23,7 +23,6 @@ export interface IGreska {
 
 export type GreskaSerializable = XmlSerializable<IGreska>
 
-
 /**
  * Odgovor Sustava za fiskalizaciju na poslani zahtjev. Odgovor opisuje uspješno zaprimanje (element
  * prihvacenZahtjev ima vrijednost true) ili neuspješno zaprimanje (element prihvacenZahtjev ima vrijednosti false)

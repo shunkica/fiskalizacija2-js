@@ -2,40 +2,38 @@ import {IEvidentirajERacunZahtjev, IEvidentirajIsporukuZaKojuNijeIzdanERacunZaht
 import {XmlSigner} from "../../src/util/signing";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import {Naplata} from "../../src/models/xml/izvjestavanje";
 import {getCurrentDateTimeString} from "../../src/util/time";
-import {randomUUID} from "node:crypto";
 
 export class XmlTestProvider {
-    static mockPrivateKey = fs.readFileSync(path.join(__dirname, 'key.pem'), 'utf8')
+    static mockPrivateKey = fs.readFileSync(path.join(__dirname, "key.pem"), "utf8")
 
-    static mockPublicCert = fs.readFileSync(path.join(__dirname, 'cert.pem'), 'utf8')
+    static mockPublicCert = fs.readFileSync(path.join(__dirname, "cert.pem"), "utf8")
 
-    static mockPrivateKey2 = fs.readFileSync(path.join(__dirname, 'key2.pem'), 'utf8')
+    static mockPrivateKey2 = fs.readFileSync(path.join(__dirname, "key2.pem"), "utf8")
 
-    static mockPublicCert2 = fs.readFileSync(path.join(__dirname, 'cert2.pem'), 'utf8')
+    static mockPublicCert2 = fs.readFileSync(path.join(__dirname, "cert2.pem"), "utf8")
 
-    static ublInvoiceFull = fs.readFileSync(path.join(__dirname, 'ubl-invoice-full.xml'), 'utf8')
+    static ublInvoiceFull = fs.readFileSync(path.join(__dirname, "ubl-invoice-full.xml"), "utf8")
 
-    static ublInvoiceMinimal = fs.readFileSync(path.join(__dirname, 'ubl-invoice-minimal.xml'), 'utf8');
+    static ublInvoiceMinimal = fs.readFileSync(path.join(__dirname, "ubl-invoice-minimal.xml"), "utf8");
 
-    static ublInvoiceInvalid = fs.readFileSync(path.join(__dirname, 'ubl-invoice-invalid.xml'), 'utf8');
+    static ublInvoiceInvalid = fs.readFileSync(path.join(__dirname, "ubl-invoice-invalid.xml"), "utf8");
 
-    static EvidentirajERacunZahtjev = fs.readFileSync(path.join(__dirname, 'EvidentirajERacunZahtjev.xml'), 'utf8');
+    static EvidentirajERacunZahtjev = fs.readFileSync(path.join(__dirname, "EvidentirajERacunZahtjev.xml"), "utf8");
     static EvidentirajERacunZahtjev_ID = "cfa9dd33-9d9a-4a2a-8ef0-dd65fe476d8b";
     static EvidentirajERacunZahtjev_brojDokumenta = "5-P1-1";
 
-    static EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev = fs.readFileSync(path.join(__dirname, 'EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev.xml'), 'utf8');
+    static EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev = fs.readFileSync(path.join(__dirname, "EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev.xml"), "utf8");
     static EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev_brojDokumenta = "1234/2024/01";
 
-    static EvidentirajNaplatuZahtjev = fs.readFileSync(path.join(__dirname, 'EvidentirajNaplatuZahtjev.xml'), 'utf8');
+    static EvidentirajNaplatuZahtjev = fs.readFileSync(path.join(__dirname, "EvidentirajNaplatuZahtjev.xml"), "utf8");
     static EvidentirajNaplatuZahtjev_brojDokumenta = "1234-2024-06";
 
-    static EvidentirajOdbijanjeZahtjev = fs.readFileSync(path.join(__dirname, 'EvidentirajOdbijanjeZahtjev.xml'), 'utf8');
+    static EvidentirajOdbijanjeZahtjev = fs.readFileSync(path.join(__dirname, "EvidentirajOdbijanjeZahtjev.xml"), "utf8");
     static EvidentirajOdbijanjeZahtjev_brojDokumenta = "1234/2024/06";
 
     static mockEvidentirajERacunZahtjev(brojDokumenta: string, oib: string): IEvidentirajERacunZahtjev {
-        const datum = new Date().toISOString().split('T')[0];
+        const datum = new Date().toISOString().split("T")[0];
 
         return {
             _id: XmlSigner.generateId("ID"),
@@ -99,7 +97,7 @@ export class XmlTestProvider {
     }
 
     static mockEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev(brojDokumenta: string, oib: string): IEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev {
-        const datum = new Date().toISOString().split('T')[0];
+        const datum = new Date().toISOString().split("T")[0];
         return {
             _id: XmlSigner.generateId("ID"),
             Zaglavlje: {
@@ -162,7 +160,7 @@ export class XmlTestProvider {
     }
 
     static mockEvidentirajNaplatuZahtjev(brojDokumenta: string, oib: string): IEvidentirajNaplatuZahtjev {
-        const datum = new Date().toISOString().split('T')[0];
+        const datum = new Date().toISOString().split("T")[0];
         return {
             _id: XmlSigner.generateId("ID"),
             Zaglavlje: {
@@ -181,7 +179,7 @@ export class XmlTestProvider {
     }
 
     static mockEvidentirajOdbijanjeZahtjev(brojDokumenta: string, oib: string): IEvidentirajOdbijanjeZahtjev {
-        const datum = new Date().toISOString().split('T')[0];
+        const datum = new Date().toISOString().split("T")[0];
         return {
             _id: XmlSigner.generateId("ID"),
             Zaglavlje: {

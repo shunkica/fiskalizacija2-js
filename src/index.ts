@@ -1,17 +1,17 @@
-export * from './types';
+export * from "./types";
 export {
     getEvidentirajERacunZahtjev,
     getEvidentirajOdbijanjeZahtjev,
     getEvidentirajNaplatuZahtjev,
     getEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev
-} from './builders/zahtjevi';
+} from "./builders/zahtjevi";
 export {
     getERacunFromUbl,
     getRacunFromUbl
-} from './builders/ubl';
+} from "./builders/ubl";
 export {
     FiskalizacijaClient
-} from './fiskalizacija';
+} from "./fiskalizacija";
 export {
     FiskalizacijaService
-} from './models/api';
+} from "./models/api";

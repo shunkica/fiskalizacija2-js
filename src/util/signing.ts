@@ -1,4 +1,4 @@
-import {pemToDer, SignedXml} from 'xml-crypto';
+import {pemToDer, SignedXml} from "xml-crypto";
 import {Sha256} from "xml-crypto/lib/hash-algorithms";
 import {SigningOptions} from "../types";
 import {randomUUID} from "node:crypto";
@@ -11,9 +11,9 @@ export class XmlSigner {
     private options: SigningOptions;
 
     private defaultOptions = {
-        signatureAlgorithm: 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
-        canonicalizationAlgorithm: 'http://www.w3.org/2001/10/xml-exc-c14n#',
-        digestAlgorithm: 'http://www.w3.org/2001/04/xmlenc#sha256',
+        signatureAlgorithm: "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256",
+        canonicalizationAlgorithm: "http://www.w3.org/2001/10/xml-exc-c14n#",
+        digestAlgorithm: "http://www.w3.org/2001/04/xmlenc#sha256",
     };
 
     constructor(options: SigningOptions) {
@@ -29,22 +29,22 @@ export class XmlSigner {
     private getXAdESContent(signatureId: string, signedPropertiesId: string, signingTime: string): string {
         let publicCertPem = this.options.publicCert;
         if (Buffer.isBuffer(publicCertPem)) {
-            publicCertPem = publicCertPem.toString('utf8');
+            publicCertPem = publicCertPem.toString("utf8");
         }
         const publicCertDer = pemToDer(publicCertPem)
         const publicCertDigest = new Sha256().getHash(publicCertDer)
-        let res = '';
+        let res = "";
         res += `<xades:QualifyingProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Target="#${signatureId}">`
         res += `<xades:SignedProperties Id="${signedPropertiesId}">`
-        res += `<xades:SignedSignatureProperties>`
+        res += "<xades:SignedSignatureProperties>"
         res += `<xades:SigningTime>${signingTime}</xades:SigningTime>`
-        res += `<xades:SigningCertificateV2><xades:Cert><xades:CertDigest>`
-        res += `<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>`
+        res += "<xades:SigningCertificateV2><xades:Cert><xades:CertDigest>"
+        res += "<ds:DigestMethod Algorithm=\"http://www.w3.org/2001/04/xmlenc#sha256\"/>"
         res += `<ds:DigestValue>${publicCertDigest}</ds:DigestValue>`
-        res += `</xades:CertDigest></xades:Cert></xades:SigningCertificateV2>`
-        res += `</xades:SignedSignatureProperties>`
-        res += `</xades:SignedProperties>`
-        res += `</xades:QualifyingProperties>`
+        res += "</xades:CertDigest></xades:Cert></xades:SigningCertificateV2>"
+        res += "</xades:SignedSignatureProperties>"
+        res += "</xades:SignedProperties>"
+        res += "</xades:QualifyingProperties>"
         return res;
     }
 
@@ -75,7 +75,7 @@ export class XmlSigner {
             xpath: `//*[@*[local-name()='id'] = '${referenceURI}']`,
             digestAlgorithm: this.options.digestAlgorithm,
             transforms: [
-                'http://www.w3.org/2000/09/xmldsig#enveloped-signature',
+                "http://www.w3.org/2000/09/xmldsig#enveloped-signature",
                 "http://www.w3.org/2001/10/xml-exc-c14n#"
             ]
         });
@@ -91,10 +91,10 @@ export class XmlSigner {
 
         // Compute signature and insert it into the document
         sig.computeSignature(xml, {
-            prefix: 'ds',
+            prefix: "ds",
             location: {
                 reference: "/*",
-                action: 'append'
+                action: "append"
             },
             attrs: {
                 Id: signatureId
@@ -130,7 +130,7 @@ export class XmlSigner {
             });
         }
         if (Buffer.isBuffer(signedXml)) {
-            signedXml = signedXml.toString('utf8');
+            signedXml = signedXml.toString("utf8");
         }
         const sig = new SignedXml({
             publicCert: extractPemCertificate(publicCert!),
@@ -138,7 +138,7 @@ export class XmlSigner {
         sig.loadSignature(signature.toString({format: false, noDeclaration: true}));
         try {
             return sig.checkSignature(signedXml);
-        } catch (error) {
+        } catch (_error) {
             return false;
         }
     }

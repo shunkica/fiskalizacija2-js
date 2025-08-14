@@ -1,6 +1,6 @@
-import https from 'node:https';
-import { URL } from 'node:url';
-import { FiskalizacijaOptions } from '../types';
+import https from "node:https";
+import {URL} from "node:url";
+import {FiskalizacijaOptions} from "../types";
 
 const defaultOptions: Partial<FiskalizacijaOptions> = {
     timeout: 30000,
@@ -8,7 +8,7 @@ const defaultOptions: Partial<FiskalizacijaOptions> = {
 };
 
 export async function postRequest(data: string, userOptions: FiskalizacijaOptions): Promise<{ statusCode: number, data: string }> {
-    const options = { ...defaultOptions, ...userOptions };
+    const options = {...defaultOptions, ...userOptions};
     const url = new URL(options.service);
 
     const agentOptions: https.AgentOptions = {
@@ -26,18 +26,18 @@ export async function postRequest(data: string, userOptions: FiskalizacijaOption
             hostname: url.hostname,
             port: url.port || 443,
             path: url.pathname + url.search,
-            method: 'POST',
+            method: "POST",
             headers: {
                 ...options.headers,
-                'Content-Length': Buffer.byteLength(data)
+                "Content-Length": Buffer.byteLength(data)
             },
             agent: httpsAgent,
             timeout: options.timeout
         }, (res) => {
-            let body = '';
-            res.setEncoding('utf8');
-            res.on('data', chunk => body += chunk);
-            res.on('end', () => {
+            let body = "";
+            res.setEncoding("utf8");
+            res.on("data", chunk => body += chunk);
+            res.on("end", () => {
                 resolve({
                     statusCode: res.statusCode ?? 0,
                     data: body
@@ -45,9 +45,9 @@ export async function postRequest(data: string, userOptions: FiskalizacijaOption
             });
         });
 
-        req.on('error', reject);
-        req.on('timeout', () => {
-            req.destroy(new Error('Request timed out'));
+        req.on("error", reject);
+        req.on("timeout", () => {
+            req.destroy(new Error("Request timed out"));
         });
 
         req.write(data);

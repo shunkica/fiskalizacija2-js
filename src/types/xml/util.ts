@@ -1,5 +1,3 @@
-import {XmlElement} from "libxml2-wasm";
-
 export interface IXmlSerializable {
     toXmlString(): string;
 }
@@ -18,7 +16,7 @@ export class ValidationError {
     toString(): string {
         if (this.value === undefined || this.value === null) {
             return `ValidationError: ${this.message}`;
-        } else if (typeof this.value === 'string') {
+        } else if (typeof this.value === "string") {
             return `ValidationError: ${this.message} (value: "${this.value}")`;
         } else {
             return `ValidationError: ${this.message} (value: ${JSON.stringify(this.value)})`;

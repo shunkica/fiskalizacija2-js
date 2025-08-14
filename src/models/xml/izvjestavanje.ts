@@ -4,7 +4,7 @@ import {
     EvidentirajNaplatuOdgovorSerializable,
     EvidentirajNaplatuZahtjevSerializable,
     EvidentirajOdbijanjeOdgovorSerializable,
-    EvidentirajOdbijanjeZahtjevSerializable, IERacun, IEvidentirajERacunZahtjev,
+    EvidentirajOdbijanjeZahtjevSerializable,
     IEvidentirajIsporukuZaKojuNijeIzdanERacunOdgovor,
     IEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev,
     IEvidentirajNaplatuOdgovor,
@@ -29,9 +29,8 @@ import {
 } from "../../types";
 import {extractElement, extractElements, extractOptionalElements, getAttributeValue, getBusinessGroupXpath, getBusinessTermXpath, getElementContent, getElementContentNumber, getOptionalElementContent, getOptionalElementContentNumber, usingXmlDocument, xmlEscape} from "../../util/xml";
 import {FISK_NS, UBL_NS} from "./const";
-import {XmlAttribute, XmlDocument, XmlElement} from "libxml2-wasm";
+import {XmlDocument, XmlElement} from "libxml2-wasm";
 import {ArtiklIdentifikatorKlasifikacija, DokumentUkupanIznos, Izdavatelj, Odgovor, PrijenosSredstava, Primatelj, RaspodjelaPdv} from "./common";
-import {ZaglavljeFiskalizacija} from "./fiskalizacija";
 
 export class EvidentirajNaplatuZahtjev implements EvidentirajNaplatuZahtjevSerializable {
     _id: string;
@@ -45,16 +44,16 @@ export class EvidentirajNaplatuZahtjev implements EvidentirajNaplatuZahtjevSeria
     }
 
     toXmlString(): string {
-        let res = '';
+        let res = "";
         res += `<eizv:EvidentirajNaplatuZahtjev xmlns:eizv="${FISK_NS.eizv}" eizv:id="${xmlEscape(this._id)}">`;
         res += this.Zaglavlje.toXmlString();
         this.Naplata.forEach(i => res += i.toXmlString());
-        res += '</eizv:EvidentirajNaplatuZahtjev>';
+        res += "</eizv:EvidentirajNaplatuZahtjev>";
         return res;
     }
 
     public static fromXml(xml: string | Uint8Array | XmlDocument | XmlElement): IEvidentirajNaplatuZahtjev {
-        if (typeof xml === 'string') {
+        if (typeof xml === "string") {
             return usingXmlDocument(XmlDocument.fromString(xml), doc => {
                 return EvidentirajNaplatuZahtjev.fromXml(doc);
             });
@@ -66,14 +65,14 @@ export class EvidentirajNaplatuZahtjev implements EvidentirajNaplatuZahtjevSeria
             return EvidentirajNaplatuZahtjev.fromXml(xml.root)
         } else {
             let el = xml as XmlElement;
-            if (el.name === 'Envelope' && el.namespaceUri === FISK_NS.soapenv) {
-                let el2 = el.get('/soapenv:Envelope/soapenv:Body/eizv:EvidentirajNaplatuZahtjev', FISK_NS) as XmlElement | null;
+            if (el.name === "Envelope" && el.namespaceUri === FISK_NS.soapenv) {
+                let el2 = el.get("/soapenv:Envelope/soapenv:Body/eizv:EvidentirajNaplatuZahtjev", FISK_NS) as XmlElement | null;
                 if (!el2) {
-                    throw new ValidationError(`Expected 'EvidentirajNaplatuZahtjev' element in SOAP body`, xml);
+                    throw new ValidationError("Expected 'EvidentirajNaplatuZahtjev' element in SOAP body", xml);
                 }
                 el = el2;
             }
-            if (el.name !== 'EvidentirajNaplatuZahtjev' || el.namespaceUri != FISK_NS.eizv) {
+            if (el.name !== "EvidentirajNaplatuZahtjev" || el.namespaceUri != FISK_NS.eizv) {
                 throw new ValidationError(`Expected 'EvidentirajNaplatuZahtjev' element with namespace '${FISK_NS.eizv}'`, xml);
             }
             return EvidentirajNaplatuZahtjev.fromXmlElement(el);
@@ -101,16 +100,16 @@ export class EvidentirajOdbijanjeZahtjev implements EvidentirajOdbijanjeZahtjevS
     }
 
     toXmlString(): string {
-        let res = '';
+        let res = "";
         res += `<eizv:EvidentirajOdbijanjeZahtjev xmlns:eizv="${FISK_NS.eizv}" eizv:id="${xmlEscape(this._id)}">`;
         res += this.Zaglavlje.toXmlString();
         this.Odbijanje.forEach(i => res += i.toXmlString());
-        res += '</eizv:EvidentirajOdbijanjeZahtjev>';
+        res += "</eizv:EvidentirajOdbijanjeZahtjev>";
         return res;
     }
 
     public static fromXml(xml: string | Uint8Array | XmlDocument | XmlElement): IEvidentirajOdbijanjeZahtjev {
-        if (typeof xml === 'string') {
+        if (typeof xml === "string") {
             return usingXmlDocument(XmlDocument.fromString(xml), doc => {
                 return EvidentirajOdbijanjeZahtjev.fromXml(doc);
             });
@@ -122,14 +121,14 @@ export class EvidentirajOdbijanjeZahtjev implements EvidentirajOdbijanjeZahtjevS
             return EvidentirajOdbijanjeZahtjev.fromXml(xml.root)
         } else {
             let el = xml as XmlElement;
-            if (el.name === 'Envelope' && el.namespaceUri === FISK_NS.soapenv) {
-                let el2 = el.get('/soapenv:Envelope/soapenv:Body/eizv:EvidentirajOdbijanjeZahtjev', FISK_NS) as XmlElement | null;
+            if (el.name === "Envelope" && el.namespaceUri === FISK_NS.soapenv) {
+                let el2 = el.get("/soapenv:Envelope/soapenv:Body/eizv:EvidentirajOdbijanjeZahtjev", FISK_NS) as XmlElement | null;
                 if (!el2) {
-                    throw new ValidationError(`Expected 'EvidentirajOdbijanjeZahtjev' element in SOAP body`, xml);
+                    throw new ValidationError("Expected 'EvidentirajOdbijanjeZahtjev' element in SOAP body", xml);
                 }
                 el = el2;
             }
-            if (el.name !== 'EvidentirajOdbijanjeZahtjev' || el.namespaceUri != FISK_NS.eizv) {
+            if (el.name !== "EvidentirajOdbijanjeZahtjev" || el.namespaceUri != FISK_NS.eizv) {
                 throw new ValidationError(`Expected 'EvidentirajOdbijanjeZahtjev' element with namespace '${FISK_NS.eizv}'`, xml);
             }
             return EvidentirajOdbijanjeZahtjev.fromXmlElement(el);
@@ -157,16 +156,16 @@ export class EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev implements Evidenti
     }
 
     toXmlString(): string {
-        let res = '';
+        let res = "";
         res += `<eizv:EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev xmlns:eizv="${FISK_NS.eizv}" eizv:id="${xmlEscape(this._id)}">`;
         res += this.Zaglavlje.toXmlString();
         this.Racun.forEach(i => res += i.toXmlString());
-        res += '</eizv:EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev>';
+        res += "</eizv:EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev>";
         return res;
     }
 
     public static fromXml(xml: string | Uint8Array | XmlDocument | XmlElement): IEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev {
-        if (typeof xml === 'string') {
+        if (typeof xml === "string") {
             return usingXmlDocument(XmlDocument.fromString(xml), doc => {
                 return EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev.fromXml(doc);
             });
@@ -178,7 +177,7 @@ export class EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev implements Evidenti
             return EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev.fromXml(xml.root)
         } else {
             const el = xml as XmlElement;
-            if (el.name !== 'EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev' || el.namespaceUri != FISK_NS.eizv) {
+            if (el.name !== "EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev" || el.namespaceUri != FISK_NS.eizv) {
                 throw new ValidationError(`Expected 'EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev' element with namespace '${FISK_NS.eizv}'`, JSON.stringify({name: el.name, namespaceUri: el.namespaceUri}));
             }
             return EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev.fromXmlElement(el);
@@ -202,10 +201,10 @@ export class ZaglavljeIzvjestavanje implements ZaglavljeIzvjestavanjeSerializabl
     }
 
     toXmlString(): string {
-        let res = '';
-        res += `<eizv:Zaglavlje>`;
+        let res = "";
+        res += "<eizv:Zaglavlje>";
         res += `<eizv:datumVrijemeSlanja>${xmlEscape(this.datumVrijemeSlanja)}</eizv:datumVrijemeSlanja>`;
-        res += '</eizv:Zaglavlje>';
+        res += "</eizv:Zaglavlje>";
         return res;
     }
 
@@ -226,11 +225,11 @@ export class ZaglavljeIsporuka implements ZaglavljeIsporukaSerializable {
     }
 
     toXmlString(): string {
-        let res = '';
-        res += `<eizv:Zaglavlje>`;
+        let res = "";
+        res += "<eizv:Zaglavlje>";
         res += `<eizv:datumVrijemeSlanja>${xmlEscape(this.datumVrijemeSlanja)}</eizv:datumVrijemeSlanja>`;
         res += `<eizv:vrstaRacuna>${xmlEscape(this.vrstaRacuna)}</eizv:vrstaRacuna>`;
-        res += '</eizv:Zaglavlje>';
+        res += "</eizv:Zaglavlje>";
         return res;
     }
 
@@ -263,8 +262,8 @@ export class Naplata implements NaplataSerializable {
     }
 
     toXmlString(): string {
-        let res = '';
-        res += '<eizv:Naplata>';
+        let res = "";
+        res += "<eizv:Naplata>";
         res += `<eizv:brojDokumenta>${xmlEscape(this.brojDokumenta)}</eizv:brojDokumenta>`;
         res += `<eizv:datumIzdavanja>${xmlEscape(this.datumIzdavanja)}</eizv:datumIzdavanja>`;
         res += `<eizv:oibPorezniBrojIzdavatelja>${xmlEscape(this.oibPorezniBrojIzdavatelja)}</eizv:oibPorezniBrojIzdavatelja>`;
@@ -272,7 +271,7 @@ export class Naplata implements NaplataSerializable {
         res += `<eizv:datumNaplate>${xmlEscape(this.datumNaplate)}</eizv:datumNaplate>`;
         res += `<eizv:naplaceniIznos>${this.naplaceniIznos.toFixed(2)}</eizv:naplaceniIznos>`;
         res += `<eizv:nacinPlacanja>${xmlEscape(this.nacinPlacanja)}</eizv:nacinPlacanja>`;
-        res += '</eizv:Naplata>';
+        res += "</eizv:Naplata>";
         return res;
     }
 
@@ -309,8 +308,8 @@ export class Odbijanje implements OdbijanjeSerializable {
     }
 
     toXmlString(): string {
-        let res = '';
-        res += '<eizv:Odbijanje>';
+        let res = "";
+        res += "<eizv:Odbijanje>";
         res += `<eizv:brojDokumenta>${xmlEscape(this.brojDokumenta)}</eizv:brojDokumenta>`;
         res += `<eizv:datumIzdavanja>${xmlEscape(this.datumIzdavanja)}</eizv:datumIzdavanja>`;
         res += `<eizv:oibPorezniBrojIzdavatelja>${xmlEscape(this.oibPorezniBrojIzdavatelja)}</eizv:oibPorezniBrojIzdavatelja>`;
@@ -318,7 +317,7 @@ export class Odbijanje implements OdbijanjeSerializable {
         res += `<eizv:datumOdbijanja>${xmlEscape(this.datumOdbijanja)}</eizv:datumOdbijanja>`;
         res += `<eizv:vrstaRazlogaOdbijanja>${xmlEscape(this.vrstaRazlogaOdbijanja)}</eizv:vrstaRazlogaOdbijanja>`;
         res += `<eizv:razlogOdbijanja>${xmlEscape(this.razlogOdbijanja)}</eizv:razlogOdbijanja>`;
-        res += '</eizv:Odbijanje>';
+        res += "</eizv:Odbijanje>";
         return res;
     }
 
@@ -346,11 +345,11 @@ export class PrethodniRacun implements PrethodniRacunSerializable {
     }
 
     toXmlString(): string {
-        let res = '';
-        res += `<eizv:PrethodniRacun>`;
+        let res = "";
+        res += "<eizv:PrethodniRacun>";
         res += `<eizv:brojDokumenta>${xmlEscape(this.brojDokumenta)}</eizv:brojDokumenta>`;
         res += `<eizv:datumIzdavanja>${xmlEscape(this.datumIzdavanja)}</eizv:datumIzdavanja>`;
-        res += `</eizv:PrethodniRacun>`;
+        res += "</eizv:PrethodniRacun>";
         return res;
     }
 
@@ -399,8 +398,8 @@ export class StavkaRacuna implements StavkaRacunaSerializable {
     }
 
     toXmlString(): string {
-        let res = '';
-        res += `<eizv:StavkaRacuna>`;
+        let res = "";
+        res += "<eizv:StavkaRacuna>";
         res += `<eizv:kolicina>${this.kolicina.toFixed(2)}</eizv:kolicina>`;
         res += `<eizv:jedinicaMjere>${xmlEscape(this.jedinicaMjere)}</eizv:jedinicaMjere>`;
         res += `<eizv:artiklNetoCijena>${this.artiklNetoCijena.toFixed(2)}</eizv:artiklNetoCijena>`;
@@ -416,7 +415,7 @@ export class StavkaRacuna implements StavkaRacunaSerializable {
         if (this.ArtiklIdentifikatorKlasifikacija) {
             this.ArtiklIdentifikatorKlasifikacija.forEach(a => res += a.toXmlString());
         }
-        res += `</eizv:StavkaRacuna>`;
+        res += "</eizv:StavkaRacuna>";
         return res;
     }
 
@@ -496,8 +495,8 @@ export class Racun implements RacunSerializable {
     }
 
     toXmlString(): string {
-        let res = '';
-        res += '<eizv:Racun>';
+        let res = "";
+        res += "<eizv:Racun>";
         res += `<eizv:brojDokumenta>${xmlEscape(this.brojDokumenta)}</eizv:brojDokumenta>`;
         res += `<eizv:datumIzdavanja>${xmlEscape(this.datumIzdavanja)}</eizv:datumIzdavanja>`;
         res += `<eizv:vrstaDokumenta>${xmlEscape(this.vrstaDokumenta)}</eizv:vrstaDokumenta>`;
@@ -513,11 +512,11 @@ export class Racun implements RacunSerializable {
             res += `<eizv:referencaNaUgovor>${xmlEscape(this.referencaNaUgovor)}</eizv:referencaNaUgovor>`;
         }
         if (this.PrethodniRacun) {
-            res += '<eizv:PrethodniRacun>';
+            res += "<eizv:PrethodniRacun>";
             this.PrethodniRacun.forEach(i => {
                 res += i.toXmlString();
             });
-            res += '</eizv:PrethodniRacun>';
+            res += "</eizv:PrethodniRacun>";
         }
         res += this.Izdavatelj.toXmlString();
         res += this.Primatelj.toXmlString();
@@ -528,7 +527,7 @@ export class Racun implements RacunSerializable {
         this.RaspodjelaPdv.forEach(i => res += i.toXmlString());
         this.StavkaRacuna.forEach(i => res += i.toXmlString());
         res += `<eizv:indikatorKopije>${this.indikatorKopije}</eizv:indikatorKopije>`;
-        res += '</eizv:Racun>';
+        res += "</eizv:Racun>";
         return res;
     }
 
@@ -587,11 +586,11 @@ export class EvidentirajNaplatuOdgovor implements EvidentirajNaplatuOdgovorSeria
     }
 
     toXmlString(): string {
-        let res = '';
+        let res = "";
         res += `<eizv:EvidentirajNaplatuOdgovor xmlns:eizv="${FISK_NS.eizv}" eizv:id="${xmlEscape(this._id)}">`;
         res += `<eizv:datumVrijemeSlanja>${xmlEscape(this.datumVrijemeSlanja)}</eizv:datumVrijemeSlanja>`;
         res += this.Odgovor.toXmlString();
-        res += '</eizv:EvidentirajNaplatuOdgovor>';
+        res += "</eizv:EvidentirajNaplatuOdgovor>";
         return res;
     }
 
@@ -616,11 +615,11 @@ export class EvidentirajOdbijanjeOdgovor implements EvidentirajOdbijanjeOdgovorS
     }
 
     toXmlString(): string {
-        let res = '';
+        let res = "";
         res += `<eizv:EvidentirajOdbijanjeOdgovor xmlns:eizv="${FISK_NS.eizv}" eizv:id="${xmlEscape(this._id)}">`;
         res += `<eizv:datumVrijemeSlanja>${xmlEscape(this.datumVrijemeSlanja)}</eizv:datumVrijemeSlanja>`;
         res += this.Odgovor.toXmlString();
-        res += '</eizv:EvidentirajOdbijanjeOdgovor>';
+        res += "</eizv:EvidentirajOdbijanjeOdgovor>";
         return res;
     }
 
@@ -644,13 +643,12 @@ export class EvidentirajIsporukuZaKojuNijeIzdanERacunOdgovor implements Evidenti
         this.Odgovor = new Odgovor(props.Odgovor, "eizv");
     }
 
-
     toXmlString(): string {
-        let res = '';
+        let res = "";
         res += `<eizv:EvidentirajIsporukuZaKojuNijeIzdanERacunOdgovor xmlns:eizv="${FISK_NS.eizv}" eizv:id="${xmlEscape(this._id)}">`;
         res += `<eizv:datumVrijemeSlanja>${xmlEscape(this.datumVrijemeSlanja)}</eizv:datumVrijemeSlanja>`;
         res += this.Odgovor.toXmlString();
-        res += '</eizv:EvidentirajIsporukuZaKojuNijeIzdanERacunOdgovor>';
+        res += "</eizv:EvidentirajIsporukuZaKojuNijeIzdanERacunOdgovor>";
         return res;
     }
 

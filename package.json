@@ -11,6 +11,9 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "clean": "rm -rf dist",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
+    "format": "prettier --write .",
     "test": "vitest --exclude tests/external",
     "test:watch": "vitest --watch --exclude tests/external",
     "test:coverage": "vitest --coverage --exclude tests/external",
@@ -22,7 +25,10 @@
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.39.1",
+    "@typescript-eslint/parser": "^8.39.1",
     "@vitest/coverage-v8": "^2.0.0",
+    "eslint": "^9.33.0",
     "tsup": "^8.5.0",
     "typescript": "^5.0.0",
     "vitest": "^2.0.0"

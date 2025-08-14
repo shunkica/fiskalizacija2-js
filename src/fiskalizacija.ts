@@ -1,13 +1,12 @@
-import {XmlSigner} from './util/signing';
-import {EvidentirajERacunOdgovor, EvidentirajERacunZahtjev} from './models/xml/fiskalizacija';
-import {FiskalizacijaOptions, FiskalizacijaResult, IEvidentirajERacunOdgovor, IEvidentirajERacunZahtjev, IEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev, IEvidentirajNaplatuOdgovor, IEvidentirajNaplatuZahtjev, IEvidentirajOdbijanjeZahtjev, ValidationError} from './types';
+import {XmlSigner} from "./util/signing";
+import {EvidentirajERacunOdgovor, EvidentirajERacunZahtjev} from "./models/xml/fiskalizacija";
+import {FiskalizacijaOptions, FiskalizacijaResult, IEvidentirajERacunZahtjev, IEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev, IEvidentirajNaplatuZahtjev, IEvidentirajOdbijanjeZahtjev, ValidationError} from "./types";
 import {XmlDocument, XmlElement} from "libxml2-wasm";
 import {FISK_NS} from "./models/xml/const";
 import {usingXmlDocument} from "./util/xml";
 import {postRequest} from "./util/http";
 import {parseError} from "./util/error";
 import {EvidentirajIsporukuZaKojuNijeIzdanERacunOdgovor, EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev, EvidentirajNaplatuOdgovor, EvidentirajNaplatuZahtjev, EvidentirajOdbijanjeOdgovor, EvidentirajOdbijanjeZahtjev} from "./models/xml/izvjestavanje";
-
 
 export class FiskalizacijaClient {
     private readonly signer: XmlSigner;
@@ -17,8 +16,8 @@ export class FiskalizacijaClient {
         this.options = {
             timeout: 30000,
             headers: {
-                'Content-Type': 'application/xml; charset=utf-8',
-                'SOAPAction': ''
+                "Content-Type": "application/xml; charset=utf-8",
+                "SOAPAction": ""
             },
             ...options
         };
@@ -41,7 +40,7 @@ export class FiskalizacijaClient {
 
             result.reqObject = zahtjev;
 
-            const signedXml = await this.signer.signFiscalizationRequest((zahtjev as any).toXmlString(), (zahtjev as any)._id);
+            const signedXml = this.signer.signFiscalizationRequest((zahtjev as any).toXmlString(), (zahtjev as any)._id);
             const soap = this.generateSoapEnvelope(signedXml);
 
             result.soapReqRaw = soap;
@@ -53,7 +52,7 @@ export class FiskalizacijaClient {
 
             // Neka korisnik odluči što se događa ako potpis odgovora nije valjan
             try {
-                result.soapResSignatureValid = await XmlSigner.isValidSignature(result.soapResRaw);
+                result.soapResSignatureValid = XmlSigner.isValidSignature(result.soapResRaw);
             } catch (error) {
                 result.soapResSignatureValid = false;
                 result.error = parseError(error);
@@ -79,7 +78,7 @@ export class FiskalizacijaClient {
             zahtjev,
             EvidentirajERacunZahtjev,
             EvidentirajERacunOdgovor,
-            '/soapenv:Envelope/soapenv:Body/efis:EvidentirajERacunOdgovor'
+            "/soapenv:Envelope/soapenv:Body/efis:EvidentirajERacunOdgovor"
         );
     }
 
@@ -88,7 +87,7 @@ export class FiskalizacijaClient {
             zahtjev,
             EvidentirajNaplatuZahtjev,
             EvidentirajNaplatuOdgovor,
-            '/soapenv:Envelope/soapenv:Body/eizv:EvidentirajNaplatuOdgovor'
+            "/soapenv:Envelope/soapenv:Body/eizv:EvidentirajNaplatuOdgovor"
         );
     }
 
@@ -97,7 +96,7 @@ export class FiskalizacijaClient {
             zahtjev,
             EvidentirajOdbijanjeZahtjev,
             EvidentirajOdbijanjeOdgovor,
-            '/soapenv:Envelope/soapenv:Body/eizv:EvidentirajOdbijanjeOdgovor'
+            "/soapenv:Envelope/soapenv:Body/eizv:EvidentirajOdbijanjeOdgovor"
         );
     }
 
@@ -106,20 +105,19 @@ export class FiskalizacijaClient {
             zahtjev,
             EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev,
             EvidentirajIsporukuZaKojuNijeIzdanERacunOdgovor,
-            '/soapenv:Envelope/soapenv:Body/eizv:EvidentirajIsporukuZaKojuNijeIzdanERacunOdgovor'
+            "/soapenv:Envelope/soapenv:Body/eizv:EvidentirajIsporukuZaKojuNijeIzdanERacunOdgovor"
         );
     }
 
     private generateSoapEnvelope(body: string): string {
-        let res = '';
-        res += '<?xml version="1.0" encoding="UTF-8"?>';
-        res += '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">';
-        res += '<soap:Body>';
+        let res = "";
+        res += "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+        res += "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
+        res += "<soap:Body>";
         res += body;
-        res += '</soap:Body>';
-        res += '</soap:Envelope>';
+        res += "</soap:Body>";
+        res += "</soap:Envelope>";
         return res;
     }
-
 
 }

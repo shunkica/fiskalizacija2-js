@@ -17,7 +17,7 @@ export class Izdavatelj implements IzdavateljSerializable {
     }
 
     toXmlString(): string {
-        let res = '';
+        let res = "";
         res += `<${this._prefix}:Izdavatelj>`;
         res += `<${this._prefix}:ime>${xmlEscape(this.ime)}</${this._prefix}:ime>`;
         res += `<${this._prefix}:oibPorezniBroj>${xmlEscape(this.oibPorezniBroj)}</${this._prefix}:oibPorezniBroj>`;
@@ -60,7 +60,7 @@ export class Primatelj implements PrimateljSerializable {
     }
 
     toXmlString(): string {
-        let res = '';
+        let res = "";
         res += `<${this._prefix}:Primatelj>`;
         res += `<${this._prefix}:ime>${xmlEscape(this.ime)}</${this._prefix}:ime>`;
         res += `<${this._prefix}:oibPorezniBroj>${xmlEscape(this.oibPorezniBroj)}</${this._prefix}:oibPorezniBroj>`;
@@ -102,7 +102,7 @@ export class PrijenosSredstava implements PrijenosSredstavaSerializable {
     }
 
     toXmlString(): string {
-        let res = '';
+        let res = "";
         res += `<${this._prefix}:PrijenosSredstava>`;
         res += `<${this._prefix}:identifikatorRacunaZaPlacanje>${xmlEscape(this.identifikatorRacunaZaPlacanje)}</${this._prefix}:identifikatorRacunaZaPlacanje>`;
         if (this.nazivRacunaZaPlacanje) {
@@ -161,7 +161,7 @@ export class DokumentUkupanIznos implements DokumentUkupanIznosSerializable {
     }
 
     toXmlString(): string {
-        let res = '';
+        let res = "";
         res += `<${this._prefix}:DokumentUkupanIznos>`;
         res += `<${this._prefix}:neto>${this.neto.toFixed(2)}</${this._prefix}:neto>`;
         if (this.popust !== undefined) {
@@ -225,7 +225,7 @@ export class RaspodjelaPdv implements RaspodjelaPdvSerializable {
     }
 
     toXmlString(): string {
-        let res = '';
+        let res = "";
         res += `<${this._prefix}:RaspodjelaPdv>`;
         res += `<${this._prefix}:kategorijaPdv>${xmlEscape(this.kategorijaPdv)}</${this._prefix}:kategorijaPdv>`;
         res += `<${this._prefix}:oporeziviIznos>${this.oporeziviIznos.toFixed(2)}</${this._prefix}:oporeziviIznos>`;
@@ -286,9 +286,8 @@ export class ArtiklIdentifikatorKlasifikacija implements ArtiklIdentifikatorKlas
         this.verzijaSheme = args.verzijaSheme;
     }
 
-
     toXmlString(): string {
-        let res = '';
+        let res = "";
         res += `<${this._prefix}:ArtiklIdentifikatorKlasifikacija>`;
         res += `<${this._prefix}:identifikatorKlasifikacije>${xmlEscape(this.identifikatorKlasifikacije)}</${this._prefix}:identifikatorKlasifikacije>`;
         res += `<${this._prefix}:identifikatorSheme>${xmlEscape(this.identifikatorSheme)}</${this._prefix}:identifikatorSheme>`;
@@ -308,7 +307,7 @@ export class ArtiklIdentifikatorKlasifikacija implements ArtiklIdentifikatorKlas
         }
     }
 
-    static fromUblElement(el: XmlElement, type: "Invoice" | "CreditNote") {
+    static fromUblElement(el: XmlElement, _type: "Invoice" | "CreditNote") {
         return {
             identifikatorKlasifikacije: getElementContent(el, ".", UBL_NS, "tekst10"),
             identifikatorSheme: getAttributeValue(el, "listID", ""),
@@ -331,7 +330,7 @@ export class Odgovor implements OdgovorSerializable {
     }
 
     toXmlString(): string {
-        let res = '';
+        let res = "";
         res += `<${this._prefix}:Odgovor>`;
         res += `<${this._prefix}:idZahtjeva>${xmlEscape(this.idZahtjeva)}</${this._prefix}:idZahtjeva>`;
         res += `<${this._prefix}:prihvacenZahtjev>${this.prihvacenZahtjev}</${this._prefix}:prihvacenZahtjev>`;
@@ -367,7 +366,7 @@ export class Greska implements GreskaSerializable {
     }
 
     toXmlString(): string {
-        let res = '';
+        let res = "";
         res += `<${this._prefix}:Greska>`;
         res += `<${this._prefix}:sifra>${xmlEscape(this.sifra)}</${this._prefix}:sifra>`;
         res += `<${this._prefix}:redniBrojZapisa>${xmlEscape(this.redniBrojZapisa)}</${this._prefix}:redniBrojZapisa>`;

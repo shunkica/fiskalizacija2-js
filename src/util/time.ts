@@ -1,8 +1,8 @@
 export function getCurrentDateTimeString() {
     const now = new Date();
 
-    const pad = (number: number, length = 2) => String(number).padStart(length, '0');
-    const padMilliseconds = (ms: number) => String(ms).padEnd(4, '0');
+    const pad = (number: number, length = 2) => String(number).padStart(length, "0");
+    const padMilliseconds = (ms: number) => String(ms).padEnd(4, "0");
 
     const year = now.getFullYear();
     const month = pad(now.getMonth() + 1);
