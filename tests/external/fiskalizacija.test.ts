@@ -1,4 +1,4 @@
-import {describe, it, expect, vi, beforeEach} from 'vitest';
+import {describe, it, expect, beforeEach} from 'vitest';
 import * as fs from "node:fs";
 import {FiskalizacijaClient} from "../../src";
 import {EvidentirajERacunZahtjev, FiskalizacijaService} from "../../src/models";
@@ -44,11 +44,10 @@ describe('FiscalizationClient Test Environment', () => {
             expect(response.soapResSignatureValid).toBe(true);
             expect(response.resObject).toBeDefined();
             expect(response.error).toBeUndefined();
-            expect(response.success).toBe(true);
+            expect(response.success, JSON.stringify(response.resObject, null, 2)).toBe(true);
         });
     });
 
-    // TODO: Ovaj test ne radi, vraća se S0001, provjeriti zašto
     describe('EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev', () => {
         const id = randomUUID();
         const data = XmlTestProvider.mockEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev(id, oib);
@@ -61,7 +60,7 @@ describe('FiscalizationClient Test Environment', () => {
             expect(response.soapResSignatureValid).toBe(true);
             expect(response.resObject).toBeDefined();
             expect(response.error).toBeUndefined();
-            expect(response.success).toBe(true);
+            expect(response.success, JSON.stringify(response.resObject, null, 2)).toBe(true);
         });
     });
 
@@ -82,7 +81,7 @@ describe('FiscalizationClient Test Environment', () => {
             expect(response.soapResSignatureValid).toBe(true);
             expect(response.resObject).toBeDefined();
             expect(response.error).toBeUndefined();
-            expect(response.success).toBe(true);
+            expect(response.success, JSON.stringify(response.resObject, null, 2)).toBe(true);
         });
     });
 
@@ -103,7 +102,7 @@ describe('FiscalizationClient Test Environment', () => {
             expect(response.soapResSignatureValid).toBe(true);
             expect(response.resObject).toBeDefined();
             expect(response.error).toBeUndefined();
-            expect(response.success).toBe(true);
+            expect(response.success, JSON.stringify(response.resObject, null, 2)).toBe(true);
         });
     });
 });

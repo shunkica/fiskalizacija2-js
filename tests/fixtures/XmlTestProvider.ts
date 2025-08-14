@@ -34,6 +34,8 @@ export class XmlTestProvider {
     static EvidentirajOdbijanjeZahtjev_ID = "1234/2024/06";
 
     static mockEvidentirajERacunZahtjev(brojDokumenta: string, oib: string): IEvidentirajERacunZahtjev {
+        const datum = new Date().toISOString().split('T')[0];
+
         return {
             _id: XmlSigner.generateId("ID"),
             Zaglavlje: {
@@ -42,10 +44,10 @@ export class XmlTestProvider {
             },
             ERacun: [{
                 brojDokumenta: brojDokumenta,
-                datumIzdavanja: "2025-06-23",
+                datumIzdavanja: datum,
                 vrstaDokumenta: "380",
                 valutaERacuna: "EUR",
-                datumDospijecaPlacanja: "2026-01-01",
+                datumDospijecaPlacanja: datum,
                 vrstaPoslovnogProcesa: "P1",
                 Izdavatelj: {
                     ime: "IZDAVATELJ",
@@ -96,6 +98,7 @@ export class XmlTestProvider {
     }
 
     static mockEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev(brojDokumenta: string, oib: string): IEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev {
+        const datum = new Date().toISOString().split('T')[0];
         return {
             _id: XmlSigner.generateId("ID"),
             Zaglavlje: {
@@ -104,10 +107,10 @@ export class XmlTestProvider {
             },
             Racun: [{
                 brojDokumenta: brojDokumenta,
-                datumIzdavanja: "2025-06-23",
+                datumIzdavanja: datum,
                 vrstaDokumenta: "380",
                 valutaRacuna: "EUR",
-                datumDospijecaPlacanja: "2026-01-01",
+                datumDospijecaPlacanja: datum,
                 vrstaPoslovnogProcesa: "P1",
                 Izdavatelj: {
                     ime: "IZDAVATELJ",
@@ -158,6 +161,7 @@ export class XmlTestProvider {
     }
 
     static mockEvidentirajNaplatuZahtjev(brojDokumenta: string, oib: string): IEvidentirajNaplatuZahtjev {
+        const datum = new Date().toISOString().split('T')[0];
         return {
             _id: XmlSigner.generateId("ID"),
             Zaglavlje: {
@@ -165,10 +169,10 @@ export class XmlTestProvider {
             },
             Naplata: [{
                 brojDokumenta: brojDokumenta,
-                datumIzdavanja: "2025-06-23",
+                datumIzdavanja: datum,
                 oibPorezniBrojIzdavatelja: oib,
                 oibPorezniBrojPrimatelja: "11111111119",
-                datumNaplate: "2025-06-23",
+                datumNaplate: datum,
                 naplaceniIznos: 100,
                 nacinPlacanja: "T"
             }]
@@ -176,6 +180,7 @@ export class XmlTestProvider {
     }
 
     static mockEvidentirajOdbijanjeZahtjev(brojDokumenta: string, oib: string): IEvidentirajOdbijanjeZahtjev {
+        const datum = new Date().toISOString().split('T')[0];
         return {
             _id: XmlSigner.generateId("ID"),
             Zaglavlje: {
@@ -183,10 +188,10 @@ export class XmlTestProvider {
             },
             Odbijanje: [{
                 brojDokumenta: brojDokumenta,
-                datumIzdavanja: "2025-06-23",
+                datumIzdavanja: datum,
                 oibPorezniBrojIzdavatelja: "11111111119",
                 oibPorezniBrojPrimatelja: oib,
-                datumOdbijanja: "2025-06-23",
+                datumOdbijanja: datum,
                 vrstaRazlogaOdbijanja: "O",
                 razlogOdbijanja: "Neispravni podaci",
             }]
