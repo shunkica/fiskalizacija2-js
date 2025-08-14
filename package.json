@@ -18,13 +18,10 @@
   },
   "dependencies": {
     "libxml2-wasm": "^0.6.0",
-    "xadesjs": "^2.0.16",
-    "@peculiar/webcrypto": "^1.4.3",
-    "@xmldom/xmldom": "^0.8.10"
+    "xml-crypto": "git+https://github.com/shunkica/xml-crypto.git#014b0fb"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
-    "@types/xmldom": "^0.1.31",
     "@vitest/coverage-v8": "^2.0.0",
     "tsup": "^8.5.0",
     "typescript": "^5.0.0",

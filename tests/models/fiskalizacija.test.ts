@@ -1,10 +1,10 @@
-import {describe, it, expect,} from 'vitest';
+import {describe, it, expect, assert} from 'vitest';
 import {XmlDocument} from 'libxml2-wasm';
 import {XmlTestProvider} from "../fixtures/XmlTestProvider";
 import {ERacun, EvidentirajERacunZahtjev} from "../../src/models";
 import {XmlTestValidator} from "../fixtures/XmlTestValidator";
 import {EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev, EvidentirajNaplatuZahtjev, EvidentirajOdbijanjeZahtjev} from "../../src/models/xml/izvjestavanje";
-import {IEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev} from "../../src";
+import {IEvidentirajERacunZahtjev, IEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev} from "../../src";
 
 describe('ERacun', () => {
     describe('fromUbl', () => {
@@ -81,10 +81,11 @@ describe('Model serialization and deserialization', () => {
         const zahtjev = new EvidentirajERacunZahtjev(data);
 
         it('should deserialize XML without throwing', () => {
+            let res!: IEvidentirajERacunZahtjev;
             expect(() => {
-                const res = EvidentirajERacunZahtjev.fromXml(xml);
-                expect(res.ERacun[0].brojDokumenta).toBe(id);
+                res = EvidentirajERacunZahtjev.fromXml(xml);
             }).not.toThrow();
+            expect(res.ERacun[0].brojDokumenta).toBe(XmlTestProvider.EvidentirajERacunZahtjev_brojDokumenta);
         });
 
         it('should serialize and deserialize without throwing', () => {
@@ -101,7 +102,7 @@ describe('Model serialization and deserialization', () => {
 
     describe('EvidentirajIsporukuZaKojuNijeIzdanERacun', () => {
         const xml = XmlTestProvider.EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev;
-        const id = XmlTestProvider.EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev_ID;
+        const id = XmlTestProvider.EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev_brojDokumenta;
         const data: IEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev = XmlTestProvider.mockEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev(id, '00000000001');
         const zahtjev = new EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev(data);
 
@@ -125,7 +126,7 @@ describe('Model serialization and deserialization', () => {
 
     describe('EvidentirajNaplatuZahtjev', () => {
         const xml = XmlTestProvider.EvidentirajNaplatuZahtjev;
-        const id = XmlTestProvider.EvidentirajNaplatuZahtjev_ID;
+        const id = XmlTestProvider.EvidentirajNaplatuZahtjev_brojDokumenta;
         const data = XmlTestProvider.mockEvidentirajNaplatuZahtjev(id, '00000000001');
         const zahtjev = new EvidentirajNaplatuZahtjev(data);
 
@@ -144,7 +145,7 @@ describe('Model serialization and deserialization', () => {
 
     describe('EvidentirajOdbijanjeZahtjev', () => {
         const xml = XmlTestProvider.EvidentirajOdbijanjeZahtjev;
-        const id = XmlTestProvider.EvidentirajOdbijanjeZahtjev_ID;
+        const id = XmlTestProvider.EvidentirajOdbijanjeZahtjev_brojDokumenta;
         const data = XmlTestProvider.mockEvidentirajOdbijanjeZahtjev(id, '00000000001');
         const zahtjev = new EvidentirajOdbijanjeZahtjev(data);
 

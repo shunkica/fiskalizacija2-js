@@ -22,16 +22,17 @@ export class XmlTestProvider {
     static ublInvoiceInvalid = fs.readFileSync(path.join(__dirname, 'ubl-invoice-invalid.xml'), 'utf8');
 
     static EvidentirajERacunZahtjev = fs.readFileSync(path.join(__dirname, 'EvidentirajERacunZahtjev.xml'), 'utf8');
-    static EvidentirajERacunZahtjev_ID = "5-P1-1";
+    static EvidentirajERacunZahtjev_ID = "cfa9dd33-9d9a-4a2a-8ef0-dd65fe476d8b";
+    static EvidentirajERacunZahtjev_brojDokumenta = "5-P1-1";
 
     static EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev = fs.readFileSync(path.join(__dirname, 'EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev.xml'), 'utf8');
-    static EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev_ID = "1234/2024/01";
+    static EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev_brojDokumenta = "1234/2024/01";
 
     static EvidentirajNaplatuZahtjev = fs.readFileSync(path.join(__dirname, 'EvidentirajNaplatuZahtjev.xml'), 'utf8');
-    static EvidentirajNaplatuZahtjev_ID = "1234-2024-06";
+    static EvidentirajNaplatuZahtjev_brojDokumenta = "1234-2024-06";
 
     static EvidentirajOdbijanjeZahtjev = fs.readFileSync(path.join(__dirname, 'EvidentirajOdbijanjeZahtjev.xml'), 'utf8');
-    static EvidentirajOdbijanjeZahtjev_ID = "1234/2024/06";
+    static EvidentirajOdbijanjeZahtjev_brojDokumenta = "1234/2024/06";
 
     static mockEvidentirajERacunZahtjev(brojDokumenta: string, oib: string): IEvidentirajERacunZahtjev {
         const datum = new Date().toISOString().split('T')[0];
