@@ -1,7 +1,8 @@
-import {XmlDocument} from "libxml2-wasm";
-import {IERacun, IRacun, ValidationError} from "../types";
-import {usingXmlDocument} from "../util/xml";
-import {ERacun, Racun} from "../models";
+import { XmlDocument } from "libxml2-wasm";
+import type { IERacun, IRacun } from "../types";
+import { usingXmlDocument } from "../util/xml";
+import { ERacun, Racun } from "../models";
+import { ValidationError } from "../util/error";
 
 export function getERacunFromUbl(doc: string | Buffer | XmlDocument): IERacun {
     if (!(doc instanceof XmlDocument)) {

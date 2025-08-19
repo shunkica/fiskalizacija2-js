@@ -1,11 +1,11 @@
-import {pemToDer, SignedXml} from "xml-crypto";
-import {Sha256} from "xml-crypto/lib/hash-algorithms";
-import {SigningOptions} from "../types";
-import {randomUUID} from "node:crypto";
-import {usingXmlDocument} from "./xml";
-import {XmlElement} from "libxml2-wasm";
-import {FISK_NS} from "../models/xml/const";
-import {extractPemCertificate, extractPemPrivateKey} from "./cert";
+import { pemToDer, SignedXml } from "xml-crypto";
+import { Sha256 } from "xml-crypto/lib/hash-algorithms";
+import type { SigningOptions } from "../types";
+import { randomUUID } from "node:crypto";
+import { usingXmlDocument } from "./xml";
+import type { XmlElement } from "libxml2-wasm";
+import { FISK_NS } from "../models/xml/const";
+import { extractPemCertificate, extractPemPrivateKey } from "./cert";
 
 export class XmlSigner {
     private options: SigningOptions;
@@ -13,11 +13,11 @@ export class XmlSigner {
     private defaultOptions = {
         signatureAlgorithm: "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256",
         canonicalizationAlgorithm: "http://www.w3.org/2001/10/xml-exc-c14n#",
-        digestAlgorithm: "http://www.w3.org/2001/04/xmlenc#sha256",
+        digestAlgorithm: "http://www.w3.org/2001/04/xmlenc#sha256"
     };
 
     constructor(options: SigningOptions) {
-        this.options = {...this.defaultOptions, ...options};
+        this.options = { ...this.defaultOptions, ...options };
         this.options.publicCert = extractPemCertificate(this.options.publicCert);
         this.options.privateKey = extractPemPrivateKey(this.options.privateKey);
     }
@@ -31,20 +31,20 @@ export class XmlSigner {
         if (Buffer.isBuffer(publicCertPem)) {
             publicCertPem = publicCertPem.toString("utf8");
         }
-        const publicCertDer = pemToDer(publicCertPem)
-        const publicCertDigest = new Sha256().getHash(publicCertDer)
+        const publicCertDer = pemToDer(publicCertPem);
+        const publicCertDigest = new Sha256().getHash(publicCertDer);
         let res = "";
-        res += `<xades:QualifyingProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Target="#${signatureId}">`
-        res += `<xades:SignedProperties Id="${signedPropertiesId}">`
-        res += "<xades:SignedSignatureProperties>"
-        res += `<xades:SigningTime>${signingTime}</xades:SigningTime>`
-        res += "<xades:SigningCertificateV2><xades:Cert><xades:CertDigest>"
-        res += "<ds:DigestMethod Algorithm=\"http://www.w3.org/2001/04/xmlenc#sha256\"/>"
-        res += `<ds:DigestValue>${publicCertDigest}</ds:DigestValue>`
-        res += "</xades:CertDigest></xades:Cert></xades:SigningCertificateV2>"
-        res += "</xades:SignedSignatureProperties>"
-        res += "</xades:SignedProperties>"
-        res += "</xades:QualifyingProperties>"
+        res += `<xades:QualifyingProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Target="#${signatureId}">`;
+        res += `<xades:SignedProperties Id="${signedPropertiesId}">`;
+        res += "<xades:SignedSignatureProperties>";
+        res += `<xades:SigningTime>${signingTime}</xades:SigningTime>`;
+        res += "<xades:SigningCertificateV2><xades:Cert><xades:CertDigest>";
+        res += '<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>';
+        res += `<ds:DigestValue>${publicCertDigest}</ds:DigestValue>`;
+        res += "</xades:CertDigest></xades:Cert></xades:SigningCertificateV2>";
+        res += "</xades:SignedSignatureProperties>";
+        res += "</xades:SignedProperties>";
+        res += "</xades:QualifyingProperties>";
         return res;
     }
 
@@ -65,19 +65,14 @@ export class XmlSigner {
             privateKey: this.options.privateKey,
             signatureAlgorithm: this.options.signatureAlgorithm,
             canonicalizationAlgorithm: this.options.canonicalizationAlgorithm,
-            getObjectContent: () => [
-                {content: this.getXAdESContent(signatureId, signedPropertiesId, signingTime)}
-            ]
+            objects: [{ content: this.getXAdESContent(signatureId, signedPropertiesId, signingTime) }]
         });
 
         // Add reference to the entire document
         sig.addReference({
             xpath: `//*[@*[local-name()='id'] = '${referenceURI}']`,
             digestAlgorithm: this.options.digestAlgorithm,
-            transforms: [
-                "http://www.w3.org/2000/09/xmldsig#enveloped-signature",
-                "http://www.w3.org/2001/10/xml-exc-c14n#"
-            ]
+            transforms: ["http://www.w3.org/2000/09/xmldsig#enveloped-signature", "http://www.w3.org/2001/10/xml-exc-c14n#"]
         });
 
         // Add reference to the SignedProperties
@@ -85,8 +80,7 @@ export class XmlSigner {
             xpath: `//*[@Id='${signedPropertiesId}']`,
             type: "http://uri.etsi.org/01903#SignedProperties",
             digestAlgorithm: "http://www.w3.org/2001/04/xmlenc#sha256",
-            transforms: ["http://www.w3.org/2001/10/xml-exc-c14n#"],
-            isSignatureReference: true,
+            transforms: ["http://www.w3.org/2001/10/xml-exc-c14n#"]
         });
 
         // Compute signature and insert it into the document
@@ -106,18 +100,18 @@ export class XmlSigner {
 
     static isValidSignature(signedXml: string | Buffer): boolean;
     static isValidSignature(signedXml: string | Buffer, publicCert: string | Buffer): boolean;
-    static isValidSignature(signedXml: string | Buffer, publicCert: string | Buffer, signature: XmlElement): boolean
+    static isValidSignature(signedXml: string | Buffer, publicCert: string | Buffer, signature: XmlElement): boolean;
     static isValidSignature(signedXml: string | Buffer, publicCert?: string | Buffer, signature?: XmlElement): boolean {
         if (!signedXml) {
             throw new Error("Signed XML is required for signature validation");
         }
-        if (signature == undefined) {
-            return usingXmlDocument(signedXml, (doc) => {
+        if (signature === undefined) {
+            return usingXmlDocument(signedXml, doc => {
                 const signature = doc.get("//ds:Signature", FISK_NS) as XmlElement | null;
                 if (!signature) {
                     throw new Error("No signature found in the signed XML");
                 }
-                if (publicCert == undefined) {
+                if (publicCert === undefined) {
                     const certElement = signature.get("ds:KeyInfo/ds:X509Data/ds:X509Certificate", FISK_NS);
                     if (!certElement) {
                         throw new Error("No public certificate found in the signature");
@@ -133,9 +127,9 @@ export class XmlSigner {
             signedXml = signedXml.toString("utf8");
         }
         const sig = new SignedXml({
-            publicCert: extractPemCertificate(publicCert!),
+            publicCert: extractPemCertificate(publicCert!)
         });
-        sig.loadSignature(signature.toString({format: false, noDeclaration: true}));
+        sig.loadSignature(signature.toString({ format: false, noDeclaration: true }));
         try {
             return sig.checkSignature(signedXml);
         } catch (_error) {

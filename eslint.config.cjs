@@ -1,23 +1,37 @@
+const eslintConfigPrettierFlat = require("eslint-config-prettier/flat");
+const { importX } = require("eslint-plugin-import-x");
+
 module.exports = [
+    eslintConfigPrettierFlat,
+    importX.flatConfigs.recommended,
+    importX.flatConfigs.typescript,
     {
         files: ["src/**/*.ts", "tests/**/*.ts"],
         languageOptions: {
             parser: require("@typescript-eslint/parser"),
             parserOptions: {
-                project: ["./tsconfig.json"],
-            },
+                project: ["./tsconfig.json"]
+            }
         },
         plugins: {
-            "@typescript-eslint": require("@typescript-eslint/eslint-plugin"),
+            "@typescript-eslint": require("@typescript-eslint/eslint-plugin")
         },
         rules: {
-            "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_", "caughtErrorsIgnorePattern": "^_" }],
-            "quotes": ["error", "double"],
-            "eol-last": ["error", "always"],
-            "comma-spacing": ["error", { "before": false, "after": true }],
-            "object-curly-spacing": ["error", "never"],
-            "no-trailing-spaces": "error",
-            "no-multiple-empty-lines": ["error", { "max": 1 }],
-        },
-    },
+            "@typescript-eslint/consistent-type-imports": ["error", { prefer: "type-imports" }],
+            "@typescript-eslint/no-explicit-any": "error",
+            "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_", varsIgnorePattern: "^_", caughtErrorsIgnorePattern: "^_" }],
+            "@typescript-eslint/only-throw-error": "error",
+            "no-console": ["error", { allow: ["warn", "error"] }],
+            "no-debugger": "error",
+            "no-var": "error",
+            "prefer-const": "error",
+            "eqeqeq": ["error", "always"],
+            "curly": "error",
+            "import-x/no-unresolved": "error",
+            "import-x/named": "error",
+            "import-x/default": "error",
+            "import-x/namespace": "error",
+            "import-x/no-absolute-path": "error"
+        }
+    }
 ];

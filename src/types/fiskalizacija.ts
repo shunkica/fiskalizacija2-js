@@ -28,4 +28,4 @@ export type FiskalizacijaResult<Z, O> = {
     soapResRaw?: string;
     soapResSignatureValid?: boolean;
     resObject?: O;
-}
+};

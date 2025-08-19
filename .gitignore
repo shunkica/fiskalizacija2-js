@@ -1,5 +1,6 @@
 .aider*
 .idea
+/coverage/
 /node_modules/
 /package-lock.json
 /dist/

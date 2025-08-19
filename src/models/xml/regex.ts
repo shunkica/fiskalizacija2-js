@@ -30,11 +30,10 @@ export const REGEX = {
     tekst1024: /^.{1,1024}$/,
     decimal2: /^[+-]?([0-9]+(\.[0-9]{1,2})?|\.[0-9]{1,2})$/,
     decimalPositive2: /^[+]?([0-9]+(\.[0-9]{1,2})?|\.[0-9]{1,2})$/,
-    greska: /^(S001|S002|S003|S004|S005|S006|S007|S008|S009|S010|S011|S012)$/, /* 9 i 10 samo za izvještavanje */
+    greska: /^(S001|S002|S003|S004|S005|S006|S007|S008|S009|S010|S011|S012)$/ /* 9 i 10 samo za izvještavanje */,
     razlogOdbijanja: /^[NUO]$/,
     drzava: /^[A-Z]{2}$/,
     shemaIdentifikator: /^[0-9]{4}$/,
     boolean: /^(true|false)$/,
-    redniBroj: /^[0-9]+$/,
-}
-
+    redniBroj: /^[0-9]+$/
+};

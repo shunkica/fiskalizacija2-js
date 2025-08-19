@@ -1,12 +1,49 @@
-import {XmlSigner} from "./util/signing";
-import {EvidentirajERacunOdgovor, EvidentirajERacunZahtjev} from "./models/xml/fiskalizacija";
-import {FiskalizacijaOptions, FiskalizacijaResult, IEvidentirajERacunZahtjev, IEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev, IEvidentirajNaplatuZahtjev, IEvidentirajOdbijanjeZahtjev, ValidationError} from "./types";
-import {XmlDocument, XmlElement} from "libxml2-wasm";
-import {FISK_NS} from "./models/xml/const";
-import {usingXmlDocument} from "./util/xml";
-import {postRequest} from "./util/http";
-import {parseError} from "./util/error";
-import {EvidentirajIsporukuZaKojuNijeIzdanERacunOdgovor, EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev, EvidentirajNaplatuOdgovor, EvidentirajNaplatuZahtjev, EvidentirajOdbijanjeOdgovor, EvidentirajOdbijanjeZahtjev} from "./models/xml/izvjestavanje";
+import { XmlSigner } from "./util/signing";
+import { EvidentirajERacunOdgovor, EvidentirajERacunZahtjev } from "./models/xml/fiskalizacija";
+import type {
+    FiskalizacijaOptions,
+    FiskalizacijaResult,
+    IEvidentirajERacunZahtjev,
+    IEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev,
+    IEvidentirajNaplatuZahtjev,
+    IEvidentirajOdbijanjeZahtjev,
+    IGreska
+} from "./types";
+import type { XmlElement } from "libxml2-wasm";
+import { XmlDocument } from "libxml2-wasm";
+import { FISK_NS } from "./models/xml/const";
+import { usingXmlDocument } from "./util/xml";
+import { postRequest } from "./util/http";
+import { parseError, ValidationError } from "./util/error";
+import {
+    EvidentirajIsporukuZaKojuNijeIzdanERacunOdgovor,
+    EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev,
+    EvidentirajNaplatuOdgovor,
+    EvidentirajNaplatuZahtjev,
+    EvidentirajOdbijanjeOdgovor,
+    EvidentirajOdbijanjeZahtjev
+} from "./models/xml/izvjestavanje";
+
+interface SerializableRequest {
+    toXmlString(): string;
+    _id: string;
+}
+
+interface ParsedResponse {
+    Odgovor: {
+        prihvacenZahtjev: boolean;
+        greska?: IGreska;
+    };
+}
+
+type RequestClass<TReqData, TReq extends SerializableRequest> = new (arg: TReqData) => TReq;
+type ResponseClass<TRes extends ParsedResponse> = { fromXmlElement(elem: XmlElement): TRes };
+
+interface RequestConfig<TReqData, TReq extends SerializableRequest, TRes extends ParsedResponse> {
+    RequestClass: RequestClass<TReqData, TReq>;
+    ResponseClass: ResponseClass<TRes>;
+    xpath: string;
+}
 
 export class FiskalizacijaClient {
     private readonly signer: XmlSigner;
@@ -25,32 +62,25 @@ export class FiskalizacijaClient {
         this.signer = new XmlSigner(options);
     }
 
-    private async execute<TReq, TReqClass extends { new(arg: TReq): TReqInstance }, TReqInstance extends TReq, TRes>(
-        zahtjev: TReq | TReqInstance,
-        ReqClass: TReqClass,
-        OdgovorClass: { fromXmlElement(elem: XmlElement): TRes },
-        responseXpath: string
+    private async execute<TReqData, TReq extends SerializableRequest, TRes extends ParsedResponse>(
+        zahtjev: TReq | TReqData,
+        config: RequestConfig<TReqData, TReq, TRes>
     ): Promise<FiskalizacijaResult<TReq, TRes>> {
-        const result: FiskalizacijaResult<TReq, TRes> = {success: false};
+        const result: FiskalizacijaResult<TReq, TRes> = { success: false };
 
         try {
-            if (!(zahtjev instanceof ReqClass)) {
-                zahtjev = new ReqClass(zahtjev) as TReqInstance;
-            }
+            const requestInstance = zahtjev instanceof config.RequestClass ? zahtjev : new config.RequestClass(zahtjev as TReqData);
 
-            result.reqObject = zahtjev;
+            result.reqObject = requestInstance;
 
-            const signedXml = this.signer.signFiscalizationRequest((zahtjev as any).toXmlString(), (zahtjev as any)._id);
+            const signedXml = this.signer.signFiscalizationRequest(requestInstance.toXmlString(), requestInstance._id);
             const soap = this.generateSoapEnvelope(signedXml);
-
             result.soapReqRaw = soap;
 
-            const {statusCode, data} = await postRequest(soap, this.options);
-
+            const { statusCode, data } = await postRequest(soap, this.options);
             result.httpStatusCode = statusCode;
             result.soapResRaw = data;
 
-            // Neka korisnik odluči što se događa ako potpis odgovora nije valjan
             try {
                 result.soapResSignatureValid = XmlSigner.isValidSignature(result.soapResRaw);
             } catch (error) {
@@ -59,12 +89,12 @@ export class FiskalizacijaClient {
             }
 
             usingXmlDocument(XmlDocument.fromString(data), (doc: XmlDocument) => {
-                const odgovorElement = doc.get(responseXpath, FISK_NS) as XmlElement;
+                const odgovorElement = doc.get(config.xpath, FISK_NS) as XmlElement;
                 if (!odgovorElement) {
-                    throw new ValidationError(`HTTP ${statusCode} | ${responseXpath}`, data);
+                    throw new ValidationError(`HTTP ${statusCode} | ${config.xpath}`, data);
                 }
-                result.resObject = OdgovorClass.fromXmlElement(odgovorElement);
-                result.success = (result.resObject as any).Odgovor.prihvacenZahtjev && !(result.resObject as any).Odgovor.greska;
+                result.resObject = config.ResponseClass.fromXmlElement(odgovorElement);
+                result.success = result.resObject.Odgovor.prihvacenZahtjev && !result.resObject.Odgovor.greska;
             });
         } catch (error) {
             result.error = parseError(error);
@@ -74,50 +104,49 @@ export class FiskalizacijaClient {
     }
 
     async evidentirajERacun(zahtjev: IEvidentirajERacunZahtjev | EvidentirajERacunZahtjev) {
-        return this.execute(
-            zahtjev,
-            EvidentirajERacunZahtjev,
-            EvidentirajERacunOdgovor,
-            "/soapenv:Envelope/soapenv:Body/efis:EvidentirajERacunOdgovor"
-        );
+        return this.execute(zahtjev, {
+            RequestClass: EvidentirajERacunZahtjev,
+            ResponseClass: EvidentirajERacunOdgovor,
+            xpath: "/soapenv:Envelope/soapenv:Body/efis:EvidentirajERacunOdgovor"
+        });
     }
 
     async evidentirajNaplatu(zahtjev: IEvidentirajNaplatuZahtjev | EvidentirajNaplatuZahtjev) {
-        return this.execute(
-            zahtjev,
-            EvidentirajNaplatuZahtjev,
-            EvidentirajNaplatuOdgovor,
-            "/soapenv:Envelope/soapenv:Body/eizv:EvidentirajNaplatuOdgovor"
-        );
+        return this.execute(zahtjev, {
+            RequestClass: EvidentirajNaplatuZahtjev,
+            ResponseClass: EvidentirajNaplatuOdgovor,
+            xpath: "/soapenv:Envelope/soapenv:Body/eizv:EvidentirajNaplatuOdgovor"
+        });
     }
 
     async evidentirajOdbijanje(zahtjev: IEvidentirajOdbijanjeZahtjev | EvidentirajOdbijanjeZahtjev) {
-        return this.execute(
-            zahtjev,
-            EvidentirajOdbijanjeZahtjev,
-            EvidentirajOdbijanjeOdgovor,
-            "/soapenv:Envelope/soapenv:Body/eizv:EvidentirajOdbijanjeOdgovor"
-        );
+        return this.execute(zahtjev, {
+            RequestClass: EvidentirajOdbijanjeZahtjev,
+            ResponseClass: EvidentirajOdbijanjeOdgovor,
+            xpath: "/soapenv:Envelope/soapenv:Body/eizv:EvidentirajOdbijanjeOdgovor"
+        });
     }
 
-    async evidentirajIsporukuZaKojuNijeIzdanERacun(zahtjev: IEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev | EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev) {
-        return this.execute(
-            zahtjev,
-            EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev,
-            EvidentirajIsporukuZaKojuNijeIzdanERacunOdgovor,
-            "/soapenv:Envelope/soapenv:Body/eizv:EvidentirajIsporukuZaKojuNijeIzdanERacunOdgovor"
-        );
+    async evidentirajIsporukuZaKojuNijeIzdanERacun(
+        zahtjev: IEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev | EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev
+    ) {
+        return this.execute(zahtjev, {
+            RequestClass: EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev,
+            ResponseClass: EvidentirajIsporukuZaKojuNijeIzdanERacunOdgovor,
+            xpath: "/soapenv:Envelope/soapenv:Body/eizv:EvidentirajIsporukuZaKojuNijeIzdanERacunOdgovor"
+        });
     }
 
-    private generateSoapEnvelope(body: string): string {
+    private generateSoapEnvelope(body: string, withXmlDec: boolean = true): string {
         let res = "";
-        res += "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-        res += "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">";
+        if (withXmlDec) {
+            res += '<?xml version="1.0" encoding="UTF-8"?>';
+        }
+        res += '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">';
         res += "<soap:Body>";
         res += body;
         res += "</soap:Body>";
         res += "</soap:Envelope>";
         return res;
     }
-
 }

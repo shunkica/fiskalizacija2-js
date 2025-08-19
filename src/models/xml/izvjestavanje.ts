@@ -1,4 +1,4 @@
-import {
+import type {
     EvidentirajIsporukuZaKojuNijeIzdanERacunOdgovorSerializable,
     EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjevSerializable,
     EvidentirajNaplatuOdgovorSerializable,
@@ -23,14 +23,28 @@ import {
     PrethodniRacunSerializable,
     RacunSerializable,
     StavkaRacunaSerializable,
-    ValidationError,
     ZaglavljeIsporukaSerializable,
     ZaglavljeIzvjestavanjeSerializable
 } from "../../types";
-import {extractElement, extractElements, extractOptionalElements, getAttributeValue, getBusinessGroupXpath, getBusinessTermXpath, getElementContent, getElementContentNumber, getOptionalElementContent, getOptionalElementContentNumber, usingXmlDocument, xmlEscape} from "../../util/xml";
-import {FISK_NS, UBL_NS} from "./const";
-import {XmlDocument, XmlElement} from "libxml2-wasm";
-import {ArtiklIdentifikatorKlasifikacija, DokumentUkupanIznos, Izdavatelj, Odgovor, PrijenosSredstava, Primatelj, RaspodjelaPdv} from "./common";
+import {
+    extractElement,
+    extractElements,
+    extractOptionalElements,
+    getAttributeValue,
+    getBusinessGroupXpath,
+    getBusinessTermXpath,
+    getElementContent,
+    getElementContentNumber,
+    getOptionalElementContent,
+    getOptionalElementContentNumber,
+    usingXmlDocument,
+    xmlEscape
+} from "../../util/xml";
+import { FISK_NS, UBL_NS } from "./const";
+import type { XmlElement } from "libxml2-wasm";
+import { XmlDocument } from "libxml2-wasm";
+import { ArtiklIdentifikatorKlasifikacija, DokumentUkupanIznos, Izdavatelj, Odgovor, PrijenosSredstava, Primatelj, RaspodjelaPdv } from "./common";
+import { ValidationError } from "../../util/error";
 
 export class EvidentirajNaplatuZahtjev implements EvidentirajNaplatuZahtjevSerializable {
     _id: string;
@@ -47,7 +61,7 @@ export class EvidentirajNaplatuZahtjev implements EvidentirajNaplatuZahtjevSeria
         let res = "";
         res += `<eizv:EvidentirajNaplatuZahtjev xmlns:eizv="${FISK_NS.eizv}" eizv:id="${xmlEscape(this._id)}">`;
         res += this.Zaglavlje.toXmlString();
-        this.Naplata.forEach(i => res += i.toXmlString());
+        this.Naplata.forEach(i => (res += i.toXmlString()));
         res += "</eizv:EvidentirajNaplatuZahtjev>";
         return res;
     }
@@ -62,17 +76,17 @@ export class EvidentirajNaplatuZahtjev implements EvidentirajNaplatuZahtjevSeria
                 return EvidentirajNaplatuZahtjev.fromXml(doc);
             });
         } else if (xml instanceof XmlDocument) {
-            return EvidentirajNaplatuZahtjev.fromXml(xml.root)
+            return EvidentirajNaplatuZahtjev.fromXml(xml.root);
         } else {
             let el = xml as XmlElement;
             if (el.name === "Envelope" && el.namespaceUri === FISK_NS.soapenv) {
-                let el2 = el.get("/soapenv:Envelope/soapenv:Body/eizv:EvidentirajNaplatuZahtjev", FISK_NS) as XmlElement | null;
+                const el2 = el.get("/soapenv:Envelope/soapenv:Body/eizv:EvidentirajNaplatuZahtjev", FISK_NS) as XmlElement | null;
                 if (!el2) {
                     throw new ValidationError("Expected 'EvidentirajNaplatuZahtjev' element in SOAP body", xml);
                 }
                 el = el2;
             }
-            if (el.name !== "EvidentirajNaplatuZahtjev" || el.namespaceUri != FISK_NS.eizv) {
+            if (el.name !== "EvidentirajNaplatuZahtjev" || el.namespaceUri !== FISK_NS.eizv) {
                 throw new ValidationError(`Expected 'EvidentirajNaplatuZahtjev' element with namespace '${FISK_NS.eizv}'`, xml);
             }
             return EvidentirajNaplatuZahtjev.fromXmlElement(el);
@@ -84,7 +98,7 @@ export class EvidentirajNaplatuZahtjev implements EvidentirajNaplatuZahtjevSeria
             _id: getAttributeValue(el, "id", el.prefix),
             Zaglavlje: extractElement(el, "eizv:Zaglavlje", FISK_NS, ZaglavljeIzvjestavanje.fromXmlElement),
             Naplata: extractElements(el, "eizv:Naplata", FISK_NS, Naplata.fromXmlElement)
-        }
+        };
     }
 }
 
@@ -103,7 +117,7 @@ export class EvidentirajOdbijanjeZahtjev implements EvidentirajOdbijanjeZahtjevS
         let res = "";
         res += `<eizv:EvidentirajOdbijanjeZahtjev xmlns:eizv="${FISK_NS.eizv}" eizv:id="${xmlEscape(this._id)}">`;
         res += this.Zaglavlje.toXmlString();
-        this.Odbijanje.forEach(i => res += i.toXmlString());
+        this.Odbijanje.forEach(i => (res += i.toXmlString()));
         res += "</eizv:EvidentirajOdbijanjeZahtjev>";
         return res;
     }
@@ -118,17 +132,17 @@ export class EvidentirajOdbijanjeZahtjev implements EvidentirajOdbijanjeZahtjevS
                 return EvidentirajOdbijanjeZahtjev.fromXml(doc);
             });
         } else if (xml instanceof XmlDocument) {
-            return EvidentirajOdbijanjeZahtjev.fromXml(xml.root)
+            return EvidentirajOdbijanjeZahtjev.fromXml(xml.root);
         } else {
             let el = xml as XmlElement;
             if (el.name === "Envelope" && el.namespaceUri === FISK_NS.soapenv) {
-                let el2 = el.get("/soapenv:Envelope/soapenv:Body/eizv:EvidentirajOdbijanjeZahtjev", FISK_NS) as XmlElement | null;
+                const el2 = el.get("/soapenv:Envelope/soapenv:Body/eizv:EvidentirajOdbijanjeZahtjev", FISK_NS) as XmlElement | null;
                 if (!el2) {
                     throw new ValidationError("Expected 'EvidentirajOdbijanjeZahtjev' element in SOAP body", xml);
                 }
                 el = el2;
             }
-            if (el.name !== "EvidentirajOdbijanjeZahtjev" || el.namespaceUri != FISK_NS.eizv) {
+            if (el.name !== "EvidentirajOdbijanjeZahtjev" || el.namespaceUri !== FISK_NS.eizv) {
                 throw new ValidationError(`Expected 'EvidentirajOdbijanjeZahtjev' element with namespace '${FISK_NS.eizv}'`, xml);
             }
             return EvidentirajOdbijanjeZahtjev.fromXmlElement(el);
@@ -140,7 +154,7 @@ export class EvidentirajOdbijanjeZahtjev implements EvidentirajOdbijanjeZahtjevS
             _id: getAttributeValue(el, "id", el.prefix),
             Zaglavlje: extractElement(el, "eizv:Zaglavlje", FISK_NS, ZaglavljeIzvjestavanje.fromXmlElement),
             Odbijanje: extractElements(el, "eizv:Odbijanje", FISK_NS, Odbijanje.fromXmlElement)
-        }
+        };
     }
 }
 
@@ -159,7 +173,7 @@ export class EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev implements Evidenti
         let res = "";
         res += `<eizv:EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev xmlns:eizv="${FISK_NS.eizv}" eizv:id="${xmlEscape(this._id)}">`;
         res += this.Zaglavlje.toXmlString();
-        this.Racun.forEach(i => res += i.toXmlString());
+        this.Racun.forEach(i => (res += i.toXmlString()));
         res += "</eizv:EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev>";
         return res;
     }
@@ -174,11 +188,14 @@ export class EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev implements Evidenti
                 return EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev.fromXml(doc);
             });
         } else if (xml instanceof XmlDocument) {
-            return EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev.fromXml(xml.root)
+            return EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev.fromXml(xml.root);
         } else {
             const el = xml as XmlElement;
-            if (el.name !== "EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev" || el.namespaceUri != FISK_NS.eizv) {
-                throw new ValidationError(`Expected 'EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev' element with namespace '${FISK_NS.eizv}'`, JSON.stringify({name: el.name, namespaceUri: el.namespaceUri}));
+            if (el.name !== "EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev" || el.namespaceUri !== FISK_NS.eizv) {
+                throw new ValidationError(
+                    `Expected 'EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev' element with namespace '${FISK_NS.eizv}'`,
+                    JSON.stringify({ name: el.name, namespaceUri: el.namespaceUri })
+                );
             }
             return EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev.fromXmlElement(el);
         }
@@ -189,7 +206,7 @@ export class EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev implements Evidenti
             _id: getAttributeValue(el, "id", el.prefix),
             Zaglavlje: extractElement(el, "eizv:Zaglavlje", FISK_NS, ZaglavljeIsporuka.fromXmlElement),
             Racun: extractElements(el, "eizv:Racun", FISK_NS, Racun.fromXmlElement)
-        }
+        };
     }
 }
 
@@ -211,7 +228,7 @@ export class ZaglavljeIzvjestavanje implements ZaglavljeIzvjestavanjeSerializabl
     static fromXmlElement(el: XmlElement): IZaglavljeIzvjestavanje {
         return {
             datumVrijemeSlanja: getElementContent(el, "eizv:datumVrijemeSlanja", FISK_NS, "datumVrijemeDeci")
-        }
+        };
     }
 }
 
@@ -238,7 +255,7 @@ export class ZaglavljeIsporuka implements ZaglavljeIsporukaSerializable {
             datumVrijemeSlanja: getElementContent(el, "eizv:datumVrijemeSlanja", FISK_NS, "datumVrijemeDeci"),
             // TODO: ovo bi trebalo uvijek biti `IR`
             vrstaRacuna: getElementContent(el, "eizv:vrstaRacuna", FISK_NS, "vrstaERacuna")
-        }
+        };
     }
 }
 
@@ -284,7 +301,7 @@ export class Naplata implements NaplataSerializable {
             datumNaplate: getElementContent(el, "eizv:datumNaplate", FISK_NS, "datum"),
             naplaceniIznos: getElementContentNumber(el, "eizv:naplaceniIznos", FISK_NS, "decimal2"),
             nacinPlacanja: getElementContent(el, "eizv:nacinPlacanja", FISK_NS, "nacinPlacanja")
-        }
+        };
     }
 }
 
@@ -330,8 +347,7 @@ export class Odbijanje implements OdbijanjeSerializable {
             datumOdbijanja: getElementContent(el, "eizv:datumOdbijanja", FISK_NS, "datum"),
             vrstaRazlogaOdbijanja: getElementContent(el, "eizv:vrstaRazlogaOdbijanja", FISK_NS, "razlogOdbijanja"),
             razlogOdbijanja: getElementContent(el, "eizv:razlogOdbijanja", FISK_NS, "tekst1024")
-        }
-
+        };
     }
 }
 
@@ -413,7 +429,7 @@ export class StavkaRacuna implements StavkaRacunaSerializable {
         res += `<eizv:artiklStopaPdv>${this.artiklStopaPdv.toFixed(2)}</eizv:artiklStopaPdv>`;
         res += `<eizv:artiklNaziv>${xmlEscape(this.artiklNaziv)}</eizv:artiklNaziv>`;
         if (this.ArtiklIdentifikatorKlasifikacija) {
-            this.ArtiklIdentifikatorKlasifikacija.forEach(a => res += a.toXmlString());
+            this.ArtiklIdentifikatorKlasifikacija.forEach(a => (res += a.toXmlString()));
         }
         res += "</eizv:StavkaRacuna>";
         return res;
@@ -425,13 +441,22 @@ export class StavkaRacuna implements StavkaRacunaSerializable {
             jedinicaMjere: getElementContent(el, "eizv:jedinicaMjere", FISK_NS, "jedinicaMjere"),
             artiklNetoCijena: getElementContentNumber(el, "eizv:artiklNetoCijena", FISK_NS, "decimal"),
             artiklOsnovnaKolicina: getOptionalElementContentNumber(el, "eizv:artiklOsnovnaKolicina", FISK_NS, "decimal"),
-            artiklJedinicaMjereZaOsnovnuKolicinu: getOptionalElementContent(el, "eizv:artiklJedinicaMjereZaOsnovnuKolicinu", FISK_NS, "jedinicaMjere"),
+            artiklJedinicaMjereZaOsnovnuKolicinu: getOptionalElementContent(
+                el,
+                "eizv:artiklJedinicaMjereZaOsnovnuKolicinu",
+                FISK_NS,
+                "jedinicaMjere"
+            ),
             artiklKategorijaPdv: getElementContent(el, "eizv:artiklKategorijaPdv", FISK_NS, "kategorijaPdv"),
             artiklStopaPdv: getElementContentNumber(el, "eizv:artiklStopaPdv", FISK_NS, "decimal"),
             artiklNaziv: getElementContent(el, "eizv:artiklNaziv", FISK_NS, "tekst100"),
-            ArtiklIdentifikatorKlasifikacija: extractOptionalElements(el, "eizv:ArtiklIdentifikatorKlasifikacija", FISK_NS, ArtiklIdentifikatorKlasifikacija.fromXmlElement)
-        }
-
+            ArtiklIdentifikatorKlasifikacija: extractOptionalElements(
+                el,
+                "eizv:ArtiklIdentifikatorKlasifikacija",
+                FISK_NS,
+                ArtiklIdentifikatorKlasifikacija.fromXmlElement
+            )
+        };
     }
 
     static fromUblElement(el: XmlElement, type: "Invoice" | "CreditNote") {
@@ -445,11 +470,18 @@ export class StavkaRacuna implements StavkaRacunaSerializable {
                 jedinicaMjere: getElementContent(groupEl, getBusinessTermXpath("BT-130", type, "BG-25"), UBL_NS, "jedinicaMjere"),
                 artiklNetoCijena: getElementContentNumber(groupEl, getBusinessTermXpath("BT-146", type, "BG-25"), UBL_NS, "decimal"),
                 artiklOsnovnaKolicina: getOptionalElementContentNumber(groupEl, getBusinessTermXpath("BT-149", type, "BG-25"), UBL_NS, "decimal"),
-                artiklJedinicaMjereZaOsnovnuKolicinu: getOptionalElementContent(groupEl, getBusinessTermXpath("BT-150", type, "BG-25"), UBL_NS, "jedinicaMjere"),
+                artiklJedinicaMjereZaOsnovnuKolicinu: getOptionalElementContent(
+                    groupEl,
+                    getBusinessTermXpath("BT-150", type, "BG-25"),
+                    UBL_NS,
+                    "jedinicaMjere"
+                ),
                 artiklKategorijaPdv: getElementContent(groupEl, getBusinessTermXpath("BT-151", type, "BG-25"), UBL_NS, "kategorijaPdv"),
                 artiklStopaPdv: getElementContentNumber(groupEl, getBusinessTermXpath("BT-152", type, "BG-25"), UBL_NS, "decimal"),
                 artiklNaziv: getElementContent(groupEl, getBusinessTermXpath("BT-153", type, "BG-25"), UBL_NS, "tekst100"),
-                ArtiklIdentifikatorKlasifikacija: extractOptionalElements(groupEl, getBusinessTermXpath("BT-158", type, "BG-25"), UBL_NS, (el) => ArtiklIdentifikatorKlasifikacija.fromUblElement(el, type))
+                ArtiklIdentifikatorKlasifikacija: extractOptionalElements(groupEl, getBusinessTermXpath("BT-158", type, "BG-25"), UBL_NS, el =>
+                    ArtiklIdentifikatorKlasifikacija.fromUblElement(el, type)
+                )
             };
         });
     }
@@ -476,10 +508,12 @@ export class Racun implements RacunSerializable {
     constructor(props: IRacun) {
         this.DokumentUkupanIznos = new DokumentUkupanIznos(props.DokumentUkupanIznos, "eizv");
         this.Izdavatelj = new Izdavatelj(props.Izdavatelj, "eizv");
-        if (props.PrethodniRacun)
+        if (props.PrethodniRacun) {
             this.PrethodniRacun = props.PrethodniRacun.map(i => new PrethodniRacun(i));
-        if (props.PrijenosSredstava)
+        }
+        if (props.PrijenosSredstava) {
             this.PrijenosSredstava = props.PrijenosSredstava.map(i => new PrijenosSredstava(i, "eizv"));
+        }
         this.Primatelj = new Primatelj(props.Primatelj, "eizv");
         this.RaspodjelaPdv = props.RaspodjelaPdv.map(i => new RaspodjelaPdv(i, "eizv"));
         this.StavkaRacuna = props.StavkaRacuna.map(i => new StavkaRacuna(i));
@@ -521,11 +555,11 @@ export class Racun implements RacunSerializable {
         res += this.Izdavatelj.toXmlString();
         res += this.Primatelj.toXmlString();
         if (this.PrijenosSredstava) {
-            this.PrijenosSredstava.forEach(i => res += i.toXmlString());
+            this.PrijenosSredstava.forEach(i => (res += i.toXmlString()));
         }
         res += this.DokumentUkupanIznos.toXmlString();
-        this.RaspodjelaPdv.forEach(i => res += i.toXmlString());
-        this.StavkaRacuna.forEach(i => res += i.toXmlString());
+        this.RaspodjelaPdv.forEach(i => (res += i.toXmlString()));
+        this.StavkaRacuna.forEach(i => (res += i.toXmlString()));
         res += `<eizv:indikatorKopije>${this.indikatorKopije}</eizv:indikatorKopije>`;
         res += "</eizv:Racun>";
         return res;
@@ -549,7 +583,7 @@ export class Racun implements RacunSerializable {
             RaspodjelaPdv: extractElements(el, "eizv:RaspodjelaPdv", FISK_NS, RaspodjelaPdv.fromXmlElement),
             StavkaRacuna: extractElements(el, "eizv:StavkaRacuna", FISK_NS, StavkaRacuna.fromXmlElement),
             indikatorKopije: getElementContent(el, "eizv:indikatorKopije", FISK_NS, "boolean") === "true"
-        }
+        };
     }
 
     static fromUblElement(el: XmlElement, type: "Invoice" | "CreditNote"): IRacun {
@@ -570,7 +604,7 @@ export class Racun implements RacunSerializable {
             RaspodjelaPdv: RaspodjelaPdv.fromUblElement(el, type),
             StavkaRacuna: StavkaRacuna.fromUblElement(el, type),
             indikatorKopije: getOptionalElementContent(el, getBusinessTermXpath("HR-BT-1", type), UBL_NS, "boolean") === "true"
-        }
+        };
     }
 }
 
@@ -599,7 +633,7 @@ export class EvidentirajNaplatuOdgovor implements EvidentirajNaplatuOdgovorSeria
             _id: getAttributeValue(el, "id", "eizv"),
             datumVrijemeSlanja: getElementContent(el, "eizv:datumVrijemeSlanja", FISK_NS, "datumVrijemeDeci"),
             Odgovor: extractElement(el, "eizv:Odgovor", FISK_NS, Odgovor.fromXmlElement)
-        }
+        };
     }
 }
 
@@ -628,7 +662,7 @@ export class EvidentirajOdbijanjeOdgovor implements EvidentirajOdbijanjeOdgovorS
             _id: getAttributeValue(el, "id", "eizv"),
             datumVrijemeSlanja: getElementContent(el, "eizv:datumVrijemeSlanja", FISK_NS, "datumVrijeme"),
             Odgovor: extractElement(el, "eizv:Odgovor", FISK_NS, Odgovor.fromXmlElement)
-        }
+        };
     }
 }
 
@@ -657,7 +691,6 @@ export class EvidentirajIsporukuZaKojuNijeIzdanERacunOdgovor implements Evidenti
             _id: getAttributeValue(el, "id", "eizv"),
             datumVrijemeSlanja: getElementContent(el, "eizv:datumVrijemeSlanja", FISK_NS, "datumVrijeme"),
             Odgovor: extractElement(el, "eizv:Odgovor", FISK_NS, Odgovor.fromXmlElement)
-        }
+        };
     }
 }
-

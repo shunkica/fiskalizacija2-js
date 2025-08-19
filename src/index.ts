@@ -5,13 +5,6 @@ export {
     getEvidentirajNaplatuZahtjev,
     getEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev
 } from "./builders/zahtjevi";
-export {
-    getERacunFromUbl,
-    getRacunFromUbl
-} from "./builders/ubl";
-export {
-    FiskalizacijaClient
-} from "./fiskalizacija";
-export {
-    FiskalizacijaService
-} from "./models/api";
+export { getERacunFromUbl, getRacunFromUbl } from "./builders/ubl";
+export { FiskalizacijaClient } from "./fiskalizacija";
+export { FiskalizacijaService } from "./models/api";

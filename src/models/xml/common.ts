@@ -1,7 +1,36 @@
-import {ArtiklIdentifikatorKlasifikacijaSerializable, DokumentUkupanIznosSerializable, GreskaSerializable, IArtiklIdentifikatorKlasifikacija, IDokumentUkupanIznos, IGreska, IIzdavatelj, IOdgovor, IPrijenosSredstava, IPrimatelj, IRaspodjelaPdv, IzdavateljSerializable, OdgovorSerializable, PrijenosSredstavaSerializable, PrimateljSerializable, RaspodjelaPdvSerializable, ValidationError} from "../../types";
-import {extractOptionalElement, getAttributeValue, getBusinessGroupXpath, getBusinessTermXpath, getElementContent, getElementContentNumber, getOptionalAttributeValue, getOptionalElementContent, getOptionalElementContentNumber, xmlEscape} from "../../util/xml";
-import {XmlElement} from "libxml2-wasm";
-import {FISK_NS, getFiskNsPrefix, UBL_NS} from "./const";
+import type {
+    ArtiklIdentifikatorKlasifikacijaSerializable,
+    DokumentUkupanIznosSerializable,
+    GreskaSerializable,
+    IArtiklIdentifikatorKlasifikacija,
+    IDokumentUkupanIznos,
+    IGreska,
+    IIzdavatelj,
+    IOdgovor,
+    IPrijenosSredstava,
+    IPrimatelj,
+    IRaspodjelaPdv,
+    IzdavateljSerializable,
+    OdgovorSerializable,
+    PrijenosSredstavaSerializable,
+    PrimateljSerializable,
+    RaspodjelaPdvSerializable
+} from "../../types";
+import {
+    extractOptionalElement,
+    getAttributeValue,
+    getBusinessGroupXpath,
+    getBusinessTermXpath,
+    getElementContent,
+    getElementContentNumber,
+    getOptionalAttributeValue,
+    getOptionalElementContent,
+    getOptionalElementContentNumber,
+    xmlEscape
+} from "../../util/xml";
+import type { XmlElement } from "libxml2-wasm";
+import { FISK_NS, getFiskNsPrefix, UBL_NS } from "./const";
+import { ValidationError } from "../../util/error";
 
 export class Izdavatelj implements IzdavateljSerializable {
     private readonly _prefix: "efis" | "eizv";
@@ -27,7 +56,7 @@ export class Izdavatelj implements IzdavateljSerializable {
     }
 
     static fromXmlElement(el: XmlElement): IIzdavatelj {
-        const prefix = getFiskNsPrefix(el.namespaceUri)
+        const prefix = getFiskNsPrefix(el.namespaceUri);
         return {
             ime: getElementContent(el, `${prefix}:ime`, FISK_NS, "tekst500"),
             oibPorezniBroj: getElementContent(el, `${prefix}:oibPorezniBroj`, FISK_NS, "tekst20"),
@@ -73,7 +102,7 @@ export class Primatelj implements PrimateljSerializable {
         return {
             ime: getElementContent(el, `${prefix}:ime`, FISK_NS, "tekst500"),
             oibPorezniBroj: getElementContent(el, `${prefix}:oibPorezniBroj`, FISK_NS, "tekst20")
-        }
+        };
     }
 
     static fromUblElement(el: XmlElement, type: "Invoice" | "CreditNote"): IPrimatelj {
@@ -121,7 +150,7 @@ export class PrijenosSredstava implements PrijenosSredstavaSerializable {
             identifikatorRacunaZaPlacanje: getElementContent(el, `${prefix}:identifikatorRacunaZaPlacanje`, FISK_NS, "tekst34"),
             nazivRacunaZaPlacanje: getOptionalElementContent(el, `${prefix}:nazivRacunaZaPlacanje`, FISK_NS, "tekst35"),
             identifikatorPruzateljaPlatnihUsluga: getOptionalElementContent(el, `${prefix}:identifikatorPruzateljaPlatnihUsluga`, FISK_NS, "tekst25")
-        }
+        };
     }
 
     static fromUblElement(el: XmlElement, type: "Invoice" | "CreditNote"): IPrijenosSredstava[] | undefined {
@@ -133,7 +162,12 @@ export class PrijenosSredstava implements PrijenosSredstavaSerializable {
             return {
                 identifikatorRacunaZaPlacanje: getElementContent(groupEl, getBusinessTermXpath("BT-84", type, "BG-17"), UBL_NS, "tekst34"),
                 nazivRacunaZaPlacanje: getOptionalElementContent(groupEl, getBusinessTermXpath("BT-85", type, "BG-17"), UBL_NS, "tekst35"),
-                identifikatorPruzateljaPlatnihUsluga: getOptionalElementContent(groupEl, getBusinessTermXpath("BT-86", type, "BG-17"), UBL_NS, "tekst25")
+                identifikatorPruzateljaPlatnihUsluga: getOptionalElementContent(
+                    groupEl,
+                    getBusinessTermXpath("BT-86", type, "BG-17"),
+                    UBL_NS,
+                    "tekst25"
+                )
             };
         });
     }
@@ -188,7 +222,7 @@ export class DokumentUkupanIznos implements DokumentUkupanIznosSerializable {
             iznosSPdv: getElementContentNumber(el, `${prefix}:iznosSPdv`, FISK_NS, "decimal2"),
             placeniIznos: getOptionalElementContentNumber(el, `${prefix}:placeniIznos`, FISK_NS, "decimal2"),
             iznosKojiDospijevaZaPlacanje: getElementContentNumber(el, `${prefix}:iznosKojiDospijevaZaPlacanje`, FISK_NS, "decimal2")
-        }
+        };
     }
 
     static fromUblElement(el: XmlElement, type: "Invoice" | "CreditNote"): IDokumentUkupanIznos {
@@ -201,7 +235,7 @@ export class DokumentUkupanIznos implements DokumentUkupanIznosSerializable {
             iznosSPdv: getElementContentNumber(el, getBusinessTermXpath("BT-112", type), UBL_NS, "decimal2"),
             placeniIznos: getOptionalElementContentNumber(el, getBusinessTermXpath("BT-113", type), UBL_NS, "decimal2"),
             iznosKojiDospijevaZaPlacanje: getElementContentNumber(el, getBusinessTermXpath("BT-115", type), UBL_NS, "decimal2")
-        }
+        };
     }
 }
 
@@ -252,7 +286,7 @@ export class RaspodjelaPdv implements RaspodjelaPdvSerializable {
             stopa: getOptionalElementContentNumber(el, `${prefix}:stopa`, FISK_NS, "decimal"),
             razlogOslobodenja: getOptionalElementContent(el, `${prefix}:razlogOslobodenja`, FISK_NS, "izuzecePdv"),
             tekstRazlogaOslobodenja: getOptionalElementContent(el, `${prefix}:tekstRazlogaOslobodenja`, FISK_NS, "tekst1024")
-        }
+        };
     }
 
     static fromUblElement(el: XmlElement, type: "Invoice" | "CreditNote"): IRaspodjelaPdv[] {
@@ -304,14 +338,14 @@ export class ArtiklIdentifikatorKlasifikacija implements ArtiklIdentifikatorKlas
             identifikatorKlasifikacije: getElementContent(el, `${prefix}:identifikatorKlasifikacije`, FISK_NS, "tekst10"),
             identifikatorSheme: getElementContent(el, `${prefix}:identifikatorSheme`, FISK_NS, "klasifikacijaArtikla"),
             verzijaSheme: getOptionalElementContent(el, `${prefix}:verzijaSheme`, FISK_NS, "tekst10")
-        }
+        };
     }
 
     static fromUblElement(el: XmlElement, _type: "Invoice" | "CreditNote") {
         return {
             identifikatorKlasifikacije: getElementContent(el, ".", UBL_NS, "tekst10"),
             identifikatorSheme: getAttributeValue(el, "listID", ""),
-            verzijaSheme: getOptionalAttributeValue(el, "listVersionID", "") || undefined,
+            verzijaSheme: getOptionalAttributeValue(el, "listVersionID", "") || undefined
         };
     }
 }
@@ -326,7 +360,9 @@ export class Odgovor implements OdgovorSerializable {
         this._prefix = prefix;
         this.idZahtjeva = props.idZahtjeva;
         this.prihvacenZahtjev = props.prihvacenZahtjev;
-        if (props.greska) this.greska = new Greska(props.greska, prefix);
+        if (props.greska) {
+            this.greska = new Greska(props.greska, prefix);
+        }
     }
 
     toXmlString(): string {
@@ -347,9 +383,8 @@ export class Odgovor implements OdgovorSerializable {
             idZahtjeva: getElementContent(el, `${prefix}:idZahtjeva`, FISK_NS, "uuid"),
             prihvacenZahtjev: getElementContent(el, `${prefix}:prihvacenZahtjev`, FISK_NS, "boolean") === "true",
             greska: extractOptionalElement(el, `${prefix}:greska`, FISK_NS, Greska.fromXmlElement)
-        }
+        };
     }
-
 }
 
 export class Greska implements GreskaSerializable {
@@ -381,7 +416,6 @@ export class Greska implements GreskaSerializable {
             sifra: getElementContent(el, `${prefix}:sifra`, FISK_NS, "greska"),
             redniBrojZapisa: getElementContent(el, `${prefix}:redniBrojZapisa`, FISK_NS, "redniBroj"),
             opis: getElementContent(el, `${prefix}:opis`, FISK_NS, "tekst1024")
-        }
+        };
     }
-
 }

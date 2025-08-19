@@ -1,4 +1,23 @@
-import {IErrorWithMessage} from "../types";
+import type { IErrorWithMessage } from "../types";
+
+export class ValidationError extends Error {
+    value: unknown;
+
+    constructor(message: string, value: unknown) {
+        super(message);
+        this.value = value;
+    }
+
+    toString(): string {
+        if (this.value === undefined || this.value === null) {
+            return `ValidationError: ${this.message}`;
+        } else if (typeof this.value === "string") {
+            return `ValidationError: ${this.message} (value: "${this.value}")`;
+        } else {
+            return `ValidationError: ${this.message} (value: ${JSON.stringify(this.value)})`;
+        }
+    }
+}
 
 export function parseError(error: unknown): IErrorWithMessage {
     let message: string;

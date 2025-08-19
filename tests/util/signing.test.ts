@@ -1,12 +1,12 @@
-import {describe, it, expect, beforeEach} from "vitest";
-import {XmlDocument} from "libxml2-wasm";
-import {XmlSigner} from "../../src/util/signing";
-import {XmlTestProvider} from "../fixtures/XmlTestProvider";
+import { describe, it, expect, beforeEach } from "vitest";
+import { XmlDocument } from "libxml2-wasm";
+import { XmlSigner } from "../../src/util/signing";
+import { XmlTestProvider } from "../fixtures/XmlTestProvider";
 import * as fs from "node:fs";
 
 describe("XmlSigner", () => {
-    const mockPrivateKey = XmlTestProvider.mockPrivateKey
-    const mockPublicCert = XmlTestProvider.mockPublicCert
+    const mockPrivateKey = XmlTestProvider.mockPrivateKey;
+    const mockPublicCert = XmlTestProvider.mockPublicCert;
 
     describe("constructor", () => {
         it("should create XmlSigner with default options", () => {
@@ -74,14 +74,14 @@ describe("XmlSigner", () => {
 
             expect(signedXml).toBeDefined();
             expect(signedXml).toContain("<ds:Signature");
-            expect(signedXml).toContain("xmlns:ds=\"http://www.w3.org/2000/09/xmldsig#\"");
+            expect(signedXml).toContain('xmlns:ds="http://www.w3.org/2000/09/xmldsig#"');
         });
 
         it("should include XAdES elements in signature", () => {
             const signedXml = signer.signFiscalizationRequest(XmlTestProvider.EvidentirajERacunZahtjev, XmlTestProvider.EvidentirajERacunZahtjev_ID);
 
             // Check for XAdES namespace and elements
-            expect(signedXml).toContain("xmlns:xades=\"http://uri.etsi.org/01903/v1.3.2#\"");
+            expect(signedXml).toContain('xmlns:xades="http://uri.etsi.org/01903/v1.3.2#"');
             expect(signedXml).toContain("<xades:QualifyingProperties");
             expect(signedXml).toContain("<xades:SignedProperties");
             expect(signedXml).toContain("<xades:SigningTime>");
@@ -95,7 +95,7 @@ describe("XmlSigner", () => {
             expect(signedXml).toContain(`<ds:Reference URI="#${XmlTestProvider.EvidentirajERacunZahtjev_ID}">`);
 
             // Check for SignedProperties reference
-            expect(signedXml).toContain("Type=\"http://uri.etsi.org/01903#SignedProperties\"");
+            expect(signedXml).toContain('Type="http://uri.etsi.org/01903#SignedProperties"');
         });
 
         it("should include proper transforms", () => {
@@ -117,9 +117,8 @@ describe("XmlSigner", () => {
                 expect(doc.root).toBeDefined();
 
                 // Check that signature is appended to the root element
-                const signatures = doc.root.find("//ds:Signature", {ds: "http://www.w3.org/2000/09/xmldsig#"});
+                const signatures = doc.root.find("//ds:Signature", { ds: "http://www.w3.org/2000/09/xmldsig#" });
                 expect(signatures.length).toBe(1);
-
             } finally {
                 doc.dispose();
             }
@@ -130,7 +129,7 @@ describe("XmlSigner", () => {
 
             // Check for certificate digest elements
             expect(signedXml).toContain("<xades:CertDigest>");
-            expect(signedXml).toContain("<ds:DigestMethod Algorithm=\"http://www.w3.org/2001/04/xmlenc#sha256\"/>");
+            expect(signedXml).toContain('<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>');
             expect(signedXml).toContain("<ds:DigestValue>");
         });
 
@@ -155,16 +154,22 @@ describe("XmlSigner", () => {
                 signatureAlgorithm: "http://www.w3.org/2001/04/xmldsig-more#rsa-sha512"
             });
 
-            const signedXml = customSigner.signFiscalizationRequest(XmlTestProvider.EvidentirajERacunZahtjev, XmlTestProvider.EvidentirajERacunZahtjev_ID);
+            const signedXml = customSigner.signFiscalizationRequest(
+                XmlTestProvider.EvidentirajERacunZahtjev,
+                XmlTestProvider.EvidentirajERacunZahtjev_ID
+            );
 
             expect(signedXml).toContain("http://www.w3.org/2001/04/xmldsig-more#rsa-sha512");
         });
 
         it("should throw error for invalid certificate format", () => {
-            expect(() => new XmlSigner({
-                privateKey: mockPrivateKey,
-                publicCert: "invalid-certificate"
-            })).toThrow("Invalid PEM certificate format");
+            expect(
+                () =>
+                    new XmlSigner({
+                        privateKey: mockPrivateKey,
+                        publicCert: "invalid-certificate"
+                    })
+            ).toThrow("Invalid PEM certificate format");
         });
 
         it("should preserve original XML content", () => {
@@ -184,8 +189,8 @@ describe("XmlSigner", () => {
             const xmldoc1 = XmlDocument.fromString(signedXml1);
             const xmldoc2 = XmlDocument.fromString(signedXml2);
             // GEt Signature element
-            const sig1El = xmldoc1.get("//ds:Signature", {ds: "http://www.w3.org/2000/09/xmldsig#"});
-            const sig2El = xmldoc2.get("//ds:Signature", {ds: "http://www.w3.org/2000/09/xmldsig#"});
+            const sig1El = xmldoc1.get("//ds:Signature", { ds: "http://www.w3.org/2000/09/xmldsig#" });
+            const sig2El = xmldoc2.get("//ds:Signature", { ds: "http://www.w3.org/2000/09/xmldsig#" });
 
             expect(sig1El).not.toBeNull();
             expect(sig2El).not.toBeNull();
@@ -239,12 +244,14 @@ describe("XmlSigner", () => {
 
         it("should fail validation with wrong public certificate", () => {
             expect(XmlSigner.isValidSignature(signedXml, XmlTestProvider.mockPublicCert2)).toBe(false);
-
         });
 
         it("should fail validation with an invalid signature", () => {
             const invalidSignatureValue = Buffer.from("invalid-signature").toString("base64");
-            const invalidSignedXml = signedXml.replace(/<ds:SignatureValue>.*?<\/ds:SignatureValue>/, `<ds:SignatureValue>${invalidSignatureValue}</ds:SignatureValue>`);
+            const invalidSignedXml = signedXml.replace(
+                /<ds:SignatureValue>.*?<\/ds:SignatureValue>/,
+                `<ds:SignatureValue>${invalidSignatureValue}</ds:SignatureValue>`
+            );
             expect(XmlSigner.isValidSignature(invalidSignedXml, mockPublicCert)).toBe(false);
         });
     });

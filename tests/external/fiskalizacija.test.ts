@@ -1,10 +1,15 @@
-import {describe, it, expect, beforeEach} from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import * as fs from "node:fs";
-import {FiskalizacijaClient} from "../../src";
-import {EvidentirajERacunZahtjev, FiskalizacijaService} from "../../src/models";
-import {XmlTestProvider} from "../fixtures/XmlTestProvider";
-import {EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev, EvidentirajNaplatuZahtjev, EvidentirajOdbijanjeZahtjev} from "../../src/models";
-import {randomUUID} from "node:crypto";
+import { FiskalizacijaClient } from "../../src";
+import {
+    EvidentirajERacunZahtjev,
+    FiskalizacijaService,
+    EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev,
+    EvidentirajNaplatuZahtjev,
+    EvidentirajOdbijanjeZahtjev
+} from "../../src/models";
+import { XmlTestProvider } from "../fixtures/XmlTestProvider";
+import { randomUUID } from "node:crypto";
 
 describe("FiscalizationClient Test Environment", () => {
     if (!process.env.PRIVATE_KEY_FILE || !fs.existsSync(process.env.PRIVATE_KEY_FILE)) {

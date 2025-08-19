@@ -1,10 +1,15 @@
-import {describe, it, expect} from "vitest";
-import {XmlDocument} from "libxml2-wasm";
-import {XmlTestProvider} from "../fixtures/XmlTestProvider";
-import {ERacun, EvidentirajERacunZahtjev} from "../../src/models";
-import {XmlTestValidator} from "../fixtures/XmlTestValidator";
-import {EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev, EvidentirajNaplatuZahtjev, EvidentirajOdbijanjeZahtjev} from "../../src/models";
-import {IEvidentirajERacunZahtjev, IEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev} from "../../src";
+import { describe, it, expect } from "vitest";
+import { XmlDocument } from "libxml2-wasm";
+import { XmlTestProvider } from "../fixtures/XmlTestProvider";
+import {
+    ERacun,
+    EvidentirajERacunZahtjev,
+    EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev,
+    EvidentirajNaplatuZahtjev,
+    EvidentirajOdbijanjeZahtjev
+} from "../../src/models";
+import { XmlTestValidator } from "../fixtures/XmlTestValidator";
+import type { IEvidentirajERacunZahtjev, IEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev } from "../../src";
 
 describe("ERacun", () => {
     describe("fromUbl", () => {
@@ -15,8 +20,7 @@ describe("ERacun", () => {
                 const root = doc.root;
                 const eracun = ERacun.fromUblElement(root, "Invoice");
 
-                XmlTestValidator.validateFullUblInvoice(eracun)
-
+                XmlTestValidator.validateFullUblInvoice(eracun);
             } finally {
                 doc.dispose();
             }
@@ -30,7 +34,6 @@ describe("ERacun", () => {
                 const eracun = ERacun.fromUblElement(root, "Invoice");
 
                 XmlTestValidator.validateMinimalUblInvoice(eracun);
-
             } finally {
                 doc.dispose();
             }
@@ -50,7 +53,6 @@ describe("ERacun", () => {
                 expect(eracun.PrijenosSredstava).toBeUndefined();
                 expect(eracun.DokumentUkupanIznos.popust).toBeUndefined();
                 expect(eracun.DokumentUkupanIznos.placeniIznos).toBeUndefined();
-
             } finally {
                 doc.dispose();
             }
@@ -64,7 +66,6 @@ describe("ERacun", () => {
                 expect(() => {
                     ERacun.fromUblElement(root, "Invoice");
                 }).toThrow();
-
             } finally {
                 doc.dispose();
             }
@@ -73,7 +74,6 @@ describe("ERacun", () => {
 });
 
 describe("Model serialization and deserialization", () => {
-
     describe("EvidentirajERacun", () => {
         const xml = XmlTestProvider.EvidentirajERacunZahtjev;
         const id = XmlTestProvider.EvidentirajERacunZahtjev_ID;
@@ -103,7 +103,10 @@ describe("Model serialization and deserialization", () => {
     describe("EvidentirajIsporukuZaKojuNijeIzdanERacun", () => {
         const xml = XmlTestProvider.EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev;
         const id = XmlTestProvider.EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev_brojDokumenta;
-        const data: IEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev = XmlTestProvider.mockEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev(id, "00000000001");
+        const data: IEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev = XmlTestProvider.mockEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev(
+            id,
+            "00000000001"
+        );
         const zahtjev = new EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev(data);
 
         it("should deserialize XML correctly", () => {
@@ -121,7 +124,6 @@ describe("Model serialization and deserialization", () => {
                 EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev.fromXml(stringXml);
             }).not.toThrow();
         });
-
     });
 
     describe("EvidentirajNaplatuZahtjev", () => {
@@ -140,7 +142,6 @@ describe("Model serialization and deserialization", () => {
                 EvidentirajNaplatuZahtjev.fromXml(zahtjev.toXmlString());
             }).not.toThrow();
         });
-
     });
 
     describe("EvidentirajOdbijanjeZahtjev", () => {
@@ -159,6 +160,5 @@ describe("Model serialization and deserialization", () => {
                 EvidentirajOdbijanjeZahtjev.fromXml(zahtjev.toXmlString());
             }).not.toThrow();
         });
-
     });
 });

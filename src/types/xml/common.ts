@@ -1,4 +1,4 @@
-import {XmlSerializable} from "./util";
+import type { XmlSerializable } from "./util";
 
 /**
  * Greška prilikom obrade zahtjeva
@@ -21,7 +21,7 @@ export interface IGreska {
     opis: string;
 }
 
-export type GreskaSerializable = XmlSerializable<IGreska>
+export type GreskaSerializable = XmlSerializable<IGreska>;
 
 /**
  * Odgovor Sustava za fiskalizaciju na poslani zahtjev. Odgovor opisuje uspješno zaprimanje (element
@@ -43,10 +43,9 @@ export interface IOdgovor {
      * Detalji o grešci ako zahtjev nije prihvaćen
      */
     greska?: IGreska;
-
 }
 
-export type OdgovorSerializable = XmlSerializable<IOdgovor>
+export type OdgovorSerializable = XmlSerializable<IOdgovor>;
 
 /**
  * Informacije o identifikatoru klasifikacije artikla.
@@ -73,7 +72,7 @@ export interface IArtiklIdentifikatorKlasifikacija {
     verzijaSheme?: string;
 }
 
-export type ArtiklIdentifikatorKlasifikacijaSerializable = XmlSerializable<IArtiklIdentifikatorKlasifikacija>
+export type ArtiklIdentifikatorKlasifikacijaSerializable = XmlSerializable<IArtiklIdentifikatorKlasifikacija>;
 
 /**
  * Informacije o ukupnim novčanim iznosima za eRačun.
@@ -129,7 +128,7 @@ export interface IDokumentUkupanIznos {
     iznosKojiDospijevaZaPlacanje: number;
 }
 
-export type DokumentUkupanIznosSerializable = XmlSerializable<IDokumentUkupanIznos>
+export type DokumentUkupanIznosSerializable = XmlSerializable<IDokumentUkupanIznos>;
 
 /**
  * Informacije o izdavatelju eRačuna
@@ -158,7 +157,7 @@ export interface IIzdavatelj {
     oibOperatera: string;
 }
 
-export type IzdavateljSerializable = XmlSerializable<IIzdavatelj>
+export type IzdavateljSerializable = XmlSerializable<IIzdavatelj>;
 
 /**
  * Informacije o plaćanjima
@@ -187,7 +186,7 @@ export interface IPrijenosSredstava {
     identifikatorPruzateljaPlatnihUsluga?: string;
 }
 
-export type PrijenosSredstavaSerializable = XmlSerializable<IPrijenosSredstava>
+export type PrijenosSredstavaSerializable = XmlSerializable<IPrijenosSredstava>;
 
 /**
  * Informacije o primatelju eRačuna
@@ -209,7 +208,7 @@ export interface IPrimatelj {
     oibPorezniBroj: string;
 }
 
-export type PrimateljSerializable = XmlSerializable<IPrimatelj>
+export type PrimateljSerializable = XmlSerializable<IPrimatelj>;
 
 /**
  * Informacije o rekapitulaciji PDV-a po različitim kategorijama, stopama i razlozima izuzeća.
@@ -258,4 +257,4 @@ export interface IRaspodjelaPdv {
     tekstRazlogaOslobodenja?: string;
 }
 
-export type RaspodjelaPdvSerializable = XmlSerializable<IRaspodjelaPdv>
+export type RaspodjelaPdvSerializable = XmlSerializable<IRaspodjelaPdv>;

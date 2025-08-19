@@ -1,5 +1,13 @@
-import {IArtiklIdentifikatorKlasifikacija, IDokumentUkupanIznos, IIzdavatelj, IOdgovor, IPrijenosSredstava, IPrimatelj, IRaspodjelaPdv} from "./common";
-import {XmlSerializable} from "./util";
+import type {
+    IArtiklIdentifikatorKlasifikacija,
+    IDokumentUkupanIznos,
+    IIzdavatelj,
+    IOdgovor,
+    IPrijenosSredstava,
+    IPrimatelj,
+    IRaspodjelaPdv
+} from "./common";
+import type { XmlSerializable } from "./util";
 
 /**
  * Zaglavlje sadrži osnovne informacije o zahtjevu, uključujući datum i vrijeme slanja.

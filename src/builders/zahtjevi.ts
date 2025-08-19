@@ -1,10 +1,16 @@
-import {IERacun, IEvidentirajERacunZahtjev, IEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev, IEvidentirajNaplatuZahtjev, IEvidentirajOdbijanjeZahtjev, INaplata, IOdbijanje, IRacun} from "../types";
-import {getCurrentDateTimeString} from "../util/time";
+import type {
+    IERacun,
+    IEvidentirajERacunZahtjev,
+    IEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev,
+    IEvidentirajNaplatuZahtjev,
+    IEvidentirajOdbijanjeZahtjev,
+    INaplata,
+    IOdbijanje,
+    IRacun
+} from "../types";
+import { getCurrentDateTimeString } from "../util/time";
 
-export function getEvidentirajERacunZahtjev(
-    vrsta: "I" | "U",
-    eracun: IERacun | IERacun[]
-): IEvidentirajERacunZahtjev {
+export function getEvidentirajERacunZahtjev(vrsta: "I" | "U", eracun: IERacun | IERacun[]): IEvidentirajERacunZahtjev {
     return {
         _id: crypto.randomUUID(),
         Zaglavlje: {
@@ -15,9 +21,7 @@ export function getEvidentirajERacunZahtjev(
     };
 }
 
-export function getEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev(
-    racun: IRacun | IRacun[]
-): IEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev {
+export function getEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev(racun: IRacun | IRacun[]): IEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev {
     return {
         _id: crypto.randomUUID(),
         Zaglavlje: {
@@ -28,9 +32,7 @@ export function getEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev(
     };
 }
 
-export function getEvidentirajNaplatuZahtjev(
-    naplata: INaplata | INaplata[]
-): IEvidentirajNaplatuZahtjev {
+export function getEvidentirajNaplatuZahtjev(naplata: INaplata | INaplata[]): IEvidentirajNaplatuZahtjev {
     return {
         _id: crypto.randomUUID(),
         Zaglavlje: {
@@ -40,13 +42,11 @@ export function getEvidentirajNaplatuZahtjev(
     };
 }
 
-export function getEvidentirajOdbijanjeZahtjev(
-    odbijanje: IOdbijanje | IOdbijanje[],
-): IEvidentirajOdbijanjeZahtjev {
+export function getEvidentirajOdbijanjeZahtjev(odbijanje: IOdbijanje | IOdbijanje[]): IEvidentirajOdbijanjeZahtjev {
     return {
         _id: crypto.randomUUID(),
         Zaglavlje: {
-            datumVrijemeSlanja: getCurrentDateTimeString(),
+            datumVrijemeSlanja: getCurrentDateTimeString()
         },
         Odbijanje: Array.isArray(odbijanje) ? odbijanje : [odbijanje]
     };

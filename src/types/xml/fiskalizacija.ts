@@ -1,5 +1,13 @@
-import {IArtiklIdentifikatorKlasifikacija, IDokumentUkupanIznos, IIzdavatelj, IOdgovor, IPrijenosSredstava, IPrimatelj, IRaspodjelaPdv} from "./common";
-import {XmlSerializable} from "./util";
+import type {
+    IArtiklIdentifikatorKlasifikacija,
+    IDokumentUkupanIznos,
+    IIzdavatelj,
+    IOdgovor,
+    IPrijenosSredstava,
+    IPrimatelj,
+    IRaspodjelaPdv
+} from "./common";
+import type { XmlSerializable } from "./util";
 
 /**
  * Zaglavlje sadrži osnovne informacije o zahtjevu, uključujući datum i vrijeme slanja te vrstu eRačuna, koja može biti ulazna ili izlazna.
@@ -189,7 +197,6 @@ export interface IERacun {
      * @bt HR-BT-1
      */
     indikatorKopije: boolean;
-
 }
 
 export type ERacunSerializable = XmlSerializable<IERacun>;
@@ -207,7 +214,6 @@ export interface IEvidentirajERacunZahtjev {
      * Podaci o eRačunu
      */
     ERacun: IERacun[];
-
 }
 
 export type EvidentirajERacunZahtjevSerializable = XmlSerializable<IEvidentirajERacunZahtjev>;
@@ -225,7 +231,6 @@ export interface IEvidentirajERacunOdgovor {
      * Podaci o odgovoru.
      */
     Odgovor: IOdgovor;
-
 }
 
 export type EvidentirajERacunOdgovorSerializable = XmlSerializable<IEvidentirajERacunOdgovor>;
