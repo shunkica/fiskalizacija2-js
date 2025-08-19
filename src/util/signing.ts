@@ -1,5 +1,5 @@
 import { pemToDer, SignedXml } from "xml-crypto";
-import { Sha256 } from "xml-crypto/lib/hash-algorithms";
+import { Sha256 } from "xml-crypto/lib/hash-algorithms.js";
 import type { SigningOptions } from "../types";
 import { randomUUID } from "node:crypto";
 import { usingXmlDocument } from "./xml";
