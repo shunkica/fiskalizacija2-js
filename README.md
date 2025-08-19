@@ -1,6 +1,8 @@
-# Fiskalizacija TypeScript Library
+# Fiskalizacija2 Node.js Library
 
-TypeScript library za fiskalizaciju 2.0 omogućava jednostavno slanje zahtjeva za evidenciju eRačuna i eIzvještavanje.
+Node.js library za fiskalizaciju 2.0 omogućava jednostavno slanje zahtjeva za evidenciju eRačuna i eIzvještavanje.
+
+> B2C fiskalizacija, odnosno fiskalizacija u krajnjoj potrošnji, trenutno nije podržana
 
 ## Instalacija
 
@@ -166,3 +168,7 @@ if (result.success) {
     console.error("Greška pri evidentiranju odbijanja:", result.error);
 }
 ```
+
+## Povezani projekti
+
+- [fiskalizacija2](https://github.com/shunkica/fiskalizacija2) - materijali vezani uz Projekt Fiskalizacija 2.0 - fiskalizaciju eRačuna i eIzvještavanje
