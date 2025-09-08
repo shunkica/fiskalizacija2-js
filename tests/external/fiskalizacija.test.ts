@@ -97,7 +97,7 @@ describe("FiscalizationClient Test Environment", () => {
 
         it("should submit the request and get a success response", async () => {
             // Prvo moramo fiskalizirati račun, jer se evidentiranje odbijanja oslanja na prethodnu fiskalizaciju
-            const evidentirajERacunZahtjev = new EvidentirajERacunZahtjev(XmlTestProvider.mockEvidentirajERacunZahtjev(id, oib));
+            const evidentirajERacunZahtjev = new EvidentirajERacunZahtjev(XmlTestProvider.mockEvidentirajERacunZahtjev(id, oib, "U"));
             const fiskalizacijaResponse = await client.evidentirajERacun(evidentirajERacunZahtjev);
             expect(fiskalizacijaResponse.success).toBe(true);
 

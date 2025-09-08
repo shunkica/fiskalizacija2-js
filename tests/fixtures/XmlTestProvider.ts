@@ -40,14 +40,25 @@ export class XmlTestProvider {
     static EvidentirajOdbijanjeZahtjev = fs.readFileSync(path.join(__dirname, "EvidentirajOdbijanjeZahtjev.xml"), "utf8");
     static EvidentirajOdbijanjeZahtjev_brojDokumenta = "1234/2024/06";
 
-    static mockEvidentirajERacunZahtjev(brojDokumenta: string, oib: string): IEvidentirajERacunZahtjev {
+    static mockEvidentirajERacunZahtjev(brojDokumenta: string, oib: string, vrsta: "I" | "U" = "I"): IEvidentirajERacunZahtjev {
         const datum = new Date().toISOString().split("T")[0];
+
+        const issuer = { ime: "IZDAVATELJ", oibPorezniBroj: oib, oibOperatera: "12345678901" };
+        const recipient = { ime: "PRIMATELJ", oibPorezniBroj: "11111111119" };
+        if (vrsta === "U") {
+            [issuer.ime, recipient.ime, issuer.oibPorezniBroj, recipient.oibPorezniBroj] = [
+                recipient.ime,
+                issuer.ime,
+                recipient.oibPorezniBroj,
+                issuer.oibPorezniBroj
+            ];
+        }
 
         return {
             _id: XmlSigner.generateId("ID"),
             Zaglavlje: {
                 datumVrijemeSlanja: getCurrentDateTimeString(),
-                vrstaERacuna: "I"
+                vrstaERacuna: vrsta
             },
             ERacun: [
                 {
@@ -57,15 +68,8 @@ export class XmlTestProvider {
                     valutaERacuna: "EUR",
                     datumDospijecaPlacanja: datum,
                     vrstaPoslovnogProcesa: "P1",
-                    Izdavatelj: {
-                        ime: "IZDAVATELJ",
-                        oibPorezniBroj: oib,
-                        oibOperatera: "12345678901"
-                    },
-                    Primatelj: {
-                        ime: "PRIMATELJ",
-                        oibPorezniBroj: "11111111119"
-                    },
+                    Izdavatelj: issuer,
+                    Primatelj: recipient,
                     PrijenosSredstava: [
                         {
                             identifikatorRacunaZaPlacanje: "HRXXXXXXXXXXXXXXXX"
