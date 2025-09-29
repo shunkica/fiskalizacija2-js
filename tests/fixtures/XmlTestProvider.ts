@@ -77,6 +77,7 @@ export class XmlTestProvider {
                     ],
                     DokumentUkupanIznos: {
                         neto: 100,
+                        trosak: 5,
                         iznosBezPdv: 100,
                         pdv: 25,
                         iznosSPdv: 125,
@@ -87,19 +88,40 @@ export class XmlTestProvider {
                             kategorijaPdv: "S",
                             oporeziviIznos: 100,
                             iznosPoreza: 25,
-                            stopa: 25
+                            stopa: 25,
+                            hrOznakaKategorijaPdv: "HR:PDV25"
+                        }
+                    ],
+                    DokumentPopust: [
+                        {
+                            iznosPopust: 10,
+                            kategorijaPdv: "S",
+                            stopaPdv: 25,
+                            tekstRazlogaPopusta: "Popust za redovite kupce"
+                        }
+                    ],
+                    DokumentTrosak: [
+                        {
+                            iznosTrosak: 5,
+                            kategorijaPdv: "S",
+                            stopaPdv: 25,
+                            hrOznakaPorezneKategorije: "HR:PDV25"
                         }
                     ],
                     StavkaERacuna: [
                         {
                             kolicina: 1,
                             jedinicaMjere: "H87",
+                            neto: 100,
                             artiklNetoCijena: 100,
+                            artiklBrutoCijena: 110,
                             artiklOsnovnaKolicina: 1,
                             artiklJedinicaMjereZaOsnovnuKolicinu: "H87",
                             artiklKategorijaPdv: "S",
                             artiklStopaPdv: 25,
                             artiklNaziv: "Proizvod",
+                            artiklOpis: "Opis proizvoda",
+                            artiklHrOznakaKategorijaPdv: "HR:PDV25",
                             ArtiklIdentifikatorKlasifikacija: [
                                 {
                                     identifikatorKlasifikacije: "62.90.90",
@@ -163,12 +185,16 @@ export class XmlTestProvider {
                         {
                             kolicina: 1,
                             jedinicaMjere: "H87",
+                            neto: 100,
                             artiklNetoCijena: 100,
+                            artiklBrutoCijena: 110,
                             artiklOsnovnaKolicina: 1,
                             artiklJedinicaMjereZaOsnovnuKolicinu: "H87",
                             artiklKategorijaPdv: "S",
                             artiklStopaPdv: 25,
                             artiklNaziv: "Proizvod",
+                            artiklOpis: "Opis proizvoda",
+                            artiklHrOznakaKategorijaPdv: "HR:PDV25",
                             ArtiklIdentifikatorKlasifikacija: [
                                 {
                                     identifikatorKlasifikacije: "62.90.90",

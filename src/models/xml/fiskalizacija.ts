@@ -29,7 +29,17 @@ import {
 } from "../../util/xml";
 import type { XmlElement } from "libxml2-wasm";
 import { XmlDocument } from "libxml2-wasm";
-import { ArtiklIdentifikatorKlasifikacija, DokumentUkupanIznos, Izdavatelj, PrijenosSredstava, Primatelj, RaspodjelaPdv, Odgovor } from "./common";
+import {
+    ArtiklIdentifikatorKlasifikacija,
+    DokumentUkupanIznos,
+    Izdavatelj,
+    PrijenosSredstava,
+    Primatelj,
+    RaspodjelaPdv,
+    Odgovor,
+    DokumentPopust,
+    DokumentTrosak
+} from "./common";
 import { ValidationError } from "../../util/error";
 
 export class EvidentirajERacunZahtjev implements EvidentirajERacunZahtjevSerializable {
@@ -129,6 +139,8 @@ export class ERacun implements ERacunSerializable {
     PrijenosSredstava?: PrijenosSredstava[] | undefined;
     DokumentUkupanIznos: DokumentUkupanIznos;
     RaspodjelaPdv: RaspodjelaPdv[];
+    DokumentPopust?: DokumentPopust[] | undefined;
+    DokumentTrosak?: DokumentTrosak[] | undefined;
     StavkaERacuna: StavkaERacuna[];
     indikatorKopije: boolean;
 
@@ -147,6 +159,8 @@ export class ERacun implements ERacunSerializable {
         this.PrijenosSredstava = args.PrijenosSredstava?.map(i => new PrijenosSredstava(i, "efis"));
         this.DokumentUkupanIznos = new DokumentUkupanIznos(args.DokumentUkupanIznos, "efis");
         this.RaspodjelaPdv = args.RaspodjelaPdv.map(i => new RaspodjelaPdv(i, "efis"));
+        this.DokumentPopust = args.DokumentPopust?.map(i => new DokumentPopust(i, "efis"));
+        this.DokumentTrosak = args.DokumentTrosak?.map(i => new DokumentTrosak(i, "efis"));
         this.StavkaERacuna = args.StavkaERacuna.map(i => new StavkaERacuna(i));
         this.indikatorKopije = args.indikatorKopije;
     }
@@ -178,6 +192,12 @@ export class ERacun implements ERacunSerializable {
         }
         res += this.DokumentUkupanIznos.toXmlString();
         this.RaspodjelaPdv.forEach(i => (res += i.toXmlString()));
+        if (this.DokumentPopust) {
+            this.DokumentPopust.forEach(i => (res += i.toXmlString()));
+        }
+        if (this.DokumentTrosak) {
+            this.DokumentTrosak.forEach(i => (res += i.toXmlString()));
+        }
         this.StavkaERacuna.forEach(i => (res += i.toXmlString()));
         res += `<efis:indikatorKopije>${xmlEscape(String(this.indikatorKopije))}</efis:indikatorKopije>`;
         res += "</efis:ERacun>";
@@ -200,6 +220,8 @@ export class ERacun implements ERacunSerializable {
             PrijenosSredstava: extractOptionalElements(el, "efis:PrijenosSredstava", FISK_NS, PrijenosSredstava.fromXmlElement),
             DokumentUkupanIznos: extractElement(el, "efis:DokumentUkupanIznos", FISK_NS, DokumentUkupanIznos.fromXmlElement),
             RaspodjelaPdv: extractElements(el, "efis:RaspodjelaPdv", FISK_NS, RaspodjelaPdv.fromXmlElement),
+            DokumentPopust: extractOptionalElements(el, "efis:DokumentPopust", FISK_NS, DokumentPopust.fromXmlElement),
+            DokumentTrosak: extractOptionalElements(el, "efis:DokumentTrosak", FISK_NS, DokumentTrosak.fromXmlElement),
             StavkaERacuna: extractElements(el, "efis:StavkaERacuna", FISK_NS, StavkaERacuna.fromXmlElement),
             indikatorKopije: getElementContent(el, "efis:indikatorKopije", FISK_NS, "boolean") === "true"
         };
@@ -221,6 +243,8 @@ export class ERacun implements ERacunSerializable {
             PrijenosSredstava: PrijenosSredstava.fromUblElement(el, type),
             DokumentUkupanIznos: DokumentUkupanIznos.fromUblElement(el, type),
             RaspodjelaPdv: RaspodjelaPdv.fromUblElement(el, type),
+            DokumentPopust: DokumentPopust.fromUblElement(el, type),
+            DokumentTrosak: DokumentTrosak.fromUblElement(el, type),
             StavkaERacuna: StavkaERacuna.fromUblElement(el, type),
             indikatorKopije: getOptionalElementContent(el, getBusinessTermXpath("HR-BT-1", type), UBL_NS, "boolean") === "true"
         };
@@ -269,23 +293,31 @@ export class PrethodniERacun implements PrethodniERacunSerializable {
 export class StavkaERacuna implements StavkaERacunaSerializable {
     kolicina: number;
     jedinicaMjere: string;
+    neto: number;
     artiklNetoCijena: number;
+    artiklBrutoCijena?: number | undefined;
     artiklOsnovnaKolicina?: number | undefined;
     artiklJedinicaMjereZaOsnovnuKolicinu?: string | undefined;
     artiklKategorijaPdv: string;
     artiklStopaPdv: number;
     artiklNaziv: string;
+    artiklOpis?: string | undefined;
+    artiklHrOznakaKategorijaPdv?: string | undefined;
     ArtiklIdentifikatorKlasifikacija?: ArtiklIdentifikatorKlasifikacija[] | undefined;
 
     constructor(args: IStavkaERacuna) {
         this.kolicina = args.kolicina;
         this.jedinicaMjere = args.jedinicaMjere;
+        this.neto = args.neto;
         this.artiklNetoCijena = args.artiklNetoCijena;
+        this.artiklBrutoCijena = args.artiklBrutoCijena;
         this.artiklOsnovnaKolicina = args.artiklOsnovnaKolicina;
         this.artiklJedinicaMjereZaOsnovnuKolicinu = args.artiklJedinicaMjereZaOsnovnuKolicinu;
         this.artiklKategorijaPdv = args.artiklKategorijaPdv;
         this.artiklStopaPdv = args.artiklStopaPdv;
         this.artiklNaziv = args.artiklNaziv;
+        this.artiklOpis = args.artiklOpis;
+        this.artiklHrOznakaKategorijaPdv = args.artiklHrOznakaKategorijaPdv;
         this.ArtiklIdentifikatorKlasifikacija = args.ArtiklIdentifikatorKlasifikacija?.map(i => new ArtiklIdentifikatorKlasifikacija(i, "efis"));
     }
 
@@ -294,7 +326,11 @@ export class StavkaERacuna implements StavkaERacunaSerializable {
         res += "<efis:StavkaERacuna>";
         res += `<efis:kolicina>${this.kolicina.toFixed(2)}</efis:kolicina>`;
         res += `<efis:jedinicaMjere>${xmlEscape(this.jedinicaMjere)}</efis:jedinicaMjere>`;
+        res += `<efis:neto>${this.neto.toFixed(2)}</efis:neto>`;
         res += `<efis:artiklNetoCijena>${this.artiklNetoCijena.toFixed(2)}</efis:artiklNetoCijena>`;
+        if (this.artiklBrutoCijena !== undefined) {
+            res += `<efis:artiklBrutoCijena>${this.artiklBrutoCijena.toFixed(2)}</efis:artiklBrutoCijena>`;
+        }
         if (this.artiklOsnovnaKolicina !== undefined) {
             res += `<efis:artiklOsnovnaKolicina>${this.artiklOsnovnaKolicina.toFixed(2)}</efis:artiklOsnovnaKolicina>`;
         }
@@ -304,6 +340,12 @@ export class StavkaERacuna implements StavkaERacunaSerializable {
         res += `<efis:artiklKategorijaPdv>${xmlEscape(this.artiklKategorijaPdv)}</efis:artiklKategorijaPdv>`;
         res += `<efis:artiklStopaPdv>${this.artiklStopaPdv.toFixed(2)}</efis:artiklStopaPdv>`;
         res += `<efis:artiklNaziv>${xmlEscape(this.artiklNaziv)}</efis:artiklNaziv>`;
+        if (this.artiklOpis !== undefined) {
+            res += `<efis:artiklOpis>${xmlEscape(this.artiklOpis)}</efis:artiklOpis>`;
+        }
+        if (this.artiklHrOznakaKategorijaPdv !== undefined) {
+            res += `<efis:artiklHrOznakaKategorijaPdv>${xmlEscape(this.artiklHrOznakaKategorijaPdv)}</efis:artiklHrOznakaKategorijaPdv>`;
+        }
         if (this.ArtiklIdentifikatorKlasifikacija) {
             this.ArtiklIdentifikatorKlasifikacija.forEach(a => (res += a.toXmlString()));
         }
@@ -315,7 +357,9 @@ export class StavkaERacuna implements StavkaERacunaSerializable {
         return {
             kolicina: getElementContentNumber(el, "efis:kolicina", FISK_NS, "decimal"),
             jedinicaMjere: getElementContent(el, "efis:jedinicaMjere", FISK_NS, "jedinicaMjere"),
+            neto: getElementContentNumber(el, "efis:neto", FISK_NS, "decimal2"),
             artiklNetoCijena: getElementContentNumber(el, "efis:artiklNetoCijena", FISK_NS, "decimal"),
+            artiklBrutoCijena: getOptionalElementContentNumber(el, "efis:artiklBrutoCijena", FISK_NS, "decimal2"),
             artiklOsnovnaKolicina: getOptionalElementContentNumber(el, "efis:artiklOsnovnaKolicina", FISK_NS, "decimal"),
             artiklJedinicaMjereZaOsnovnuKolicinu: getOptionalElementContent(
                 el,
@@ -326,6 +370,8 @@ export class StavkaERacuna implements StavkaERacunaSerializable {
             artiklKategorijaPdv: getElementContent(el, "efis:artiklKategorijaPdv", FISK_NS, "kategorijaPdv"),
             artiklStopaPdv: getElementContentNumber(el, "efis:artiklStopaPdv", FISK_NS, "decimal"),
             artiklNaziv: getElementContent(el, "efis:artiklNaziv", FISK_NS, "tekst100"),
+            artiklOpis: getOptionalElementContent(el, "efis:artiklOpis", FISK_NS, "tekst1024"),
+            artiklHrOznakaKategorijaPdv: getOptionalElementContent(el, "efis:artiklHrOznakaKategorijaPdv", FISK_NS, "hrKategorijaPdv"),
             ArtiklIdentifikatorKlasifikacija: extractOptionalElements(
                 el,
                 "efis:ArtiklIdentifikatorKlasifikacija",
@@ -344,7 +390,9 @@ export class StavkaERacuna implements StavkaERacunaSerializable {
             return {
                 kolicina: getElementContentNumber(groupEl, getBusinessTermXpath("BT-129", type, "BG-25"), UBL_NS, "decimal"),
                 jedinicaMjere: getElementContent(groupEl, getBusinessTermXpath("BT-130", type, "BG-25"), UBL_NS, "jedinicaMjere"),
+                neto: getElementContentNumber(groupEl, getBusinessTermXpath("BT-131", type, "BG-25"), UBL_NS, "decimal2"),
                 artiklNetoCijena: getElementContentNumber(groupEl, getBusinessTermXpath("BT-146", type, "BG-25"), UBL_NS, "decimal"),
+                artiklBrutoCijena: getOptionalElementContentNumber(groupEl, getBusinessTermXpath("BT-148", type, "BG-25"), UBL_NS, "decimal2"),
                 artiklOsnovnaKolicina: getOptionalElementContentNumber(groupEl, getBusinessTermXpath("BT-149", type, "BG-25"), UBL_NS, "decimal"),
                 artiklJedinicaMjereZaOsnovnuKolicinu: getOptionalElementContent(
                     groupEl,
@@ -355,6 +403,13 @@ export class StavkaERacuna implements StavkaERacunaSerializable {
                 artiklKategorijaPdv: getElementContent(groupEl, getBusinessTermXpath("BT-151", type, "BG-25"), UBL_NS, "kategorijaPdv"),
                 artiklStopaPdv: getElementContentNumber(groupEl, getBusinessTermXpath("BT-152", type, "BG-25"), UBL_NS, "decimal"),
                 artiklNaziv: getElementContent(groupEl, getBusinessTermXpath("BT-153", type, "BG-25"), UBL_NS, "tekst100"),
+                artiklOpis: getOptionalElementContent(groupEl, getBusinessTermXpath("BT-154", type, "BG-25"), UBL_NS, "tekst1024"),
+                artiklHrOznakaKategorijaPdv: getOptionalElementContent(
+                    groupEl,
+                    getBusinessTermXpath("HR-BT-12", type, "BG-25"),
+                    UBL_NS,
+                    "hrKategorijaPdv"
+                ),
                 ArtiklIdentifikatorKlasifikacija: extractOptionalElements(groupEl, getBusinessTermXpath("BT-158", type, "BG-25"), UBL_NS, el =>
                     ArtiklIdentifikatorKlasifikacija.fromUblElement(el, type)
                 )

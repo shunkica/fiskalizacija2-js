@@ -36,6 +36,7 @@
     <eizv:StavkaRacuna>
       <eizv:kolicina>2</eizv:kolicina>
       <eizv:jedinicaMjere>H87</eizv:jedinicaMjere>
+      <eizv:neto>1000.00</eizv:neto>
       <eizv:artiklNetoCijena>500.00</eizv:artiklNetoCijena>
       <eizv:artiklKategorijaPdv>S</eizv:artiklKategorijaPdv>
       <eizv:artiklStopaPdv>25</eizv:artiklStopaPdv>

@@ -35,5 +35,7 @@ export const REGEX = {
     drzava: /^[A-Z]{2}$/,
     shemaIdentifikator: /^[0-9]{4}$/,
     boolean: /^(true|false)$/,
-    redniBroj: /^[0-9]+$/
+    redniBroj: /^[0-9]+$/,
+    hrKategorijaPdv: /^([Hh][Rr]):(([Pp][Dd][Vv][0-9]{1,2})|([A-Za-z]{1,10}))$/,
+    razlogPopusta: /^([0-9]{4}|[A-Za-z]{2})$/
 };

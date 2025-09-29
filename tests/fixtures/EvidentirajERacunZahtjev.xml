@@ -40,6 +40,7 @@
     <efis:StavkaERacuna>
       <efis:kolicina>1.000</efis:kolicina>
       <efis:jedinicaMjere>H87</efis:jedinicaMjere>
+      <efis:neto>100.00</efis:neto>
       <efis:artiklNetoCijena>100.000000</efis:artiklNetoCijena>
       <efis:artiklOsnovnaKolicina>1.000</efis:artiklOsnovnaKolicina>
       <efis:artiklJedinicaMjereZaOsnovnuKolicinu>H87</efis:artiklJedinicaMjereZaOsnovnuKolicinu>

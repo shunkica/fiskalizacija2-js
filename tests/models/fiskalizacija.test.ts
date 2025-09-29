@@ -52,7 +52,10 @@ describe("ERacun", () => {
                 expect(eracun.PrethodniERacun).toBeUndefined();
                 expect(eracun.PrijenosSredstava).toBeUndefined();
                 expect(eracun.DokumentUkupanIznos.popust).toBeUndefined();
+                expect(eracun.DokumentUkupanIznos.trosak).toBeUndefined();
                 expect(eracun.DokumentUkupanIznos.placeniIznos).toBeUndefined();
+                expect(eracun.DokumentPopust).toBeUndefined();
+                expect(eracun.DokumentTrosak).toBeUndefined();
             } finally {
                 doc.dispose();
             }

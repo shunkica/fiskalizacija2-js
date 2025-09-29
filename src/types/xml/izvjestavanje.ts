@@ -5,7 +5,9 @@ import type {
     IOdgovor,
     IPrijenosSredstava,
     IPrimatelj,
-    IRaspodjelaPdv
+    IRaspodjelaPdv,
+    IDokumentPopust,
+    IDokumentTrosak
 } from "./common";
 import type { XmlSerializable } from "./util";
 
@@ -186,10 +188,24 @@ export interface IStavkaRacuna {
     jedinicaMjere: string;
 
     /**
+     * Ukupan iznos stavke računa, uključujući popuste i troškove na razini stavke kao i druge relevantne poreze (BT-131 iz UBL 2.1)
+     * @bt BT-131
+     * @regex decimal2
+     */
+    neto: number;
+
+    /**
      * Cijena artikla bez PDV-a, nakon oduzimanja popusta na cijenu artikla (BT-146 iz UBL 2.1)
      * @bt BT-146
      */
     artiklNetoCijena: number;
+
+    /**
+     * Jedinična cijena bez PDV-a prije oduzimanja popusta na cijenu artikla (BT-148 iz UBL 2.1)
+     * @bt BT-148
+     * @regex decimal2
+     */
+    artiklBrutoCijena?: number;
 
     /**
      * Broj jedinica artikla na koji se primjenjuje cijena (BT-149 iz UBL 2.1)
@@ -223,6 +239,20 @@ export interface IStavkaRacuna {
      * @regex tekst100
      */
     artiklNaziv: string;
+
+    /**
+     * Opis artikla (BT-154 iz UBL 2.1)
+     * @bt BT-154
+     * @regex tekst1024
+     */
+    artiklOpis?: string;
+
+    /**
+     * Podrška za stavke koje su oslobođene PDV-a ili ne podliježu PDV-u (HR-BT-12 iz EU norme)
+     * @bt HR-BT-12
+     * @regex hrKategorijaPdv
+     */
+    artiklHrOznakaKategorijaPdv?: string;
 
     /**
      * CPA nomenklatura označava se oznakom 'CG'
@@ -321,6 +351,16 @@ export interface IRacun {
      * Informacije o rekapitulaciji PDV-a po različitim kategorijama, stopama i razlozima izuzeća
      */
     RaspodjelaPdv: IRaspodjelaPdv[];
+
+    /**
+     * Skupina poslovnih pojmova koji nude informacije o popustima
+     */
+    DokumentPopust?: IDokumentPopust[];
+
+    /**
+     * Skupina poslovnih pojmova koji pružaju informacije o troškovima i porezima osim PDV-a
+     */
+    DokumentTrosak?: IDokumentTrosak[];
 
     /**
      * Informacije o pojedinačnim stavkama računa

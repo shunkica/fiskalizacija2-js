@@ -25,7 +25,8 @@ export const UBL_NS = {
     creditnote: "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2",
     cac: "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2",
     cbc: "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2",
-    ext: "urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2"
+    ext: "urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2",
+    hrextac: "urn:hzn.hr:schema:xsd:HRExtensionAggregateComponents-1"
 };
 
 export const getUblNsPrefix = (namespaceUri: string): string => {
