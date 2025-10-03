@@ -338,7 +338,7 @@ export interface IRacun {
     Primatelj: IPrimatelj;
 
     /**
-     * Informacije o virmanskim plaćanjima
+     * Informacije o virmanskim plaćanjima ( BG-17 iz UBL 2.1)
      */
     PrijenosSredstava?: IPrijenosSredstava[];
 
