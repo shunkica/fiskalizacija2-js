@@ -80,6 +80,9 @@ describe("FiscalizationClient Test Environment", () => {
             const fiskalizacijaResponse = await client.evidentirajERacun(evidentirajERacunZahtjev);
             expect(fiskalizacijaResponse.success).toBe(true);
 
+            // Ponekad je potrebno malo pričekati prije nego što se može evidentirati naplata
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
             const response = await client.evidentirajNaplatu(zahtjev);
             expect(response).toBeDefined();
             expect(response.soapResRaw).toBeDefined();
@@ -100,6 +103,9 @@ describe("FiscalizationClient Test Environment", () => {
             const evidentirajERacunZahtjev = new EvidentirajERacunZahtjev(XmlTestProvider.mockEvidentirajERacunZahtjev(id, oib, "U"));
             const fiskalizacijaResponse = await client.evidentirajERacun(evidentirajERacunZahtjev);
             expect(fiskalizacijaResponse.success).toBe(true);
+
+            // Ponekad je potrebno malo pričekati prije nego što se može evidentirati odbijanje
+            await new Promise(resolve => setTimeout(resolve, 1000));
 
             const response = await client.evidentirajOdbijanje(zahtjev);
             expect(response).toBeDefined();
