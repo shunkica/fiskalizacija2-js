@@ -712,7 +712,7 @@ export class EvidentirajOdbijanjeOdgovor implements EvidentirajOdbijanjeOdgovorS
         const { lenient = false, errors } = options || {};
         return {
             _id: getAttributeValue(el, "id", "eizv"),
-            datumVrijemeSlanja: getElementContent(el, "eizv:datumVrijemeSlanja", FISK_NS, { regexKey: "datumVrijeme", lenient, errors }),
+            datumVrijemeSlanja: getElementContent(el, "eizv:datumVrijemeSlanja", FISK_NS, { regexKey: "datumVrijemeDeci", lenient, errors }),
             Odgovor: extractElement(el, "eizv:Odgovor", FISK_NS, odgovorEl => Odgovor.fromXmlElement(odgovorEl, options))
         };
     }
@@ -745,7 +745,7 @@ export class EvidentirajIsporukuZaKojuNijeIzdanERacunOdgovor implements Evidenti
         const { lenient = false, errors } = options || {};
         return {
             _id: getAttributeValue(el, "id", "eizv"),
-            datumVrijemeSlanja: getElementContent(el, "eizv:datumVrijemeSlanja", FISK_NS, { regexKey: "datumVrijeme", lenient, errors }),
+            datumVrijemeSlanja: getElementContent(el, "eizv:datumVrijemeSlanja", FISK_NS, { regexKey: "datumVrijemeDeci", lenient, errors }),
             Odgovor: extractElement(el, "eizv:Odgovor", FISK_NS, odgovorEl => Odgovor.fromXmlElement(odgovorEl, options))
         };
     }

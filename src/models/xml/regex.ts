@@ -1,11 +1,7 @@
 export const REGEX = {
     decimal: /^[\-+]?[0-9]+(\.[0-9]+)?$/,
-    // TODO: ovaj regex nije isti kao u dokumentaciji jer servis na testnom okruženju vraća datum u formatu "2025-06-23T14:22:11+02:00"
-    //datumVrijemeDeci: /^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{4}$/,
-    datumVrijemeDeci: /^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?([+-][0-9]{2}:[0-9]{2}|Z)?$/,
-    // TODO: ovaj regex nije isti kao u dokumentaciji jer servis na testnom okruženju vraća datum u formatu "2025-06-23T14:22:11+02:00"
-    // datumVrijeme: /^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}$/,
-    datumVrijeme: /^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?([+-][0-9]{2}:[0-9]{2}|Z)?$/,
+    datumVrijemeDeci: /^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{4}$/,
+    datumVrijeme: /^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}$/,
     datum: /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/,
     vrstaERacuna: /^(I|U|IR)$/,
     uuid: /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/,
@@ -35,9 +31,9 @@ export const REGEX = {
     drzava: /^[A-Z]{2}$/,
     shemaIdentifikator: /^[0-9]{4}$/,
     boolean: /^(true|false)$/,
-    redniBroj: /^[0-9]+$/,
+    redniBroj: /^(0|[1-9][0-9]*)$/,
     hrKategorijaPdv: /^([Hh][Rr]):(([Pp][Dd][Vv][0-9]{1,2})|([A-Za-z]{1,10}))$/,
-    razlogPopusta: /^([0-9]{4}|[A-Za-z]{2})$/
+    razlogPopusta: /^[0-9]{1,3}$/
 };
 
 export type RegexKey = keyof typeof REGEX;
