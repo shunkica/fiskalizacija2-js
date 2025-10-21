@@ -1,4 +1,5 @@
 import type { XmlElement } from "libxml2-wasm";
+import type { RegexKey } from "../models/xml/regex";
 import { XmlDocument } from "libxml2-wasm";
 import { REGEX } from "../models/xml/regex";
 import { BUSINESS_TERMS } from "../models/xml/businessTerms";
@@ -26,11 +27,68 @@ export function getBusinessGroupXpath(id: keyof typeof BUSINESS_GROUPS, type: "I
     return term.xpath[type].join("/");
 }
 
-export function getElementContentNumber(parentEl: XmlElement, tag: string, ns: Record<string, string>, regexKey?: keyof typeof REGEX): number {
-    const content = getElementContent(parentEl, tag, ns, regexKey);
+interface ExtractionOptions {
+    regexKey?: RegexKey;
+    lenient?: boolean;
+    errors?: ValidationError[];
+}
+
+export function getElementContent(parentEl: XmlElement, tag: string, ns: Record<string, string>, options: ExtractionOptions = {}): string {
+    const { regexKey, lenient, errors } = options;
+    const el = parentEl.get(tag, ns) as XmlElement | null;
+    if (!el) {
+        throw new ValidationError(`Element '${tag}' nije pronađen u elementu '${parentEl.prefix}:${parentEl.name}'`, undefined);
+    }
+    if (regexKey && !REGEX[regexKey].test(el.content)) {
+        const err = new ValidationError(`Element '${tag}' ne zadovoljava regex ${REGEX[regexKey]}`, el.content);
+        if (lenient) {
+            if (errors) {
+                errors.push(err);
+            }
+        } else {
+            throw err;
+        }
+    }
+    return el.content;
+}
+
+export function getOptionalElementContent(
+    parentEl: XmlElement,
+    tag: string,
+    ns: Record<string, string>,
+    options: ExtractionOptions = {}
+): string | undefined {
+    const { regexKey, lenient, errors } = options;
+    const el = parentEl.get(tag, ns) as XmlElement | null;
+    if (!el) {
+        return undefined;
+    }
+    if (regexKey && !REGEX[regexKey].test(el.content)) {
+        const err = new ValidationError(`Element '${tag}' ne zadovoljava regex ${REGEX[regexKey]}`, el.content);
+        if (lenient) {
+            if (errors) {
+                errors.push(err);
+            }
+        } else {
+            throw err;
+        }
+    }
+    return el.content;
+}
+
+export function getElementContentNumber(parentEl: XmlElement, tag: string, ns: Record<string, string>, options: ExtractionOptions = {}): number {
+    const content = getElementContent(parentEl, tag, ns, options);
     const num = Number(content);
     if (isNaN(num)) {
-        throw new ValidationError(`Element '${tag}' ne sadrži valjani broj: ${content}`, content);
+        const err = new ValidationError(`Element '${tag}' ne sadrži valjani broj: ${content}`, content);
+        if (options.lenient) {
+            if (options.errors) {
+                options.errors.push(err);
+            }
+            return 0;
+        } else {
+            throw err;
+        }
     }
     return num;
 }
@@ -39,15 +97,23 @@ export function getOptionalElementContentNumber(
     parentEl: XmlElement,
     tag: string,
     ns: Record<string, string>,
-    regexKey?: keyof typeof REGEX
+    options: ExtractionOptions = {}
 ): number | undefined {
-    const content = getOptionalElementContent(parentEl, tag, ns, regexKey);
+    const content = getOptionalElementContent(parentEl, tag, ns, options);
     if (content === undefined) {
         return undefined;
     }
     const num = Number(content);
     if (isNaN(num)) {
-        throw new ValidationError(`Element '${tag}' ne sadrži valjani broj: ${content}`, content);
+        const err = new ValidationError(`Element '${tag}' ne sadrži valjani broj: ${content}`, content);
+        if (options.lenient) {
+            if (options.errors) {
+                options.errors.push(err);
+            }
+            return undefined;
+        } else {
+            throw err;
+        }
     }
     return num;
 }
@@ -87,33 +153,6 @@ export function extractOptionalElements<T>(
         return undefined;
     }
     return elements.map(el => fn(el as XmlElement));
-}
-
-export function getElementContent(parentEl: XmlElement, tag: string, ns: Record<string, string>, regexKey?: keyof typeof REGEX): string {
-    const el = parentEl.get(tag, ns) as XmlElement | null;
-    if (!el) {
-        throw new ValidationError(`Element '${tag}' nije pronađen u elementu '${parentEl.prefix}:${parentEl.name}'`, undefined);
-    }
-    if (regexKey && !REGEX[regexKey].test(el.content)) {
-        throw new ValidationError(`Element '${tag}' ne zadovoljava regex ${REGEX[regexKey]}`, el.content);
-    }
-    return el.content;
-}
-
-export function getOptionalElementContent(
-    parentEl: XmlElement,
-    tag: string,
-    ns: Record<string, string>,
-    regexKey?: keyof typeof REGEX
-): string | undefined {
-    const el = parentEl.get(tag, ns) as XmlElement | null;
-    if (!el) {
-        return undefined;
-    }
-    if (regexKey && !REGEX[regexKey].test(el.content)) {
-        throw new ValidationError(`Element '${tag}' ne zadovoljava regex ${REGEX[regexKey]}`, el.content);
-    }
-    return el.content;
 }
 
 export function getOptionalAttributeValue(el: XmlElement, name: string, prefix: string, regexKey?: keyof typeof REGEX): string | undefined {

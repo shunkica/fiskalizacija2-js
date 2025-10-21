@@ -237,7 +237,7 @@ export class ZaglavljeIzvjestavanje implements ZaglavljeIzvjestavanjeSerializabl
 
     static fromXmlElement(el: XmlElement): IZaglavljeIzvjestavanje {
         return {
-            datumVrijemeSlanja: getElementContent(el, "eizv:datumVrijemeSlanja", FISK_NS, "datumVrijemeDeci")
+            datumVrijemeSlanja: getElementContent(el, "eizv:datumVrijemeSlanja", FISK_NS, { regexKey: "datumVrijemeDeci" })
         };
     }
 }
@@ -262,9 +262,9 @@ export class ZaglavljeIsporuka implements ZaglavljeIsporukaSerializable {
 
     static fromXmlElement(el: XmlElement): IZaglavljeIsporuka {
         return {
-            datumVrijemeSlanja: getElementContent(el, "eizv:datumVrijemeSlanja", FISK_NS, "datumVrijemeDeci"),
+            datumVrijemeSlanja: getElementContent(el, "eizv:datumVrijemeSlanja", FISK_NS, { regexKey: "datumVrijemeDeci" }),
             // TODO: ovo bi trebalo uvijek biti `IR`
-            vrstaRacuna: getElementContent(el, "eizv:vrstaRacuna", FISK_NS, "vrstaERacuna")
+            vrstaRacuna: getElementContent(el, "eizv:vrstaRacuna", FISK_NS, { regexKey: "vrstaERacuna" })
         };
     }
 }
@@ -304,13 +304,13 @@ export class Naplata implements NaplataSerializable {
 
     static fromXmlElement(el: XmlElement): INaplata {
         return {
-            brojDokumenta: getElementContent(el, "eizv:brojDokumenta", FISK_NS, "tekst100"),
-            datumIzdavanja: getElementContent(el, "eizv:datumIzdavanja", FISK_NS, "datum"),
-            oibPorezniBrojIzdavatelja: getElementContent(el, "eizv:oibPorezniBrojIzdavatelja", FISK_NS, "tekst20"),
-            oibPorezniBrojPrimatelja: getElementContent(el, "eizv:oibPorezniBrojPrimatelja", FISK_NS, "tekst20"),
-            datumNaplate: getElementContent(el, "eizv:datumNaplate", FISK_NS, "datum"),
-            naplaceniIznos: getElementContentNumber(el, "eizv:naplaceniIznos", FISK_NS, "decimal2"),
-            nacinPlacanja: getElementContent(el, "eizv:nacinPlacanja", FISK_NS, "nacinPlacanja")
+            brojDokumenta: getElementContent(el, "eizv:brojDokumenta", FISK_NS, { regexKey: "tekst100" }),
+            datumIzdavanja: getElementContent(el, "eizv:datumIzdavanja", FISK_NS, { regexKey: "datum" }),
+            oibPorezniBrojIzdavatelja: getElementContent(el, "eizv:oibPorezniBrojIzdavatelja", FISK_NS, { regexKey: "tekst20" }),
+            oibPorezniBrojPrimatelja: getElementContent(el, "eizv:oibPorezniBrojPrimatelja", FISK_NS, { regexKey: "tekst20" }),
+            datumNaplate: getElementContent(el, "eizv:datumNaplate", FISK_NS, { regexKey: "datum" }),
+            naplaceniIznos: getElementContentNumber(el, "eizv:naplaceniIznos", FISK_NS, { regexKey: "decimal2" }),
+            nacinPlacanja: getElementContent(el, "eizv:nacinPlacanja", FISK_NS, { regexKey: "nacinPlacanja" })
         };
     }
 }
@@ -350,13 +350,13 @@ export class Odbijanje implements OdbijanjeSerializable {
 
     static fromXmlElement(el: XmlElement): IOdbijanje {
         return {
-            brojDokumenta: getElementContent(el, "eizv:brojDokumenta", FISK_NS, "tekst100"),
-            datumIzdavanja: getElementContent(el, "eizv:datumIzdavanja", FISK_NS, "datum"),
-            oibPorezniBrojIzdavatelja: getElementContent(el, "eizv:oibPorezniBrojIzdavatelja", FISK_NS, "tekst20"),
-            oibPorezniBrojPrimatelja: getElementContent(el, "eizv:oibPorezniBrojPrimatelja", FISK_NS, "tekst20"),
-            datumOdbijanja: getElementContent(el, "eizv:datumOdbijanja", FISK_NS, "datum"),
-            vrstaRazlogaOdbijanja: getElementContent(el, "eizv:vrstaRazlogaOdbijanja", FISK_NS, "razlogOdbijanja"),
-            razlogOdbijanja: getElementContent(el, "eizv:razlogOdbijanja", FISK_NS, "tekst1024")
+            brojDokumenta: getElementContent(el, "eizv:brojDokumenta", FISK_NS, { regexKey: "tekst100" }),
+            datumIzdavanja: getElementContent(el, "eizv:datumIzdavanja", FISK_NS, { regexKey: "datum" }),
+            oibPorezniBrojIzdavatelja: getElementContent(el, "eizv:oibPorezniBrojIzdavatelja", FISK_NS, { regexKey: "tekst20" }),
+            oibPorezniBrojPrimatelja: getElementContent(el, "eizv:oibPorezniBrojPrimatelja", FISK_NS, { regexKey: "tekst20" }),
+            datumOdbijanja: getElementContent(el, "eizv:datumOdbijanja", FISK_NS, { regexKey: "datum" }),
+            vrstaRazlogaOdbijanja: getElementContent(el, "eizv:vrstaRazlogaOdbijanja", FISK_NS, { regexKey: "razlogOdbijanja" }),
+            razlogOdbijanja: getElementContent(el, "eizv:razlogOdbijanja", FISK_NS, { regexKey: "tekst1024" })
         };
     }
 }
@@ -381,8 +381,8 @@ export class PrethodniRacun implements PrethodniRacunSerializable {
 
     static fromXmlElement(el: XmlElement): IPrethodniRacun {
         return {
-            brojDokumenta: getElementContent(el, "eizv:brojDokumenta", FISK_NS, "tekst100"),
-            datumIzdavanja: getElementContent(el, "eizv:datumIzdavanja", FISK_NS, "datum")
+            brojDokumenta: getElementContent(el, "eizv:brojDokumenta", FISK_NS, { regexKey: "tekst100" }),
+            datumIzdavanja: getElementContent(el, "eizv:datumIzdavanja", FISK_NS, { regexKey: "datum" })
         };
     }
 
@@ -393,8 +393,8 @@ export class PrethodniRacun implements PrethodniRacunSerializable {
         }
         return groups.map(groupEl => {
             return {
-                brojDokumenta: getElementContent(groupEl, getBusinessTermXpath("BT-25", type, "BG-3"), UBL_NS, "tekst100"),
-                datumIzdavanja: getElementContent(groupEl, getBusinessTermXpath("BT-26", type, "BG-3"), UBL_NS, "datum")
+                brojDokumenta: getElementContent(groupEl, getBusinessTermXpath("BT-25", type, "BG-3"), UBL_NS, { regexKey: "tekst100" }),
+                datumIzdavanja: getElementContent(groupEl, getBusinessTermXpath("BT-26", type, "BG-3"), UBL_NS, { regexKey: "datum" })
             };
         });
     }
@@ -465,23 +465,20 @@ export class StavkaRacuna implements StavkaRacunaSerializable {
 
     static fromXmlElement(el: XmlElement): IStavkaRacuna {
         return {
-            kolicina: getElementContentNumber(el, "eizv:kolicina", FISK_NS, "decimal"),
-            jedinicaMjere: getElementContent(el, "eizv:jedinicaMjere", FISK_NS, "jedinicaMjere"),
-            neto: getElementContentNumber(el, "eizv:neto", FISK_NS, "decimal2"),
-            artiklNetoCijena: getElementContentNumber(el, "eizv:artiklNetoCijena", FISK_NS, "decimal"),
-            artiklBrutoCijena: getOptionalElementContentNumber(el, "eizv:artiklBrutoCijena", FISK_NS, "decimal2"),
-            artiklOsnovnaKolicina: getOptionalElementContentNumber(el, "eizv:artiklOsnovnaKolicina", FISK_NS, "decimal"),
-            artiklJedinicaMjereZaOsnovnuKolicinu: getOptionalElementContent(
-                el,
-                "eizv:artiklJedinicaMjereZaOsnovnuKolicinu",
-                FISK_NS,
-                "jedinicaMjere"
-            ),
-            artiklKategorijaPdv: getElementContent(el, "eizv:artiklKategorijaPdv", FISK_NS, "kategorijaPdv"),
-            artiklStopaPdv: getElementContentNumber(el, "eizv:artiklStopaPdv", FISK_NS, "decimal"),
-            artiklNaziv: getElementContent(el, "eizv:artiklNaziv", FISK_NS, "tekst100"),
-            artiklOpis: getOptionalElementContent(el, "eizv:artiklOpis", FISK_NS, "tekst1024"),
-            artiklHrOznakaKategorijaPdv: getOptionalElementContent(el, "eizv:artiklHrOznakaKategorijaPdv", FISK_NS, "hrKategorijaPdv"),
+            kolicina: getElementContentNumber(el, "eizv:kolicina", FISK_NS, { regexKey: "decimal" }),
+            jedinicaMjere: getElementContent(el, "eizv:jedinicaMjere", FISK_NS, { regexKey: "jedinicaMjere" }),
+            neto: getElementContentNumber(el, "eizv:neto", FISK_NS, { regexKey: "decimal2" }),
+            artiklNetoCijena: getElementContentNumber(el, "eizv:artiklNetoCijena", FISK_NS, { regexKey: "decimal" }),
+            artiklBrutoCijena: getOptionalElementContentNumber(el, "eizv:artiklBrutoCijena", FISK_NS, { regexKey: "decimal2" }),
+            artiklOsnovnaKolicina: getOptionalElementContentNumber(el, "eizv:artiklOsnovnaKolicina", FISK_NS, { regexKey: "decimal" }),
+            artiklJedinicaMjereZaOsnovnuKolicinu: getOptionalElementContent(el, "eizv:artiklJedinicaMjereZaOsnovnuKolicinu", FISK_NS, {
+                regexKey: "jedinicaMjere"
+            }),
+            artiklKategorijaPdv: getElementContent(el, "eizv:artiklKategorijaPdv", FISK_NS, { regexKey: "kategorijaPdv" }),
+            artiklStopaPdv: getElementContentNumber(el, "eizv:artiklStopaPdv", FISK_NS, { regexKey: "decimal" }),
+            artiklNaziv: getElementContent(el, "eizv:artiklNaziv", FISK_NS, { regexKey: "tekst100" }),
+            artiklOpis: getOptionalElementContent(el, "eizv:artiklOpis", FISK_NS, { regexKey: "tekst1024" }),
+            artiklHrOznakaKategorijaPdv: getOptionalElementContent(el, "eizv:artiklHrOznakaKategorijaPdv", FISK_NS, { regexKey: "hrKategorijaPdv" }),
             ArtiklIdentifikatorKlasifikacija: extractOptionalElements(
                 el,
                 "eizv:ArtiklIdentifikatorKlasifikacija",
@@ -498,28 +495,26 @@ export class StavkaRacuna implements StavkaRacunaSerializable {
         }
         return groups.map(groupEl => {
             return {
-                kolicina: getElementContentNumber(groupEl, getBusinessTermXpath("BT-129", type, "BG-25"), UBL_NS, "decimal"),
-                jedinicaMjere: getElementContent(groupEl, getBusinessTermXpath("BT-130", type, "BG-25"), UBL_NS, "jedinicaMjere"),
-                neto: getElementContentNumber(groupEl, getBusinessTermXpath("BT-131", type, "BG-25"), UBL_NS, "decimal2"),
-                artiklNetoCijena: getElementContentNumber(groupEl, getBusinessTermXpath("BT-146", type, "BG-25"), UBL_NS, "decimal"),
-                artiklBrutoCijena: getOptionalElementContentNumber(groupEl, getBusinessTermXpath("BT-148", type, "BG-25"), UBL_NS, "decimal2"),
-                artiklOsnovnaKolicina: getOptionalElementContentNumber(groupEl, getBusinessTermXpath("BT-149", type, "BG-25"), UBL_NS, "decimal"),
-                artiklJedinicaMjereZaOsnovnuKolicinu: getOptionalElementContent(
-                    groupEl,
-                    getBusinessTermXpath("BT-150", type, "BG-25"),
-                    UBL_NS,
-                    "jedinicaMjere"
-                ),
-                artiklKategorijaPdv: getElementContent(groupEl, getBusinessTermXpath("BT-151", type, "BG-25"), UBL_NS, "kategorijaPdv"),
-                artiklStopaPdv: getElementContentNumber(groupEl, getBusinessTermXpath("BT-152", type, "BG-25"), UBL_NS, "decimal"),
-                artiklNaziv: getElementContent(groupEl, getBusinessTermXpath("BT-153", type, "BG-25"), UBL_NS, "tekst100"),
-                artiklOpis: getOptionalElementContent(groupEl, getBusinessTermXpath("BT-154", type, "BG-25"), UBL_NS, "tekst1024"),
-                artiklHrOznakaKategorijaPdv: getOptionalElementContent(
-                    groupEl,
-                    getBusinessTermXpath("HR-BT-12", type, "BG-25"),
-                    UBL_NS,
-                    "hrKategorijaPdv"
-                ),
+                kolicina: getElementContentNumber(groupEl, getBusinessTermXpath("BT-129", type, "BG-25"), UBL_NS, { regexKey: "decimal" }),
+                jedinicaMjere: getElementContent(groupEl, getBusinessTermXpath("BT-130", type, "BG-25"), UBL_NS, { regexKey: "jedinicaMjere" }),
+                neto: getElementContentNumber(groupEl, getBusinessTermXpath("BT-131", type, "BG-25"), UBL_NS, { regexKey: "decimal2" }),
+                artiklNetoCijena: getElementContentNumber(groupEl, getBusinessTermXpath("BT-146", type, "BG-25"), UBL_NS, { regexKey: "decimal" }),
+                artiklBrutoCijena: getOptionalElementContentNumber(groupEl, getBusinessTermXpath("BT-148", type, "BG-25"), UBL_NS, {
+                    regexKey: "decimal2"
+                }),
+                artiklOsnovnaKolicina: getOptionalElementContentNumber(groupEl, getBusinessTermXpath("BT-149", type, "BG-25"), UBL_NS, {
+                    regexKey: "decimal"
+                }),
+                artiklJedinicaMjereZaOsnovnuKolicinu: getOptionalElementContent(groupEl, getBusinessTermXpath("BT-150", type, "BG-25"), UBL_NS, {
+                    regexKey: "jedinicaMjere"
+                }),
+                artiklKategorijaPdv: getElementContent(groupEl, getBusinessTermXpath("BT-151", type, "BG-25"), UBL_NS, { regexKey: "kategorijaPdv" }),
+                artiklStopaPdv: getElementContentNumber(groupEl, getBusinessTermXpath("BT-152", type, "BG-25"), UBL_NS, { regexKey: "decimal" }),
+                artiklNaziv: getElementContent(groupEl, getBusinessTermXpath("BT-153", type, "BG-25"), UBL_NS, { regexKey: "tekst100" }),
+                artiklOpis: getOptionalElementContent(groupEl, getBusinessTermXpath("BT-154", type, "BG-25"), UBL_NS, { regexKey: "tekst1024" }),
+                artiklHrOznakaKategorijaPdv: getOptionalElementContent(groupEl, getBusinessTermXpath("HR-BT-12", type, "BG-25"), UBL_NS, {
+                    regexKey: "hrKategorijaPdv"
+                }),
                 ArtiklIdentifikatorKlasifikacija: extractOptionalElements(groupEl, getBusinessTermXpath("BT-158", type, "BG-25"), UBL_NS, el =>
                     ArtiklIdentifikatorKlasifikacija.fromUblElement(el, type)
                 )
@@ -618,14 +613,14 @@ export class Racun implements RacunSerializable {
 
     static fromXmlElement(el: XmlElement): IRacun {
         return {
-            brojDokumenta: getElementContent(el, "eizv:brojDokumenta", FISK_NS, "tekst100"),
-            datumIzdavanja: getElementContent(el, "eizv:datumIzdavanja", FISK_NS, "datum"),
-            vrstaDokumenta: getElementContent(el, "eizv:vrstaDokumenta", FISK_NS, "vrstaDokumenta"),
-            valutaRacuna: getElementContent(el, "eizv:valutaRacuna", FISK_NS, "valuta"),
-            datumDospijecaPlacanja: getOptionalElementContent(el, "eizv:datumDospijecaPlacanja", FISK_NS, "datum"),
-            datumIsporuke: getOptionalElementContent(el, "eizv:datumIsporuke", FISK_NS, "datum"),
-            vrstaPoslovnogProcesa: getElementContent(el, "eizv:vrstaPoslovnogProcesa", FISK_NS, "tekst100"),
-            referencaNaUgovor: getOptionalElementContent(el, "eizv:referencaNaUgovor", FISK_NS, "tekst100"),
+            brojDokumenta: getElementContent(el, "eizv:brojDokumenta", FISK_NS, { regexKey: "tekst100" }),
+            datumIzdavanja: getElementContent(el, "eizv:datumIzdavanja", FISK_NS, { regexKey: "datum" }),
+            vrstaDokumenta: getElementContent(el, "eizv:vrstaDokumenta", FISK_NS, { regexKey: "vrstaDokumenta" }),
+            valutaRacuna: getElementContent(el, "eizv:valutaRacuna", FISK_NS, { regexKey: "valuta" }),
+            datumDospijecaPlacanja: getOptionalElementContent(el, "eizv:datumDospijecaPlacanja", FISK_NS, { regexKey: "datum" }),
+            datumIsporuke: getOptionalElementContent(el, "eizv:datumIsporuke", FISK_NS, { regexKey: "datum" }),
+            vrstaPoslovnogProcesa: getElementContent(el, "eizv:vrstaPoslovnogProcesa", FISK_NS, { regexKey: "tekst100" }),
+            referencaNaUgovor: getOptionalElementContent(el, "eizv:referencaNaUgovor", FISK_NS, { regexKey: "tekst100" }),
             PrethodniRacun: extractOptionalElements(el, "eizv:PrethodniRacun", FISK_NS, PrethodniRacun.fromXmlElement),
             Izdavatelj: extractElement(el, "eizv:Izdavatelj", FISK_NS, Izdavatelj.fromXmlElement),
             Primatelj: extractElement(el, "eizv:Primatelj", FISK_NS, Primatelj.fromXmlElement),
@@ -635,20 +630,20 @@ export class Racun implements RacunSerializable {
             DokumentPopust: extractOptionalElements(el, "eizv:DokumentPopust", FISK_NS, DokumentPopust.fromXmlElement),
             DokumentTrosak: extractOptionalElements(el, "eizv:DokumentTrosak", FISK_NS, DokumentTrosak.fromXmlElement),
             StavkaRacuna: extractElements(el, "eizv:StavkaRacuna", FISK_NS, StavkaRacuna.fromXmlElement),
-            indikatorKopije: getElementContent(el, "eizv:indikatorKopije", FISK_NS, "boolean") === "true"
+            indikatorKopije: getElementContent(el, "eizv:indikatorKopije", FISK_NS, { regexKey: "boolean" }) === "true"
         };
     }
 
     static fromUblElement(el: XmlElement, type: "Invoice" | "CreditNote"): IRacun {
         return {
-            brojDokumenta: getElementContent(el, getBusinessTermXpath("BT-1", type), UBL_NS, "tekst100"),
-            datumIzdavanja: getElementContent(el, getBusinessTermXpath("BT-2", type), UBL_NS, "datum"),
-            vrstaDokumenta: getElementContent(el, getBusinessTermXpath("BT-3", type), UBL_NS, "vrstaDokumenta"),
-            valutaRacuna: getElementContent(el, getBusinessTermXpath("BT-5", type), UBL_NS, "valuta"),
-            datumDospijecaPlacanja: getOptionalElementContent(el, getBusinessTermXpath("BT-9", type), UBL_NS, "datum"),
-            datumIsporuke: getOptionalElementContent(el, getBusinessTermXpath("BT-72", type), UBL_NS, "datum"),
-            vrstaPoslovnogProcesa: getElementContent(el, getBusinessTermXpath("BT-23", type), UBL_NS, "tekst100"),
-            referencaNaUgovor: getOptionalElementContent(el, getBusinessTermXpath("BT-12", type), UBL_NS, "tekst100"),
+            brojDokumenta: getElementContent(el, getBusinessTermXpath("BT-1", type), UBL_NS, { regexKey: "tekst100" }),
+            datumIzdavanja: getElementContent(el, getBusinessTermXpath("BT-2", type), UBL_NS, { regexKey: "datum" }),
+            vrstaDokumenta: getElementContent(el, getBusinessTermXpath("BT-3", type), UBL_NS, { regexKey: "vrstaDokumenta" }),
+            valutaRacuna: getElementContent(el, getBusinessTermXpath("BT-5", type), UBL_NS, { regexKey: "valuta" }),
+            datumDospijecaPlacanja: getOptionalElementContent(el, getBusinessTermXpath("BT-9", type), UBL_NS, { regexKey: "datum" }),
+            datumIsporuke: getOptionalElementContent(el, getBusinessTermXpath("BT-72", type), UBL_NS, { regexKey: "datum" }),
+            vrstaPoslovnogProcesa: getElementContent(el, getBusinessTermXpath("BT-23", type), UBL_NS, { regexKey: "tekst100" }),
+            referencaNaUgovor: getOptionalElementContent(el, getBusinessTermXpath("BT-12", type), UBL_NS, { regexKey: "tekst100" }),
             PrethodniRacun: PrethodniRacun.fromUblElement(el, type),
             Izdavatelj: Izdavatelj.fromUblElement(el, type),
             Primatelj: Primatelj.fromUblElement(el, type),
@@ -658,7 +653,7 @@ export class Racun implements RacunSerializable {
             DokumentPopust: DokumentPopust.fromUblElement(el, type),
             DokumentTrosak: DokumentTrosak.fromUblElement(el, type),
             StavkaRacuna: StavkaRacuna.fromUblElement(el, type),
-            indikatorKopije: getOptionalElementContent(el, getBusinessTermXpath("HR-BT-1", type), UBL_NS, "boolean") === "true"
+            indikatorKopije: getOptionalElementContent(el, getBusinessTermXpath("HR-BT-1", type), UBL_NS, { regexKey: "boolean" }) === "true"
         };
     }
 }
@@ -683,11 +678,12 @@ export class EvidentirajNaplatuOdgovor implements EvidentirajNaplatuOdgovorSeria
         return res;
     }
 
-    static fromXmlElement(el: XmlElement): IEvidentirajNaplatuOdgovor {
+    static fromXmlElement(el: XmlElement, options?: { lenient?: boolean; errors?: ValidationError[] }): IEvidentirajNaplatuOdgovor {
+        const { lenient = false, errors } = options || {};
         return {
             _id: getAttributeValue(el, "id", "eizv"),
-            datumVrijemeSlanja: getElementContent(el, "eizv:datumVrijemeSlanja", FISK_NS, "datumVrijemeDeci"),
-            Odgovor: extractElement(el, "eizv:Odgovor", FISK_NS, Odgovor.fromXmlElement)
+            datumVrijemeSlanja: getElementContent(el, "eizv:datumVrijemeSlanja", FISK_NS, { regexKey: "datumVrijemeDeci", lenient, errors }),
+            Odgovor: extractElement(el, "eizv:Odgovor", FISK_NS, odgovorEl => Odgovor.fromXmlElement(odgovorEl, options))
         };
     }
 }
@@ -712,11 +708,12 @@ export class EvidentirajOdbijanjeOdgovor implements EvidentirajOdbijanjeOdgovorS
         return res;
     }
 
-    static fromXmlElement(el: XmlElement): IEvidentirajOdbijanjeOdgovor {
+    static fromXmlElement(el: XmlElement, options?: { lenient?: boolean; errors?: ValidationError[] }): IEvidentirajOdbijanjeOdgovor {
+        const { lenient = false, errors } = options || {};
         return {
             _id: getAttributeValue(el, "id", "eizv"),
-            datumVrijemeSlanja: getElementContent(el, "eizv:datumVrijemeSlanja", FISK_NS, "datumVrijeme"),
-            Odgovor: extractElement(el, "eizv:Odgovor", FISK_NS, Odgovor.fromXmlElement)
+            datumVrijemeSlanja: getElementContent(el, "eizv:datumVrijemeSlanja", FISK_NS, { regexKey: "datumVrijeme", lenient, errors }),
+            Odgovor: extractElement(el, "eizv:Odgovor", FISK_NS, odgovorEl => Odgovor.fromXmlElement(odgovorEl, options))
         };
     }
 }
@@ -741,11 +738,15 @@ export class EvidentirajIsporukuZaKojuNijeIzdanERacunOdgovor implements Evidenti
         return res;
     }
 
-    static fromXmlElement(el: XmlElement): IEvidentirajIsporukuZaKojuNijeIzdanERacunOdgovor {
+    static fromXmlElement(
+        el: XmlElement,
+        options?: { lenient?: boolean; errors?: ValidationError[] }
+    ): IEvidentirajIsporukuZaKojuNijeIzdanERacunOdgovor {
+        const { lenient = false, errors } = options || {};
         return {
             _id: getAttributeValue(el, "id", "eizv"),
-            datumVrijemeSlanja: getElementContent(el, "eizv:datumVrijemeSlanja", FISK_NS, "datumVrijeme"),
-            Odgovor: extractElement(el, "eizv:Odgovor", FISK_NS, Odgovor.fromXmlElement)
+            datumVrijemeSlanja: getElementContent(el, "eizv:datumVrijemeSlanja", FISK_NS, { regexKey: "datumVrijeme", lenient, errors }),
+            Odgovor: extractElement(el, "eizv:Odgovor", FISK_NS, odgovorEl => Odgovor.fromXmlElement(odgovorEl, options))
         };
     }
 }

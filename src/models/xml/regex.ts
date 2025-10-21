@@ -39,3 +39,5 @@ export const REGEX = {
     hrKategorijaPdv: /^([Hh][Rr]):(([Pp][Dd][Vv][0-9]{1,2})|([A-Za-z]{1,10}))$/,
     razlogPopusta: /^([0-9]{4}|[A-Za-z]{2})$/
 };
+
+export type RegexKey = keyof typeof REGEX;

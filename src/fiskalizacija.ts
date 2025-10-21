@@ -37,7 +37,9 @@ interface ParsedResponse {
 }
 
 type RequestClass<TReqData, TReq extends SerializableRequest> = new (arg: TReqData) => TReq;
-type ResponseClass<TRes extends ParsedResponse> = { fromXmlElement(elem: XmlElement): TRes };
+type ResponseClass<TRes extends ParsedResponse> = {
+    fromXmlElement(elem: XmlElement, options?: { lenient?: boolean; errors?: ValidationError[] }): TRes;
+};
 
 interface RequestConfig<TReqData, TReq extends SerializableRequest, TRes extends ParsedResponse> {
     RequestClass: RequestClass<TReqData, TReq>;
@@ -93,7 +95,14 @@ export class FiskalizacijaClient {
                 if (!odgovorElement) {
                     throw new ValidationError(`HTTP ${statusCode} | ${config.xpath}`, data);
                 }
-                result.resObject = config.ResponseClass.fromXmlElement(odgovorElement);
+
+                const resErrors: ValidationError[] = [];
+                result.resObject = config.ResponseClass.fromXmlElement(odgovorElement, { lenient: true, errors: resErrors });
+
+                if (resErrors.length > 0) {
+                    result.resErrors = resErrors.map(err => parseError(err));
+                }
+
                 result.success = result.resObject.Odgovor.prihvacenZahtjev && !result.resObject.Odgovor.greska;
             });
         } catch (error) {

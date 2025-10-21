@@ -39,6 +39,7 @@ interface FiskalizacijaResult<Z, O> {
     soapResRaw?: string;                // Sirovi SOAP odgovor
     soapResSignatureValid?: boolean;    // Valjanost potpisa odgovora
     resObject?: O;                      // Objekt odgovora, npr. IEvidentirajERacunOdgovor
+    resErrors?: IErrorWithMessage[];    // Greške u validaciji odgovora regexom (ne prekidaju obradu i ne utječu na success)
 }
 ```
 
