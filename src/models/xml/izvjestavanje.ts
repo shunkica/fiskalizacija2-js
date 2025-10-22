@@ -105,7 +105,7 @@ export class EvidentirajNaplatuZahtjev implements EvidentirajNaplatuZahtjevSeria
 
     static fromXmlElement(el: XmlElement): IEvidentirajNaplatuZahtjev {
         return {
-            _id: getAttributeValue(el, "id", el.prefix),
+            _id: getAttributeValue(el, "eizv:id", FISK_NS),
             Zaglavlje: extractElement(el, "eizv:Zaglavlje", FISK_NS, ZaglavljeIzvjestavanje.fromXmlElement),
             Naplata: extractElements(el, "eizv:Naplata", FISK_NS, Naplata.fromXmlElement)
         };
@@ -161,7 +161,7 @@ export class EvidentirajOdbijanjeZahtjev implements EvidentirajOdbijanjeZahtjevS
 
     static fromXmlElement(el: XmlElement): IEvidentirajOdbijanjeZahtjev {
         return {
-            _id: getAttributeValue(el, "id", el.prefix),
+            _id: getAttributeValue(el, "eizv:id", FISK_NS),
             Zaglavlje: extractElement(el, "eizv:Zaglavlje", FISK_NS, ZaglavljeIzvjestavanje.fromXmlElement),
             Odbijanje: extractElements(el, "eizv:Odbijanje", FISK_NS, Odbijanje.fromXmlElement)
         };
@@ -213,7 +213,7 @@ export class EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev implements Evidenti
 
     static fromXmlElement(el: XmlElement): IEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev {
         return {
-            _id: getAttributeValue(el, "id", el.prefix),
+            _id: getAttributeValue(el, "eizv:id", FISK_NS),
             Zaglavlje: extractElement(el, "eizv:Zaglavlje", FISK_NS, ZaglavljeIsporuka.fromXmlElement),
             Racun: extractElements(el, "eizv:Racun", FISK_NS, Racun.fromXmlElement)
         };
@@ -679,7 +679,7 @@ export class EvidentirajNaplatuOdgovor implements EvidentirajNaplatuOdgovorSeria
     static fromXmlElement(el: XmlElement, options?: { lenient?: boolean; errors?: ValidationError[] }): IEvidentirajNaplatuOdgovor {
         const { lenient = false, errors } = options || {};
         return {
-            _id: getAttributeValue(el, "id", "eizv"),
+            _id: getAttributeValue(el, "eizv:id", FISK_NS),
             datumVrijemeSlanja: getElementContent(el, "eizv:datumVrijemeSlanja", FISK_NS, { regexKey: "datumVrijemeDeci", lenient, errors }),
             Odgovor: extractElement(el, "eizv:Odgovor", FISK_NS, odgovorEl => Odgovor.fromXmlElement(odgovorEl, options))
         };
@@ -709,7 +709,7 @@ export class EvidentirajOdbijanjeOdgovor implements EvidentirajOdbijanjeOdgovorS
     static fromXmlElement(el: XmlElement, options?: { lenient?: boolean; errors?: ValidationError[] }): IEvidentirajOdbijanjeOdgovor {
         const { lenient = false, errors } = options || {};
         return {
-            _id: getAttributeValue(el, "id", "eizv"),
+            _id: getAttributeValue(el, "eizv:id", FISK_NS),
             datumVrijemeSlanja: getElementContent(el, "eizv:datumVrijemeSlanja", FISK_NS, { regexKey: "datumVrijemeDeci", lenient, errors }),
             Odgovor: extractElement(el, "eizv:Odgovor", FISK_NS, odgovorEl => Odgovor.fromXmlElement(odgovorEl, options))
         };
@@ -742,7 +742,7 @@ export class EvidentirajIsporukuZaKojuNijeIzdanERacunOdgovor implements Evidenti
     ): IEvidentirajIsporukuZaKojuNijeIzdanERacunOdgovor {
         const { lenient = false, errors } = options || {};
         return {
-            _id: getAttributeValue(el, "id", "eizv"),
+            _id: getAttributeValue(el, "eizv:id", FISK_NS),
             datumVrijemeSlanja: getElementContent(el, "eizv:datumVrijemeSlanja", FISK_NS, { regexKey: "datumVrijemeDeci", lenient, errors }),
             Odgovor: extractElement(el, "eizv:Odgovor", FISK_NS, odgovorEl => Odgovor.fromXmlElement(odgovorEl, options))
         };

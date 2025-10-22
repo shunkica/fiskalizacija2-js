@@ -82,7 +82,7 @@ export class EvidentirajERacunZahtjev implements EvidentirajERacunZahtjevSeriali
 
     static fromXmlElement(el: XmlElement): IEvidentirajERacunZahtjev {
         return {
-            _id: getAttributeValue(el, "id", el.prefix),
+            _id: getAttributeValue(el, "efis:id", FISK_NS),
             Zaglavlje: extractElement(el, "efis:Zaglavlje", FISK_NS, ZaglavljeFiskalizacija.fromXmlElement),
             ERacun: extractElements(el, "efis:ERacun", FISK_NS, ERacun.fromXmlElement)
         };
@@ -427,7 +427,7 @@ export class EvidentirajERacunOdgovor implements EvidentirajERacunOdgovorSeriali
     public static fromXmlElement(el: XmlElement, options?: { lenient?: boolean; errors?: ValidationError[] }): IEvidentirajERacunOdgovor {
         const { lenient = false, errors } = options || {};
         return {
-            _id: getAttributeValue(el, "id", el.prefix),
+            _id: getAttributeValue(el, "efis:id", FISK_NS),
             datumVrijemeSlanja: getElementContent(el, "efis:datumVrijemeSlanja", FISK_NS, { regexKey: "datumVrijemeDeci", lenient, errors }),
             Odgovor: extractElement(el, "efis:Odgovor", FISK_NS, odgovorEl => Odgovor.fromXmlElement(odgovorEl, options))
         };

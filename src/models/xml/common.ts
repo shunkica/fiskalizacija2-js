@@ -398,8 +398,8 @@ export class ArtiklIdentifikatorKlasifikacija implements ArtiklIdentifikatorKlas
     static fromUblElement(el: XmlElement, _type: "Invoice" | "CreditNote") {
         return {
             identifikatorKlasifikacije: getElementContent(el, ".", UBL_NS, { regexKey: "tekst10" }),
-            identifikatorSheme: getAttributeValue(el, "listID", ""),
-            verzijaSheme: getOptionalAttributeValue(el, "listVersionID", "") || undefined
+            identifikatorSheme: getAttributeValue(el, "listID", UBL_NS),
+            verzijaSheme: getOptionalAttributeValue(el, "listVersionID", UBL_NS) || undefined
         };
     }
 }

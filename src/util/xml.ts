@@ -155,26 +155,35 @@ export function extractOptionalElements<T>(
     return elements.map(el => fn(el as XmlElement));
 }
 
-export function getOptionalAttributeValue(el: XmlElement, name: string, prefix: string, regexKey?: keyof typeof REGEX): string | undefined {
-    const attr = el.attr(name, prefix);
-    if (!attr) {
+export function getOptionalAttributeValue(
+    el: XmlElement,
+    name: string,
+    ns: Record<string, string>,
+    regexKey?: keyof typeof REGEX
+): string | undefined {
+    const xpath = `@${name}`;
+    const attrs = el.find(xpath, ns);
+    if (!attrs || attrs.length === 0) {
         return undefined;
     }
-    if (regexKey && !REGEX[regexKey].test(attr.value)) {
-        throw new ValidationError(`Atribut '${name}' ne zadovoljava regex ${REGEX[regexKey]}`, attr.value);
+    const value = attrs[0].content;
+    if (regexKey && !REGEX[regexKey].test(value)) {
+        throw new ValidationError(`Atribut '${name}' ne zadovoljava regex ${REGEX[regexKey]}`, value);
     }
-    return attr.value;
+    return value;
 }
 
-export function getAttributeValue(el: XmlElement, name: string, prefix: string, regexKey?: keyof typeof REGEX): string {
-    const attr = el.attr(name, prefix);
-    if (!attr) {
+export function getAttributeValue(el: XmlElement, name: string, ns: Record<string, string>, regexKey?: keyof typeof REGEX): string {
+    const xpath = `@${name}`;
+    const attrs = el.find(xpath, ns);
+    if (!attrs || attrs.length === 0) {
         throw new ValidationError(`Atribut '${name}' nije pronađen u elementu '${el.prefix}:${el.name}'`, undefined);
     }
-    if (regexKey && !REGEX[regexKey].test(attr.value)) {
-        throw new ValidationError(`Atribut '${name}' ne zadovoljava regex ${REGEX[regexKey]}`, attr.value);
+    const value = attrs[0].content;
+    if (regexKey && !REGEX[regexKey].test(value)) {
+        throw new ValidationError(`Atribut '${name}' ne zadovoljava regex ${REGEX[regexKey]}`, value);
     }
-    return attr.value;
+    return value;
 }
 
 export function xmlEscape(val: string): string {
