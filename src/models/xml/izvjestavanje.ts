@@ -586,11 +586,9 @@ export class Racun implements RacunSerializable {
             res += `<eizv:datumIsporuke>${xmlEscape(this.datumIsporuke)}</eizv:datumIsporuke>`;
         }
         if (this.PrethodniRacun) {
-            res += "<eizv:PrethodniRacun>";
             this.PrethodniRacun.forEach(i => {
                 res += i.toXmlString();
             });
-            res += "</eizv:PrethodniRacun>";
         }
         res += this.Izdavatelj.toXmlString();
         res += this.Primatelj.toXmlString();
