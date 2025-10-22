@@ -68,19 +68,31 @@ export class XmlTestProvider {
                     valutaERacuna: "EUR",
                     datumDospijecaPlacanja: datum,
                     vrstaPoslovnogProcesa: "P1",
+                    referencaNaUgovor: "UG-2024-001",
+                    datumIsporuke: datum,
+                    PrethodniERacun: [
+                        {
+                            brojDokumenta: "PREV-001",
+                            datumIzdavanja: datum
+                        }
+                    ],
                     Izdavatelj: issuer,
                     Primatelj: recipient,
                     PrijenosSredstava: [
                         {
-                            identifikatorRacunaZaPlacanje: "HRXXXXXXXXXXXXXXXX"
+                            identifikatorRacunaZaPlacanje: "HRXXXXXXXXXXXXXXXX",
+                            nazivRacunaZaPlacanje: "Poslovni račun",
+                            identifikatorPruzateljaPlatnihUsluga: "HPBZHR2X"
                         }
                     ],
                     DokumentUkupanIznos: {
                         neto: 100,
+                        popust: 10,
                         trosak: 5,
                         iznosBezPdv: 100,
                         pdv: 25,
                         iznosSPdv: 125,
+                        placeniIznos: 25,
                         iznosKojiDospijevaZaPlacanje: 125
                     },
                     RaspodjelaPdv: [
@@ -89,6 +101,8 @@ export class XmlTestProvider {
                             oporeziviIznos: 100,
                             iznosPoreza: 25,
                             stopa: 25,
+                            razlogOslobodenja: "VATEX-EU-G",
+                            tekstRazlogaOslobodenja: "Izvoz robe",
                             hrOznakaKategorijaPdv: "HR:PDV25"
                         }
                     ],
@@ -97,15 +111,18 @@ export class XmlTestProvider {
                             iznosPopust: 10,
                             kategorijaPdv: "S",
                             stopaPdv: 25,
-                            tekstRazlogaPopusta: "Popust za redovite kupce"
+                            tekstRazlogaPopusta: "Popust za redovite kupce",
+                            razlogPopusta: "95"
                         }
                     ],
                     DokumentTrosak: [
                         {
                             iznosTrosak: 5,
                             kategorijaPdv: "S",
+                            hrOznakaPorezneKategorije: "HR:PDV25",
                             stopaPdv: 25,
-                            hrOznakaPorezneKategorije: "HR:PDV25"
+                            tekstRazlogaOslobodenjaPdv: "Trošak dostave",
+                            razlogOslobodenjaPdv: "VATEX-EU-G"
                         }
                     ],
                     StavkaERacuna: [
@@ -125,7 +142,8 @@ export class XmlTestProvider {
                             ArtiklIdentifikatorKlasifikacija: [
                                 {
                                     identifikatorKlasifikacije: "62.90.90",
-                                    identifikatorSheme: "CG"
+                                    identifikatorSheme: "CG",
+                                    verzijaSheme: "2.1"
                                 }
                             ]
                         }
@@ -152,6 +170,14 @@ export class XmlTestProvider {
                     valutaRacuna: "EUR",
                     datumDospijecaPlacanja: datum,
                     vrstaPoslovnogProcesa: "P1",
+                    referencaNaUgovor: "UG-2024-002",
+                    datumIsporuke: datum,
+                    PrethodniRacun: [
+                        {
+                            brojDokumenta: "PREV-002",
+                            datumIzdavanja: datum
+                        }
+                    ],
                     Izdavatelj: {
                         ime: "IZDAVATELJ",
                         oibPorezniBroj: oib,
@@ -163,14 +189,19 @@ export class XmlTestProvider {
                     },
                     PrijenosSredstava: [
                         {
-                            identifikatorRacunaZaPlacanje: "HRXXXXXXXXXXXXXXXX"
+                            identifikatorRacunaZaPlacanje: "HRXXXXXXXXXXXXXXXX",
+                            nazivRacunaZaPlacanje: "Poslovni račun za isporuku",
+                            identifikatorPruzateljaPlatnihUsluga: "HPBZHR2X"
                         }
                     ],
                     DokumentUkupanIznos: {
                         neto: 100,
+                        popust: 5,
+                        trosak: 3,
                         iznosBezPdv: 100,
                         pdv: 25,
                         iznosSPdv: 125,
+                        placeniIznos: 50,
                         iznosKojiDospijevaZaPlacanje: 125
                     },
                     RaspodjelaPdv: [
@@ -178,7 +209,29 @@ export class XmlTestProvider {
                             kategorijaPdv: "S",
                             oporeziviIznos: 100,
                             iznosPoreza: 25,
-                            stopa: 25
+                            stopa: 25,
+                            razlogOslobodenja: "VATEX-EU-G",
+                            tekstRazlogaOslobodenja: "Izvoz robe",
+                            hrOznakaKategorijaPdv: "HR:PDV25"
+                        }
+                    ],
+                    DokumentPopust: [
+                        {
+                            iznosPopust: 5,
+                            kategorijaPdv: "S",
+                            stopaPdv: 25,
+                            tekstRazlogaPopusta: "Popust za količinu",
+                            razlogPopusta: "95"
+                        }
+                    ],
+                    DokumentTrosak: [
+                        {
+                            iznosTrosak: 3,
+                            kategorijaPdv: "S",
+                            hrOznakaPorezneKategorije: "HR:PDV25",
+                            stopaPdv: 25,
+                            tekstRazlogaOslobodenjaPdv: "Trošak transporta",
+                            razlogOslobodenjaPdv: "VATEX-EU-G"
                         }
                     ],
                     StavkaRacuna: [
@@ -198,7 +251,8 @@ export class XmlTestProvider {
                             ArtiklIdentifikatorKlasifikacija: [
                                 {
                                     identifikatorKlasifikacije: "62.90.90",
-                                    identifikatorSheme: "CG"
+                                    identifikatorSheme: "CG",
+                                    verzijaSheme: "2.1"
                                 }
                             ]
                         }
