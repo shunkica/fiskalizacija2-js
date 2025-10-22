@@ -47,8 +47,8 @@ describe("ERacun", () => {
                 const eracun = ERacun.fromUblElement(root, "Invoice");
 
                 // Test that optional fields are undefined when not present
-                expect(eracun.datumIsporuke).toBeUndefined();
                 expect(eracun.referencaNaUgovor).toBeUndefined();
+                expect(eracun.datumIsporuke).toBeUndefined();
                 expect(eracun.PrethodniERacun).toBeUndefined();
                 expect(eracun.PrijenosSredstava).toBeUndefined();
                 expect(eracun.DokumentUkupanIznos.popust).toBeUndefined();

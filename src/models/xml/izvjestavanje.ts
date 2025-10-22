@@ -529,9 +529,9 @@ export class Racun implements RacunSerializable {
     vrstaDokumenta: string;
     valutaRacuna: string;
     datumDospijecaPlacanja?: string;
-    datumIsporuke?: string;
     vrstaPoslovnogProcesa: string;
     referencaNaUgovor?: string;
+    datumIsporuke?: string;
     PrethodniRacun?: PrethodniRacun[];
     Izdavatelj: Izdavatelj;
     Primatelj: Primatelj;
@@ -544,28 +544,28 @@ export class Racun implements RacunSerializable {
     indikatorKopije: boolean;
 
     constructor(props: IRacun) {
-        this.DokumentUkupanIznos = new DokumentUkupanIznos(props.DokumentUkupanIznos, "eizv");
-        this.Izdavatelj = new Izdavatelj(props.Izdavatelj, "eizv");
+        this.brojDokumenta = props.brojDokumenta;
+        this.datumIzdavanja = props.datumIzdavanja;
+        this.vrstaDokumenta = props.vrstaDokumenta;
+        this.valutaRacuna = props.valutaRacuna;
+        this.datumDospijecaPlacanja = props.datumDospijecaPlacanja;
+        this.vrstaPoslovnogProcesa = props.vrstaPoslovnogProcesa;
+        this.referencaNaUgovor = props.referencaNaUgovor;
+        this.datumIsporuke = props.datumIsporuke;
         if (props.PrethodniRacun) {
             this.PrethodniRacun = props.PrethodniRacun.map(i => new PrethodniRacun(i));
         }
+        this.Izdavatelj = new Izdavatelj(props.Izdavatelj, "eizv");
+        this.Primatelj = new Primatelj(props.Primatelj, "eizv");
         if (props.PrijenosSredstava) {
             this.PrijenosSredstava = props.PrijenosSredstava.map(i => new PrijenosSredstava(i, "eizv"));
         }
-        this.Primatelj = new Primatelj(props.Primatelj, "eizv");
+        this.DokumentUkupanIznos = new DokumentUkupanIznos(props.DokumentUkupanIznos, "eizv");
         this.RaspodjelaPdv = props.RaspodjelaPdv.map(i => new RaspodjelaPdv(i, "eizv"));
         this.DokumentPopust = props.DokumentPopust?.map(i => new DokumentPopust(i, "eizv"));
         this.DokumentTrosak = props.DokumentTrosak?.map(i => new DokumentTrosak(i, "eizv"));
         this.StavkaRacuna = props.StavkaRacuna.map(i => new StavkaRacuna(i));
-        this.brojDokumenta = props.brojDokumenta;
-        this.datumDospijecaPlacanja = props.datumDospijecaPlacanja;
-        this.datumIsporuke = props.datumIsporuke;
-        this.datumIzdavanja = props.datumIzdavanja;
         this.indikatorKopije = props.indikatorKopije;
-        this.referencaNaUgovor = props.referencaNaUgovor;
-        this.valutaRacuna = props.valutaRacuna;
-        this.vrstaDokumenta = props.vrstaDokumenta;
-        this.vrstaPoslovnogProcesa = props.vrstaPoslovnogProcesa;
     }
 
     toXmlString(): string {
@@ -578,12 +578,12 @@ export class Racun implements RacunSerializable {
         if (this.datumDospijecaPlacanja) {
             res += `<eizv:datumDospijecaPlacanja>${xmlEscape(this.datumDospijecaPlacanja)}</eizv:datumDospijecaPlacanja>`;
         }
-        if (this.datumIsporuke) {
-            res += `<eizv:datumIsporuke>${xmlEscape(this.datumIsporuke)}</eizv:datumIsporuke>`;
-        }
         res += `<eizv:vrstaPoslovnogProcesa>${xmlEscape(this.vrstaPoslovnogProcesa)}</eizv:vrstaPoslovnogProcesa>`;
         if (this.referencaNaUgovor) {
             res += `<eizv:referencaNaUgovor>${xmlEscape(this.referencaNaUgovor)}</eizv:referencaNaUgovor>`;
+        }
+        if (this.datumIsporuke) {
+            res += `<eizv:datumIsporuke>${xmlEscape(this.datumIsporuke)}</eizv:datumIsporuke>`;
         }
         if (this.PrethodniRacun) {
             res += "<eizv:PrethodniRacun>";
@@ -618,9 +618,9 @@ export class Racun implements RacunSerializable {
             vrstaDokumenta: getElementContent(el, "eizv:vrstaDokumenta", FISK_NS, { regexKey: "vrstaDokumenta" }),
             valutaRacuna: getElementContent(el, "eizv:valutaRacuna", FISK_NS, { regexKey: "valuta" }),
             datumDospijecaPlacanja: getOptionalElementContent(el, "eizv:datumDospijecaPlacanja", FISK_NS, { regexKey: "datum" }),
-            datumIsporuke: getOptionalElementContent(el, "eizv:datumIsporuke", FISK_NS, { regexKey: "datum" }),
             vrstaPoslovnogProcesa: getElementContent(el, "eizv:vrstaPoslovnogProcesa", FISK_NS, { regexKey: "tekst100" }),
             referencaNaUgovor: getOptionalElementContent(el, "eizv:referencaNaUgovor", FISK_NS, { regexKey: "tekst100" }),
+            datumIsporuke: getOptionalElementContent(el, "eizv:datumIsporuke", FISK_NS, { regexKey: "datum" }),
             PrethodniRacun: extractOptionalElements(el, "eizv:PrethodniRacun", FISK_NS, PrethodniRacun.fromXmlElement),
             Izdavatelj: extractElement(el, "eizv:Izdavatelj", FISK_NS, Izdavatelj.fromXmlElement),
             Primatelj: extractElement(el, "eizv:Primatelj", FISK_NS, Primatelj.fromXmlElement),
@@ -641,9 +641,9 @@ export class Racun implements RacunSerializable {
             vrstaDokumenta: getElementContent(el, getBusinessTermXpath("BT-3", type), UBL_NS, { regexKey: "vrstaDokumenta" }),
             valutaRacuna: getElementContent(el, getBusinessTermXpath("BT-5", type), UBL_NS, { regexKey: "valuta" }),
             datumDospijecaPlacanja: getOptionalElementContent(el, getBusinessTermXpath("BT-9", type), UBL_NS, { regexKey: "datum" }),
-            datumIsporuke: getOptionalElementContent(el, getBusinessTermXpath("BT-72", type), UBL_NS, { regexKey: "datum" }),
             vrstaPoslovnogProcesa: getElementContent(el, getBusinessTermXpath("BT-23", type), UBL_NS, { regexKey: "tekst100" }),
             referencaNaUgovor: getOptionalElementContent(el, getBusinessTermXpath("BT-12", type), UBL_NS, { regexKey: "tekst100" }),
+            datumIsporuke: getOptionalElementContent(el, getBusinessTermXpath("BT-72", type), UBL_NS, { regexKey: "datum" }),
             PrethodniRacun: PrethodniRacun.fromUblElement(el, type),
             Izdavatelj: Izdavatelj.fromUblElement(el, type),
             Primatelj: Primatelj.fromUblElement(el, type),

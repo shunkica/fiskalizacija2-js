@@ -177,12 +177,6 @@ export interface IERacun {
      */
     datumDospijecaPlacanja?: string;
     /**
-     * Datum na koji se obavlja ili dovršava isporuke robe ili usluga
-     * @bt BT-72
-     * @regex datum
-     */
-    datumIsporuke?: string;
-    /**
      * Identifikator poslovnog procesa u kojem se obavlja transakcija, kako bi se kupcu omogućila obrada na odgovarajući način. Moguće vrste su navedene u Dodatku: Vrsta poslovnog procesa.
      * @bt BT-23
      * @regex tekst100
@@ -194,6 +188,12 @@ export interface IERacun {
      * @regex tekst100
      */
     referencaNaUgovor?: string;
+    /**
+     * Datum na koji se obavlja ili dovršava isporuke robe ili usluga
+     * @bt BT-72
+     * @regex datum
+     */
+    datumIsporuke?: string;
     /**
      * Informacije o jednom ili više prethodnih eRačuna.
      */

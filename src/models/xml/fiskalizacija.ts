@@ -130,9 +130,9 @@ export class ERacun implements ERacunSerializable {
     vrstaDokumenta: string;
     valutaERacuna: string;
     datumDospijecaPlacanja?: string | undefined;
-    datumIsporuke?: string | undefined;
     vrstaPoslovnogProcesa: string;
     referencaNaUgovor?: string | undefined;
+    datumIsporuke?: string | undefined;
     PrethodniERacun?: PrethodniERacun[] | undefined;
     Izdavatelj: Izdavatelj;
     Primatelj: Primatelj;
@@ -150,9 +150,9 @@ export class ERacun implements ERacunSerializable {
         this.vrstaDokumenta = args.vrstaDokumenta;
         this.valutaERacuna = args.valutaERacuna;
         this.datumDospijecaPlacanja = args.datumDospijecaPlacanja;
-        this.datumIsporuke = args.datumIsporuke;
         this.vrstaPoslovnogProcesa = args.vrstaPoslovnogProcesa;
         this.referencaNaUgovor = args.referencaNaUgovor;
+        this.datumIsporuke = args.datumIsporuke;
         this.PrethodniERacun = args.PrethodniERacun?.map(i => new PrethodniERacun(i));
         this.Izdavatelj = new Izdavatelj(args.Izdavatelj, "efis");
         this.Primatelj = new Primatelj(args.Primatelj, "efis");
@@ -175,12 +175,12 @@ export class ERacun implements ERacunSerializable {
         if (this.datumDospijecaPlacanja) {
             res += "<efis:datumDospijecaPlacanja>" + xmlEscape(this.datumDospijecaPlacanja) + "</efis:datumDospijecaPlacanja>";
         }
-        if (this.datumIsporuke) {
-            res += "<efis:datumIsporuke>" + xmlEscape(this.datumIsporuke) + "</efis:datumIsporuke>";
-        }
         res += "<efis:vrstaPoslovnogProcesa>" + xmlEscape(this.vrstaPoslovnogProcesa) + "</efis:vrstaPoslovnogProcesa>";
         if (this.referencaNaUgovor) {
             res += "<efis:referencaNaUgovor>" + xmlEscape(this.referencaNaUgovor) + "</efis:referencaNaUgovor>";
+        }
+        if (this.datumIsporuke) {
+            res += "<efis:datumIsporuke>" + xmlEscape(this.datumIsporuke) + "</efis:datumIsporuke>";
         }
         if (this.PrethodniERacun) {
             this.PrethodniERacun.forEach(i => (res += i.toXmlString()));
@@ -211,9 +211,9 @@ export class ERacun implements ERacunSerializable {
             vrstaDokumenta: getElementContent(el, "efis:vrstaDokumenta", FISK_NS, { regexKey: "vrstaDokumenta" }),
             valutaERacuna: getElementContent(el, "efis:valutaERacuna", FISK_NS, { regexKey: "valuta" }),
             datumDospijecaPlacanja: getOptionalElementContent(el, "efis:datumDospijecaPlacanja", FISK_NS, { regexKey: "datum" }),
-            datumIsporuke: getOptionalElementContent(el, "efis:datumIsporuke", FISK_NS, { regexKey: "datum" }),
             vrstaPoslovnogProcesa: getElementContent(el, "efis:vrstaPoslovnogProcesa", FISK_NS, { regexKey: "tekst100" }),
             referencaNaUgovor: getOptionalElementContent(el, "efis:referencaNaUgovor", FISK_NS, { regexKey: "tekst100" }),
+            datumIsporuke: getOptionalElementContent(el, "efis:datumIsporuke", FISK_NS, { regexKey: "datum" }),
             PrethodniERacun: extractOptionalElements(el, "efis:PrethodniERacun", FISK_NS, PrethodniERacun.fromXmlElement),
             Izdavatelj: extractElement(el, "efis:Izdavatelj", FISK_NS, Izdavatelj.fromXmlElement),
             Primatelj: extractElement(el, "efis:Primatelj", FISK_NS, Primatelj.fromXmlElement),
@@ -234,9 +234,9 @@ export class ERacun implements ERacunSerializable {
             vrstaDokumenta: getElementContent(el, getBusinessTermXpath("BT-3", type), UBL_NS, { regexKey: "vrstaDokumenta" }),
             valutaERacuna: getElementContent(el, getBusinessTermXpath("BT-5", type), UBL_NS, { regexKey: "valuta" }),
             datumDospijecaPlacanja: getOptionalElementContent(el, getBusinessTermXpath("BT-9", type), UBL_NS, { regexKey: "datum" }),
-            datumIsporuke: getOptionalElementContent(el, getBusinessTermXpath("BT-72", type), UBL_NS, { regexKey: "datum" }),
             vrstaPoslovnogProcesa: getElementContent(el, getBusinessTermXpath("BT-23", type), UBL_NS, { regexKey: "tekst100" }),
             referencaNaUgovor: getOptionalElementContent(el, getBusinessTermXpath("BT-12", type), UBL_NS, { regexKey: "tekst100" }),
+            datumIsporuke: getOptionalElementContent(el, getBusinessTermXpath("BT-72", type), UBL_NS, { regexKey: "datum" }),
             PrethodniERacun: PrethodniERacun.fromUblElement(el, type),
             Izdavatelj: Izdavatelj.fromUblElement(el, type),
             Primatelj: Primatelj.fromUblElement(el, type),
