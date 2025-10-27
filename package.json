@@ -39,7 +39,7 @@
     },
     "dependencies": {
         "libxml2-wasm": "^0.6.0",
-        "xml-crypto": "git+https://github.com/shunkica/xml-crypto.git#9cdc22d"
+        "xml-crypto": "git+https://github.com/node-saml/xml-crypto.git#73db72d"
     },
     "devDependencies": {
         "@microsoft/api-extractor": "^7.53.1",
