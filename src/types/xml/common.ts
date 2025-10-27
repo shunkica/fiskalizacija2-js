@@ -172,7 +172,7 @@ export type IzdavateljSerializable = XmlSerializable<IIzdavatelj>;
  */
 export interface IPrijenosSredstava {
     /**
-     * Jedinstveni identifikator financijskog platnog računa, kod pružatelja platnih usluga, na koji se plaćanje treba izvršiti, IBAN obavezno ako je kod tipa nacinPlacanja jednak 30 ili 58.
+     * Jedinstveni identifikator financijskog platnog računa, kod pružatelja platnih usluga, na koji se plaćanje treba izvršiti.
      * @bt BT-84
      * @regex tekst34
      */

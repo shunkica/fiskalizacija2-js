@@ -20,9 +20,19 @@ export class XmlTestValidator {
         expect(er.PrethodniERacun[1].brojDokumenta).toBe("PREV-002");
         expect(er.PrethodniERacun[1].datumIzdavanja).toBe("2024-02-01");
         expect(er.Izdavatelj.ime).toBe("FINANCIJSKA AGENCIJA");
-        expect(er.Izdavatelj.oibPorezniBroj).toBe("HR12345678901");
+        // TODO: Iako je u specifikaciji navedeno da u ovo polje može ići OIB ili porezni broj,
+        //       ako se šalje porezni broj, na demo serveru se poruka odbija sa greškom:
+        //       S006: PT nije ovlaštena za dostavu podataka na fiskalizaciju.Inicijalna provjera za valjanost oib-a kod evidentiranja izlaznog eRačuna (Record: 1)
+        //       stoga za sada mičemo "HR" dio iz polja BT-31
+        //expect(er.Izdavatelj.oibPorezniBroj).toBe("HR12345678901");
+        expect(er.Izdavatelj.oibPorezniBroj).toBe("12345678901");
         expect(er.Primatelj.ime).toBe("Tvrtka B d.o.o.");
-        expect(er.Primatelj.oibPorezniBroj).toBe("HR11111111119");
+        // TODO: Iako je u specifikaciji navedeno da u ovo polje može ići OIB ili porezni broj,
+        //       ako se šalje porezni broj, na demo serveru se poruka odbija sa greškom:
+        //       S006: PT nije ovlaštena za dostavu podataka na fiskalizaciju.Inicijalna provjera za valjanost oib-a kod evidentiranja ulaznog eRačuna (Record: 1)
+        //       stoga za sada mičemo "HR" dio iz polja BT-48
+        //expect(er.Primatelj.oibPorezniBroj).toBe("HR11111111119");
+        expect(er.Primatelj.oibPorezniBroj).toBe("11111111119");
         expect(er.PrijenosSredstava).toBeDefined();
         assert(Array.isArray(er.PrijenosSredstava));
         expect(er.PrijenosSredstava.length).toBe(2);
@@ -93,9 +103,19 @@ export class XmlTestValidator {
         expect(er.indikatorKopije).toBe(false);
         expect(er.PrethodniERacun).toBeUndefined();
         expect(er.Izdavatelj.ime).toBe("Minimal Supplier");
-        expect(er.Izdavatelj.oibPorezniBroj).toBe("HR11111111111");
+        // TODO: Iako je u specifikaciji navedeno da u ovo polje može ići OIB ili porezni broj,
+        //       ako se šalje porezni broj, na demo serveru se poruka odbija sa greškom:
+        //       S006: PT nije ovlaštena za dostavu podataka na fiskalizaciju.Inicijalna provjera za valjanost oib-a kod evidentiranja izlaznog eRačuna (Record: 1)
+        //       stoga za sada mičemo "HR" dio iz polja BT-31
+        //expect(er.Izdavatelj.oibPorezniBroj).toBe("HR11111111111");
+        expect(er.Izdavatelj.oibPorezniBroj).toBe("11111111111");
         expect(er.Primatelj.ime).toBe("Minimal Customer");
-        expect(er.Primatelj.oibPorezniBroj).toBe("HR22222222222");
+        // TODO: Iako je u specifikaciji navedeno da u ovo polje može ići OIB ili porezni broj,
+        //       ako se šalje porezni broj, na demo serveru se poruka odbija sa greškom:
+        //       S006: PT nije ovlaštena za dostavu podataka na fiskalizaciju.Inicijalna provjera za valjanost oib-a kod evidentiranja ulaznog eRačuna (Record: 1)
+        //       stoga za sada mičemo "HR" dio iz polja BT-48
+        //expect(er.Primatelj.oibPorezniBroj).toBe("HR22222222222");
+        expect(er.Primatelj.oibPorezniBroj).toBe("22222222222");
         expect(er.PrijenosSredstava).toBeUndefined();
         expect(er.DokumentUkupanIznos.neto).toBe(50.0);
         expect(er.DokumentUkupanIznos.popust).toBeUndefined();

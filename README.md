@@ -121,7 +121,7 @@ const naplata: INaplata = {
     // Iznos koji je naplaćen
     naplaceniIznos: 100.00,
     /**
-     * Šifra načina plaćanja po UNCL4461
+     * Šifra načina plaćanja
      * T - transakcijski račun
      * O - obračunsko plaćanje
      * Z - ostalo

@@ -125,7 +125,7 @@ export class Primatelj implements PrimateljSerializable {
             ime: getElementContent(groupEl, getBusinessTermXpath("BT-44", type, "BG-7"), UBL_NS, { regexKey: "tekst500" }),
             // TODO: Iako je u specifikaciji navedeno da u ovo polje može ići OIB ili porezni broj,
             //       ako se šalje porezni broj, na demo serveru se poruka odbija sa greškom:
-            //       S006: PT nije ovlaštena za dostavu podataka na fiskalizaciju.Inicijalna provjera za valjanost oib-a kod evidentiranja izlaznog eRačuna (Record: 1)
+            //       S006: PT nije ovlaštena za dostavu podataka na fiskalizaciju.Inicijalna provjera za valjanost oib-a kod evidentiranja ulaznog eRačuna (Record: 1)
             //       stoga za sada mičemo "HR" dio iz polja BT-48
             oibPorezniBroj: getElementContent(groupEl, getBusinessTermXpath("BT-48", type, "BG-7"), UBL_NS, { regexKey: "tekst20" }).replace(
                 /^HR/,

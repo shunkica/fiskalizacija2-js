@@ -9,7 +9,7 @@ export const REGEX = {
     izuzecePdv: /^[A-Za-z0-9-]{1,20}$/,
     valuta: /^[A-Za-z]{3}$/,
     vrstaDokumenta: /^[0-9]{2,3}$/,
-    nacinPlacanja: /^[A-Za-z0-9]{1,3}$/,
+    nacinPlacanja: /^[TOZ]$/,
     kategorijaPdv: /^[A-Za-z]{1,2}$/,
     klasifikacijaArtikla: /^[A-Za-z]{2,3}$/,
     tekst3: /^.{1,3}$/,

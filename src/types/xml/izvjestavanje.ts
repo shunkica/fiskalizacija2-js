@@ -86,7 +86,7 @@ export interface INaplata {
     naplaceniIznos: number;
 
     /**
-     * Šifra načina plaćanja po UNCL4461
+     * Šifra načina plaćanja (T – Transakcijski račun, O – Obračunsko plaćanje, Z – Ostalo).
      * @regex nacinPlacanja
      */
     nacinPlacanja: string;
