@@ -114,7 +114,7 @@ export interface IStavkaERacuna {
      * Stopa PDV-a prikazana u obliku postotka koji vrijedi za fakturirani artikl.
      * @bt BT-152
      */
-    artiklStopaPdv: number;
+    artiklStopaPdv?: number;
 
     /**
      * Naziv artikla.

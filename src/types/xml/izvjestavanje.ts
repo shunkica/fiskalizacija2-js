@@ -231,7 +231,7 @@ export interface IStavkaRacuna {
      * Stopa PDV-a prikazana u obliku postotka koji vrijedi za fakturirani artikl (BT-152 iz UBL 2.1)
      * @bt BT-152
      */
-    artiklStopaPdv: number;
+    artiklStopaPdv?: number;
 
     /**
      * Naziv artikla (BT-153 iz UBL 2.1)

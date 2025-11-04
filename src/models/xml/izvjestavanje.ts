@@ -409,7 +409,7 @@ export class StavkaRacuna implements StavkaRacunaSerializable {
     artiklOsnovnaKolicina?: number | undefined;
     artiklJedinicaMjereZaOsnovnuKolicinu?: string | undefined;
     artiklKategorijaPdv: string;
-    artiklStopaPdv: number;
+    artiklStopaPdv?: number | undefined;
     artiklNaziv: string;
     artiklOpis?: string | undefined;
     artiklHrOznakaKategorijaPdv?: string | undefined;
@@ -448,7 +448,9 @@ export class StavkaRacuna implements StavkaRacunaSerializable {
             res += `<eizv:artiklJedinicaMjereZaOsnovnuKolicinu>${xmlEscape(this.artiklJedinicaMjereZaOsnovnuKolicinu)}</eizv:artiklJedinicaMjereZaOsnovnuKolicinu>`;
         }
         res += `<eizv:artiklKategorijaPdv>${xmlEscape(this.artiklKategorijaPdv)}</eizv:artiklKategorijaPdv>`;
-        res += `<eizv:artiklStopaPdv>${this.artiklStopaPdv.toFixed(2)}</eizv:artiklStopaPdv>`;
+        if (this.artiklStopaPdv !== undefined) {
+            res += `<eizv:artiklStopaPdv>${this.artiklStopaPdv.toFixed(2)}</eizv:artiklStopaPdv>`;
+        }
         res += `<eizv:artiklNaziv>${xmlEscape(this.artiklNaziv)}</eizv:artiklNaziv>`;
         if (this.artiklOpis !== undefined) {
             res += `<eizv:artiklOpis>${xmlEscape(this.artiklOpis)}</eizv:artiklOpis>`;
@@ -475,7 +477,7 @@ export class StavkaRacuna implements StavkaRacunaSerializable {
                 regexKey: "jedinicaMjere"
             }),
             artiklKategorijaPdv: getElementContent(el, "eizv:artiklKategorijaPdv", FISK_NS, { regexKey: "kategorijaPdv" }),
-            artiklStopaPdv: getElementContentNumber(el, "eizv:artiklStopaPdv", FISK_NS, { regexKey: "decimal" }),
+            artiklStopaPdv: getOptionalElementContentNumber(el, "eizv:artiklStopaPdv", FISK_NS, { regexKey: "decimal" }),
             artiklNaziv: getElementContent(el, "eizv:artiklNaziv", FISK_NS, { regexKey: "tekst100" }),
             artiklOpis: getOptionalElementContent(el, "eizv:artiklOpis", FISK_NS, { regexKey: "tekst1024" }),
             artiklHrOznakaKategorijaPdv: getOptionalElementContent(el, "eizv:artiklHrOznakaKategorijaPdv", FISK_NS, { regexKey: "hrKategorijaPdv" }),
@@ -509,7 +511,9 @@ export class StavkaRacuna implements StavkaRacunaSerializable {
                     regexKey: "jedinicaMjere"
                 }),
                 artiklKategorijaPdv: getElementContent(groupEl, getBusinessTermXpath("BT-151", type, "BG-25"), UBL_NS, { regexKey: "kategorijaPdv" }),
-                artiklStopaPdv: getElementContentNumber(groupEl, getBusinessTermXpath("BT-152", type, "BG-25"), UBL_NS, { regexKey: "decimal" }),
+                artiklStopaPdv: getOptionalElementContentNumber(groupEl, getBusinessTermXpath("BT-152", type, "BG-25"), UBL_NS, {
+                    regexKey: "decimal"
+                }),
                 artiklNaziv: getElementContent(groupEl, getBusinessTermXpath("BT-153", type, "BG-25"), UBL_NS, { regexKey: "tekst100" }),
                 artiklOpis: getOptionalElementContent(groupEl, getBusinessTermXpath("BT-154", type, "BG-25"), UBL_NS, { regexKey: "tekst1024" }),
                 artiklHrOznakaKategorijaPdv: getOptionalElementContent(groupEl, getBusinessTermXpath("HR-BT-12", type, "BG-25"), UBL_NS, {
