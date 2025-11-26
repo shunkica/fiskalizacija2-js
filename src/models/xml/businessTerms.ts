@@ -1629,7 +1629,7 @@ export const BUSINESS_TERMS: Record<string, IBusinessTermXpath> = {
                 "ext:ExtensionContent",
                 "hrextac:HRFISK20Data",
                 "hrextac:HRLegalMonetaryTotal",
-                "hrextac:HRTaxExclusiveAmount"
+                "cbc:TaxExclusiveAmount"
             ],
             CreditNote: [
                 "ext:Extensions",
@@ -1637,7 +1637,7 @@ export const BUSINESS_TERMS: Record<string, IBusinessTermXpath> = {
                 "ext:ExtensionContent",
                 "hrextac:HRFISK20Data",
                 "hrextac:HRLegalMonetaryTotal",
-                "hrextac:HRTaxExclusiveAmount"
+                "cbc:TaxExclusiveAmount"
             ]
         }
     },
