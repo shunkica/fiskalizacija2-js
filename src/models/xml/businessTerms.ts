@@ -1651,7 +1651,7 @@ export const BUSINESS_TERMS: Record<string, IBusinessTermXpath> = {
                 "ext:ExtensionContent",
                 "hrextac:HRFISK20Data",
                 "hrextac:HRLegalMonetaryTotal",
-                "cbc:OutOfScopeOfVATAmount"
+                "hrextac:OutOfScopeOfVATAmount"
             ],
             CreditNote: [
                 "ext:Extensions",
@@ -1659,7 +1659,7 @@ export const BUSINESS_TERMS: Record<string, IBusinessTermXpath> = {
                 "ext:ExtensionContent",
                 "hrextac:HRFISK20Data",
                 "hrextac:HRLegalMonetaryTotal",
-                "cbc:OutOfScopeOfVATAmount"
+                "hrextac:OutOfScopeOfVATAmount"
             ]
         }
     },
