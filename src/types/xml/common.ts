@@ -152,14 +152,14 @@ export interface IIzdavatelj {
     /**
      * OIB izdavatelja, dio identifikatora eRačuna.
      * @bt BT-31
-     * @regex tekst20
+     * @regex tekst200
      */
     oibPorezniBroj: string;
 
     /**
      * OIB operatera sukladno Zakonu o fiskalizaciji.
      * @bt HR-BT-5
-     * @regex tekst20
+     * @regex tekst200
      */
     oibOperatera: string;
 }
@@ -210,7 +210,7 @@ export interface IPrimatelj {
     /**
      * Za porezne obveznike u RH je polje obavezno i izričito OIB
      * @bt BT-48
-     * @regex tekst20
+     * @regex tekst200
      */
     oibPorezniBroj: string;
 }

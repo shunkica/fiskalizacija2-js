@@ -63,8 +63,8 @@ export class Izdavatelj implements IzdavateljSerializable {
         const prefix = getFiskNsPrefix(el.namespaceUri);
         return {
             ime: getElementContent(el, `${prefix}:ime`, FISK_NS, { regexKey: "tekst500" }),
-            oibPorezniBroj: getElementContent(el, `${prefix}:oibPorezniBroj`, FISK_NS, { regexKey: "tekst20" }),
-            oibOperatera: getElementContent(el, `${prefix}:oibOperatera`, FISK_NS, { regexKey: "tekst20" })
+            oibPorezniBroj: getElementContent(el, `${prefix}:oibPorezniBroj`, FISK_NS, { regexKey: "tekst200" }),
+            oibOperatera: getElementContent(el, `${prefix}:oibOperatera`, FISK_NS, { regexKey: "tekst200" })
         };
     }
 
@@ -79,11 +79,11 @@ export class Izdavatelj implements IzdavateljSerializable {
             //       ako se šalje porezni broj, na demo serveru se poruka odbija sa greškom:
             //       S006: PT nije ovlaštena za dostavu podataka na fiskalizaciju.Inicijalna provjera za valjanost oib-a kod evidentiranja izlaznog eRačuna (Record: 1)
             //       stoga za sada mičemo "HR" dio iz polja BT-31
-            oibPorezniBroj: getElementContent(groupEl, getBusinessTermXpath("BT-31", type, "BG-4"), UBL_NS, { regexKey: "tekst20" }).replace(
+            oibPorezniBroj: getElementContent(groupEl, getBusinessTermXpath("BT-31", type, "BG-4"), UBL_NS, { regexKey: "tekst200" }).replace(
                 /^HR/,
                 ""
             ),
-            oibOperatera: getElementContent(groupEl, getBusinessTermXpath("HR-BT-5", type, "BG-4"), UBL_NS, { regexKey: "tekst20" })
+            oibOperatera: getElementContent(groupEl, getBusinessTermXpath("HR-BT-5", type, "BG-4"), UBL_NS, { regexKey: "tekst200" })
         };
     }
 }
@@ -112,7 +112,7 @@ export class Primatelj implements PrimateljSerializable {
         const prefix = getFiskNsPrefix(el.namespaceUri);
         return {
             ime: getElementContent(el, `${prefix}:ime`, FISK_NS, { regexKey: "tekst500" }),
-            oibPorezniBroj: getElementContent(el, `${prefix}:oibPorezniBroj`, FISK_NS, { regexKey: "tekst20" })
+            oibPorezniBroj: getElementContent(el, `${prefix}:oibPorezniBroj`, FISK_NS, { regexKey: "tekst200" })
         };
     }
 
@@ -127,7 +127,7 @@ export class Primatelj implements PrimateljSerializable {
             //       ako se šalje porezni broj, na demo serveru se poruka odbija sa greškom:
             //       S006: PT nije ovlaštena za dostavu podataka na fiskalizaciju.Inicijalna provjera za valjanost oib-a kod evidentiranja ulaznog eRačuna (Record: 1)
             //       stoga za sada mičemo "HR" dio iz polja BT-48
-            oibPorezniBroj: getElementContent(groupEl, getBusinessTermXpath("BT-48", type, "BG-7"), UBL_NS, { regexKey: "tekst20" }).replace(
+            oibPorezniBroj: getElementContent(groupEl, getBusinessTermXpath("BT-48", type, "BG-7"), UBL_NS, { regexKey: "tekst200" }).replace(
                 /^HR/,
                 ""
             )

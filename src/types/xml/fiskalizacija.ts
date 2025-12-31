@@ -86,7 +86,7 @@ export interface IStavkaERacuna {
     /**
      * Jedinična cijena bez PDV-a prije oduzimanja popusta na cijenu artikla.
      * @bt BT-148
-     * @regex decimal2
+     * @regex decimal
      */
     artiklBrutoCijena?: number;
 

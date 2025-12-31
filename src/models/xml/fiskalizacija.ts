@@ -361,7 +361,7 @@ export class StavkaERacuna implements StavkaERacunaSerializable {
             jedinicaMjere: getElementContent(el, "efis:jedinicaMjere", FISK_NS, { regexKey: "jedinicaMjere" }),
             neto: getElementContentNumber(el, "efis:neto", FISK_NS, { regexKey: "decimal2" }),
             artiklNetoCijena: getElementContentNumber(el, "efis:artiklNetoCijena", FISK_NS, { regexKey: "decimal" }),
-            artiklBrutoCijena: getOptionalElementContentNumber(el, "efis:artiklBrutoCijena", FISK_NS, { regexKey: "decimal2" }),
+            artiklBrutoCijena: getOptionalElementContentNumber(el, "efis:artiklBrutoCijena", FISK_NS, { regexKey: "decimal" }),
             artiklOsnovnaKolicina: getOptionalElementContentNumber(el, "efis:artiklOsnovnaKolicina", FISK_NS, { regexKey: "decimal" }),
             artiklJedinicaMjereZaOsnovnuKolicinu: getOptionalElementContent(el, "efis:artiklJedinicaMjereZaOsnovnuKolicinu", FISK_NS, {
                 regexKey: "jedinicaMjere"
@@ -392,7 +392,7 @@ export class StavkaERacuna implements StavkaERacunaSerializable {
                 neto: getElementContentNumber(groupEl, getBusinessTermXpath("BT-131", type, "BG-25"), UBL_NS, { regexKey: "decimal2" }),
                 artiklNetoCijena: getElementContentNumber(groupEl, getBusinessTermXpath("BT-146", type, "BG-25"), UBL_NS, { regexKey: "decimal" }),
                 artiklBrutoCijena: getOptionalElementContentNumber(groupEl, getBusinessTermXpath("BT-148", type, "BG-25"), UBL_NS, {
-                    regexKey: "decimal2"
+                    regexKey: "decimal"
                 }),
                 artiklOsnovnaKolicina: getOptionalElementContentNumber(groupEl, getBusinessTermXpath("BT-149", type, "BG-25"), UBL_NS, {
                     regexKey: "decimal"

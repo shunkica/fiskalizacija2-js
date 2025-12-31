@@ -203,7 +203,7 @@ export interface IStavkaRacuna {
     /**
      * Jedinična cijena bez PDV-a prije oduzimanja popusta na cijenu artikla (BT-148 iz UBL 2.1)
      * @bt BT-148
-     * @regex decimal2
+     * @regex decimal
      */
     artiklBrutoCijena?: number;
 
