@@ -9,11 +9,4 @@ export default defineConfig({
     clean: true,
     sourcemap: true,
     minify: true,
-    onSuccess: async () => {
-        const file = path.resolve(__dirname, "dist/_tsup-dts-rollup.d.ts");
-        if (fs.existsSync(file)) {
-            fs.unlinkSync(file);
-            console.log("Removed _tsup-dts-rollup.d.ts");
-        }
-    }
 });
