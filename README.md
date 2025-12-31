@@ -61,8 +61,10 @@ Moguće generiranje zahtjeva koristeći pomoćne metode:
 
 Objekti koji zadovoljavaju sučelja `IERacun` odnosno `IRacun` mogu se generirati iz UBL dokumenata `Invoice` ili `CreditNote`:
 
-- `getERacunFromUbl(xml: string | Buffer): IERacun`
-- `getRacunFromUbl(xml: string | Buffer): IRacun`
+- `getERacunFromUbl(doc: string | Buffer | XmlDocument | XmlElement): IERacun`
+- `getRacunFromUbl(doc: string | Buffer | XmlDocument | XmlElement): IRacun`
+
+Funkcije prihvaćaju XML kao string, Buffer, ili već parsirane `XmlDocument`/`XmlElement` objekte iz `libxml2-wasm` biblioteke. Automatski prepoznaju i obrađuju StandardBusinessDocument (SBD) omot oko UBL dokumenta.
 
 ## Primjeri
 
