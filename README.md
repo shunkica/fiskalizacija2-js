@@ -17,6 +17,8 @@ Library pruža klasu `FiskalizacijaClient` koja prima objekt konfiguracije:
     service: string, // URL servisa za fiskalizaciju
     privateKey: string | Buffer, // Privatni ključ za potpis poruke u PEM formatu
     publicCert: string | Buffer, // Javni certifikat u PEM formatu
+    ca?: string | Buffer, // Opcionalni PEM CA bundle za validaciju SSL/TLS veze (default: FINA ROOT CA, RDC 2020, RDC 2025)
+    timeout?: number, // Opcionalni timeout u milisekundama (default: 30000)
 }
 ```
 
@@ -72,7 +74,7 @@ Funkcije prihvaćaju XML kao string, Buffer, ili već parsirane `XmlDocument`/`X
 
 ```typescript
 const client = new FiskalizacijaClient({
-    service: FiskalizacijaService.test, // ili FiskalizacijaService.prod
+    service: FiskalizacijaServiceURL.test, // ili FiskalizacijaServiceURL.prod
     privateKey: fs.readFileSync('path/to/privateKey.pem'),
     publicCert: fs.readFileSync('path/to/publicCert.pem'),
 })

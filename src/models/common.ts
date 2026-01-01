@@ -19,7 +19,7 @@ import type {
     PrijenosSredstavaSerializable,
     PrimateljSerializable,
     RaspodjelaPdvSerializable
-} from "../../types";
+} from "../types";
 import {
     extractOptionalElement,
     getAttributeValue,
@@ -31,10 +31,10 @@ import {
     getOptionalElementContent,
     getOptionalElementContentNumber,
     xmlEscape
-} from "../../util/xml";
+} from "../util/xml";
 import type { XmlElement } from "libxml2-wasm";
-import { FISK_NS, getFiskNsPrefix, UBL_NS } from "./const";
-import { ValidationError } from "../../util/error";
+import { FISK_NS, getFiskNsPrefix, UBL_NS } from "../constants/const";
+import { ValidationError } from "../util/error";
 
 export class Izdavatelj implements IzdavateljSerializable {
     private readonly _prefix: "efis" | "eizv";

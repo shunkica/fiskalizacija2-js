@@ -1,5 +1,5 @@
 import { XmlSigner } from "./util/signing";
-import { EvidentirajERacunOdgovor, EvidentirajERacunZahtjev } from "./models/xml/fiskalizacija";
+import { EvidentirajERacunOdgovor, EvidentirajERacunZahtjev } from "./models/fiskalizacija";
 import type {
     FiskalizacijaOptions,
     FiskalizacijaResult,
@@ -11,7 +11,7 @@ import type {
 } from "./types";
 import type { XmlElement } from "libxml2-wasm";
 import { XmlDocument } from "libxml2-wasm";
-import { FISK_NS } from "./models/xml/const";
+import { FISK_NS } from "./constants/const";
 import { usingXmlDocument } from "./util/xml";
 import { postRequest } from "./util/http";
 import { parseError, ValidationError } from "./util/error";
@@ -22,7 +22,8 @@ import {
     EvidentirajNaplatuZahtjev,
     EvidentirajOdbijanjeOdgovor,
     EvidentirajOdbijanjeZahtjev
-} from "./models/xml/izvjestavanje";
+} from "./models/izvjestavanje";
+import { FINA_CA_BUNDLE } from "./constants/ca";
 
 interface SerializableRequest {
     toXmlString(): string;
@@ -54,6 +55,7 @@ export class FiskalizacijaClient {
     constructor(options: FiskalizacijaOptions) {
         this.options = {
             timeout: 30000,
+            ca: FINA_CA_BUNDLE,
             headers: {
                 "Content-Type": "application/xml; charset=utf-8",
                 "SOAPAction": ""

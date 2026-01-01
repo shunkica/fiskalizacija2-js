@@ -3,8 +3,7 @@ import { URL } from "node:url";
 import type { FiskalizacijaOptions } from "../types";
 
 const defaultOptions: Partial<FiskalizacijaOptions> = {
-    timeout: 30000,
-    allowSelfSigned: false
+    timeout: 30000
 };
 
 export async function postRequest(data: string, userOptions: FiskalizacijaOptions): Promise<{ statusCode: number; data: string }> {
@@ -12,7 +11,7 @@ export async function postRequest(data: string, userOptions: FiskalizacijaOption
     const url = new URL(options.service);
 
     const agentOptions: https.AgentOptions = {
-        rejectUnauthorized: !options.allowSelfSigned
+        rejectUnauthorized: true
     };
 
     if (options.ca) {

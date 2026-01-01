@@ -1,15 +1,8 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import * as fs from "node:fs";
-import { FiskalizacijaClient } from "../../src";
-import {
-    EvidentirajERacunZahtjev,
-    FiskalizacijaService,
-    EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev,
-    EvidentirajNaplatuZahtjev,
-    EvidentirajOdbijanjeZahtjev
-} from "../../src/models";
-import { XmlTestProvider } from "../fixtures/XmlTestProvider";
 import { randomUUID } from "node:crypto";
+import { FiskalizacijaClient, FiskalizacijaServiceURL } from "../../src";
+import { XmlTestProvider } from "../fixtures/XmlTestProvider";
 
 describe("FiscalizationClient Test Environment", () => {
     if (!process.env.PRIVATE_KEY_FILE || !fs.existsSync(process.env.PRIVATE_KEY_FILE)) {
@@ -29,8 +22,7 @@ describe("FiscalizationClient Test Environment", () => {
 
     beforeEach(() => {
         client = new FiskalizacijaClient({
-            service: FiskalizacijaService.test,
-            allowSelfSigned: true,
+            service: FiskalizacijaServiceURL.test,
             privateKey: privateKey,
             publicCert: publicCert,
             timeout: 5000
@@ -40,10 +32,9 @@ describe("FiscalizationClient Test Environment", () => {
     describe("EvidentirajERacunZahtjev", () => {
         const id = randomUUID();
         const data = XmlTestProvider.mockEvidentirajERacunZahtjev(id, oib);
-        const zahtjev = new EvidentirajERacunZahtjev(data);
 
         it("should submit the request and get a success response", async () => {
-            const response = await client.evidentirajERacun(zahtjev);
+            const response = await client.evidentirajERacun(data);
             expect(response).toBeDefined();
             expect(response.soapResRaw).toBeDefined();
             expect(response.soapResSignatureValid).toBe(true);
@@ -56,10 +47,9 @@ describe("FiscalizationClient Test Environment", () => {
     describe("EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev", () => {
         const id = randomUUID();
         const data = XmlTestProvider.mockEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev(id, oib);
-        const zahtjev = new EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev(data);
 
         it("should submit the request and get a success response", async () => {
-            const response = await client.evidentirajIsporukuZaKojuNijeIzdanERacun(zahtjev);
+            const response = await client.evidentirajIsporukuZaKojuNijeIzdanERacun(data);
             expect(response).toBeDefined();
             expect(response.soapResRaw).toBeDefined();
             expect(response.soapResSignatureValid).toBe(true);
@@ -72,18 +62,16 @@ describe("FiscalizationClient Test Environment", () => {
     describe("EvidentirajNaplatuZahtjev", () => {
         const id = randomUUID();
         const data = XmlTestProvider.mockEvidentirajNaplatuZahtjev(id, oib);
-        const zahtjev = new EvidentirajNaplatuZahtjev(data);
 
         it("should submit the request and get a success response", async () => {
             // Prvo moramo fiskalizirati račun, jer se evidentiranje naplate oslanja na prethodnu fiskalizaciju
-            const evidentirajERacunZahtjev = new EvidentirajERacunZahtjev(XmlTestProvider.mockEvidentirajERacunZahtjev(id, oib));
-            const fiskalizacijaResponse = await client.evidentirajERacun(evidentirajERacunZahtjev);
+            const fiskalizacijaResponse = await client.evidentirajERacun(XmlTestProvider.mockEvidentirajERacunZahtjev(id, oib));
             expect(fiskalizacijaResponse.success).toBe(true);
 
             // Ponekad je potrebno malo pričekati prije nego što se može evidentirati naplata
             await new Promise(resolve => setTimeout(resolve, 1000));
 
-            const response = await client.evidentirajNaplatu(zahtjev);
+            const response = await client.evidentirajNaplatu(data);
             expect(response).toBeDefined();
             expect(response.soapResRaw).toBeDefined();
             expect(response.soapResSignatureValid).toBe(true);
@@ -96,18 +84,16 @@ describe("FiscalizationClient Test Environment", () => {
     describe("EvidentirajOdbijanjeZahtjev", () => {
         const id = randomUUID();
         const data = XmlTestProvider.mockEvidentirajOdbijanjeZahtjev(id, oib);
-        const zahtjev = new EvidentirajOdbijanjeZahtjev(data);
 
         it("should submit the request and get a success response", async () => {
             // Prvo moramo fiskalizirati račun, jer se evidentiranje odbijanja oslanja na prethodnu fiskalizaciju
-            const evidentirajERacunZahtjev = new EvidentirajERacunZahtjev(XmlTestProvider.mockEvidentirajERacunZahtjev(id, oib, "U"));
-            const fiskalizacijaResponse = await client.evidentirajERacun(evidentirajERacunZahtjev);
+            const fiskalizacijaResponse = await client.evidentirajERacun(XmlTestProvider.mockEvidentirajERacunZahtjev(id, oib, "U"));
             expect(fiskalizacijaResponse.success).toBe(true);
 
             // Ponekad je potrebno malo pričekati prije nego što se može evidentirati odbijanje
             await new Promise(resolve => setTimeout(resolve, 1000));
 
-            const response = await client.evidentirajOdbijanje(zahtjev);
+            const response = await client.evidentirajOdbijanje(data);
             expect(response).toBeDefined();
             expect(response.soapResRaw).toBeDefined();
             expect(response.soapResSignatureValid).toBe(true);

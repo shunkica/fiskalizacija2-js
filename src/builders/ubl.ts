@@ -1,7 +1,8 @@
 import { XmlDocument, XmlElement } from "libxml2-wasm";
 import type { IERacun, IRacun } from "../types";
 import { usingXmlDocument } from "../util/xml";
-import { ERacun, Racun } from "../models";
+import { ERacun } from "../models/fiskalizacija";
+import { Racun } from "../models/izvjestavanje";
 import { ValidationError } from "../util/error";
 
 const NS = {

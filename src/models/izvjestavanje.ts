@@ -25,7 +25,7 @@ import type {
     StavkaRacunaSerializable,
     ZaglavljeIsporukaSerializable,
     ZaglavljeIzvjestavanjeSerializable
-} from "../../types";
+} from "../types";
 import {
     extractElement,
     extractElements,
@@ -39,8 +39,8 @@ import {
     getOptionalElementContentNumber,
     usingXmlDocument,
     xmlEscape
-} from "../../util/xml";
-import { FISK_NS, UBL_NS } from "./const";
+} from "../util/xml";
+import { FISK_NS, UBL_NS } from "../constants/const";
 import type { XmlElement } from "libxml2-wasm";
 import { XmlDocument } from "libxml2-wasm";
 import {
@@ -54,7 +54,7 @@ import {
     DokumentPopust,
     DokumentTrosak
 } from "./common";
-import { ValidationError } from "../../util/error";
+import { ValidationError } from "../util/error";
 
 export class EvidentirajNaplatuZahtjev implements EvidentirajNaplatuZahtjevSerializable {
     _id: string;

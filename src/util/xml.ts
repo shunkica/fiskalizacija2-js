@@ -1,9 +1,9 @@
 import type { XmlElement } from "libxml2-wasm";
-import type { RegexKey } from "../models/xml/regex";
+import type { RegexKey } from "../constants/regex";
 import { XmlDocument } from "libxml2-wasm";
-import { REGEX } from "../models/xml/regex";
-import { BUSINESS_TERMS } from "../models/xml/businessTerms";
-import { BUSINESS_GROUPS } from "../models/xml/businessGroups";
+import { REGEX } from "../constants/regex";
+import { BUSINESS_TERMS } from "../constants/businessTerms";
+import { BUSINESS_GROUPS } from "../constants/businessGroups";
 import { ValidationError } from "./error";
 
 function removePrefix(str: string, prefix: string) {

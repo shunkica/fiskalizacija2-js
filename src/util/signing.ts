@@ -4,7 +4,7 @@ import type { SigningOptions } from "../types";
 import { randomUUID } from "node:crypto";
 import { usingXmlDocument } from "./xml";
 import type { XmlElement } from "libxml2-wasm";
-import { FISK_NS } from "../models/xml/const";
+import { FISK_NS } from "../constants/const";
 import { extractPemCertificate, extractPemPrivateKey } from "./cert";
 
 export class XmlSigner {

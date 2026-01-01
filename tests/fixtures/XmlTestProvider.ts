@@ -43,7 +43,7 @@ export class XmlTestProvider {
     static mockEvidentirajERacunZahtjev(brojDokumenta: string, oib: string, vrsta: "I" | "U" = "I"): IEvidentirajERacunZahtjev {
         const datum = new Date().toISOString().split("T")[0];
 
-        const issuer = { ime: "IZDAVATELJ", oibPorezniBroj: oib, oibOperatera: "12345678901" };
+        const issuer = { ime: "IZDAVATELJ", oibPorezniBroj: oib, oibOperatera: "00000000001" };
         const recipient = { ime: "PRIMATELJ", oibPorezniBroj: "11111111119" };
         if (vrsta === "U") {
             [issuer.ime, recipient.ime, issuer.oibPorezniBroj, recipient.oibPorezniBroj] = [
@@ -181,7 +181,7 @@ export class XmlTestProvider {
                     Izdavatelj: {
                         ime: "IZDAVATELJ",
                         oibPorezniBroj: oib,
-                        oibOperatera: "12345678901"
+                        oibOperatera: "00000000001"
                     },
                     Primatelj: {
                         ime: "PRIMATELJ",

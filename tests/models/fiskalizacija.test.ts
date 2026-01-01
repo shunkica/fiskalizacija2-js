@@ -1,15 +1,14 @@
 import { describe, it, expect } from "vitest";
 import { XmlDocument } from "libxml2-wasm";
 import { XmlTestProvider } from "../fixtures/XmlTestProvider";
+import { XmlTestValidator } from "../fixtures/XmlTestValidator";
+import type { IEvidentirajERacunZahtjev, IEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev } from "../../src";
+import { ERacun, EvidentirajERacunZahtjev } from "../../src/models/fiskalizacija";
 import {
-    ERacun,
-    EvidentirajERacunZahtjev,
     EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev,
     EvidentirajNaplatuZahtjev,
     EvidentirajOdbijanjeZahtjev
-} from "../../src/models";
-import { XmlTestValidator } from "../fixtures/XmlTestValidator";
-import type { IEvidentirajERacunZahtjev, IEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev } from "../../src";
+} from "../../src/models/izvjestavanje";
 
 describe("ERacun", () => {
     describe("fromUbl", () => {

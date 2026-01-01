@@ -1,4 +1,4 @@
-import type { IBusinessTermXpath } from "../../types";
+import type { IBusinessTermXpath } from "../types";
 
 export const BUSINESS_GROUPS: Record<string, IBusinessTermXpath> = {
     "BG-1": {
