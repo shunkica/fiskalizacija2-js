@@ -33,14 +33,19 @@ interface ExtractionOptions {
     errors?: ValidationError[];
 }
 
+function normalizeWhitespace(content: string): string {
+    return content.replace(/\s+/g, " ").trim();
+}
+
 export function getElementContent(parentEl: XmlElement, tag: string, ns: Record<string, string>, options: ExtractionOptions = {}): string {
     const { regexKey, lenient, errors } = options;
     const el = parentEl.get(tag, ns) as XmlElement | null;
     if (!el) {
         throw new ValidationError(`Element '${tag}' nije pronađen u elementu '${parentEl.prefix}:${parentEl.name}'`, undefined);
     }
-    if (regexKey && !REGEX[regexKey].test(el.content)) {
-        const err = new ValidationError(`Element '${tag}' ne zadovoljava regex ${REGEX[regexKey]}`, el.content);
+    const trimmedContent = normalizeWhitespace(el.content);
+    if (regexKey && !REGEX[regexKey].test(trimmedContent)) {
+        const err = new ValidationError(`Element '${tag}' ne zadovoljava regex ${REGEX[regexKey]}`, trimmedContent);
         if (lenient) {
             if (errors) {
                 errors.push(err);
@@ -49,7 +54,7 @@ export function getElementContent(parentEl: XmlElement, tag: string, ns: Record<
             throw err;
         }
     }
-    return el.content;
+    return trimmedContent;
 }
 
 export function getOptionalElementContent(
@@ -63,8 +68,9 @@ export function getOptionalElementContent(
     if (!el) {
         return undefined;
     }
-    if (regexKey && !REGEX[regexKey].test(el.content)) {
-        const err = new ValidationError(`Element '${tag}' ne zadovoljava regex ${REGEX[regexKey]}`, el.content);
+    const trimmedContent = normalizeWhitespace(el.content);
+    if (regexKey && !REGEX[regexKey].test(trimmedContent)) {
+        const err = new ValidationError(`Element '${tag}' ne zadovoljava regex ${REGEX[regexKey]}`, trimmedContent);
         if (lenient) {
             if (errors) {
                 errors.push(err);
@@ -73,7 +79,7 @@ export function getOptionalElementContent(
             throw err;
         }
     }
-    return el.content;
+    return trimmedContent;
 }
 
 export function getElementContentNumber(parentEl: XmlElement, tag: string, ns: Record<string, string>, options: ExtractionOptions = {}): number {
