@@ -1,7 +1,7 @@
 import type { XmlElement } from "libxml2-wasm";
 import type { RegexKey } from "../constants/regex";
+import { REGEX_TRUNCATE, REGEX  } from "../constants/regex";
 import { XmlDocument } from "libxml2-wasm";
-import { REGEX } from "../constants/regex";
 import { BUSINESS_TERMS } from "../constants/businessTerms";
 import { BUSINESS_GROUPS } from "../constants/businessGroups";
 import { ValidationError } from "./error";
@@ -33,8 +33,15 @@ interface ExtractionOptions {
     errors?: ValidationError[];
 }
 
-function normalizeWhitespace(content: string): string {
-    return content.replace(/\s+/g, " ").trim();
+function normalizeContent(content: string, regexKey: string | undefined): string {
+    let result = content.replace(/\s+/g, " ").trim();
+    if (content && regexKey && regexKey in REGEX_TRUNCATE) {
+        const maxLength = REGEX_TRUNCATE[regexKey as keyof typeof REGEX_TRUNCATE];
+        if (result.length > maxLength) {
+            result = result.substring(0, maxLength);
+        }
+    }
+    return result;
 }
 
 export function getElementContent(parentEl: XmlElement, tag: string, ns: Record<string, string>, options: ExtractionOptions = {}): string {
@@ -43,7 +50,7 @@ export function getElementContent(parentEl: XmlElement, tag: string, ns: Record<
     if (!el) {
         throw new ValidationError(`Element '${tag}' nije pronađen u elementu '${parentEl.prefix}:${parentEl.name}'`, undefined);
     }
-    const trimmedContent = normalizeWhitespace(el.content);
+    const trimmedContent = normalizeContent(el.content, regexKey);
     if (regexKey && !REGEX[regexKey].test(trimmedContent)) {
         const err = new ValidationError(`Element '${tag}' ne zadovoljava regex ${REGEX[regexKey]}`, trimmedContent);
         if (lenient) {
@@ -68,7 +75,7 @@ export function getOptionalElementContent(
     if (!el) {
         return undefined;
     }
-    const trimmedContent = normalizeWhitespace(el.content);
+    const trimmedContent = normalizeContent(el.content, regexKey);
     if (regexKey && !REGEX[regexKey].test(trimmedContent)) {
         const err = new ValidationError(`Element '${tag}' ne zadovoljava regex ${REGEX[regexKey]}`, trimmedContent);
         if (lenient) {

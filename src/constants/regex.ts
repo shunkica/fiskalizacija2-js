@@ -37,4 +37,21 @@ export const REGEX = {
     razlogPopusta: /^[0-9]{1,3}$/
 };
 
+export const REGEX_TRUNCATE = {
+    tekst3: 3,
+    tekst10: 10,
+    tekst20: 20,
+    tekst25: 25,
+    tekst34: 34,
+    tekst35: 35,
+    tekst50: 50,
+    tekst100: 100,
+    tekst120: 120,
+    tekst200: 200,
+    tekst300: 300,
+    tekst500: 500,
+    tekst1024: 1024
+};
+
 export type RegexKey = keyof typeof REGEX;
+export type RegexTruncateKey = keyof typeof REGEX_TRUNCATE;
