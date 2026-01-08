@@ -61,7 +61,7 @@ export interface IStavkaERacuna {
      * Količina artikala (robe ili usluga) koje se obračunavaju na stavki računa.
      * @bt BT-129
      */
-    kolicina: number;
+    kolicina: number | string;
 
     /**
      * Jedinica mjere koja se primjenjuje na količinu fakturiranu na računu.
@@ -81,20 +81,20 @@ export interface IStavkaERacuna {
      * Cijena artikla bez PDV-a, nakon oduzimanja popusta na cijenu artikla.
      * @bt BT-146
      */
-    artiklNetoCijena: number;
+    artiklNetoCijena: number | string;
 
     /**
      * Jedinična cijena bez PDV-a prije oduzimanja popusta na cijenu artikla.
      * @bt BT-148
      * @regex decimal
      */
-    artiklBrutoCijena?: number;
+    artiklBrutoCijena?: number | string;
 
     /**
      * Broj jedinica artikla na koji se primjenjuje cijena.
      * @bt BT-149
      */
-    artiklOsnovnaKolicina?: number;
+    artiklOsnovnaKolicina?: number | string;
 
     /**
      * Šifra jedinica mjere koja se primjenjuje na osnovnu količinu za cijenu artikla.
@@ -114,7 +114,7 @@ export interface IStavkaERacuna {
      * Stopa PDV-a prikazana u obliku postotka koji vrijedi za fakturirani artikl.
      * @bt BT-152
      */
-    artiklStopaPdv?: number;
+    artiklStopaPdv?: number | string;
 
     /**
      * Naziv artikla.

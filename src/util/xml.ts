@@ -1,6 +1,6 @@
 import type { XmlElement } from "libxml2-wasm";
 import type { RegexKey } from "../constants/regex";
-import { REGEX_TRUNCATE, REGEX  } from "../constants/regex";
+import { REGEX_TRUNCATE, REGEX } from "../constants/regex";
 import { XmlDocument } from "libxml2-wasm";
 import { BUSINESS_TERMS } from "../constants/businessTerms";
 import { BUSINESS_GROUPS } from "../constants/businessGroups";
@@ -131,6 +131,59 @@ export function getOptionalElementContentNumber(
     return num;
 }
 
+/**
+ * Extracts element content as a validated decimal string (preserves original representation)
+ */
+export function getElementContentDecimalString(
+    parentEl: XmlElement,
+    tag: string,
+    ns: Record<string, string>,
+    options: ExtractionOptions = {}
+): string {
+    const content = getElementContent(parentEl, tag, ns, options);
+    const num = Number(content);
+    if (isNaN(num)) {
+        const err = new ValidationError(`Element '${tag}' ne sadrži valjani broj: ${content}`, content);
+        if (options.lenient) {
+            if (options.errors) {
+                options.errors.push(err);
+            }
+            return "0";
+        } else {
+            throw err;
+        }
+    }
+    return content;
+}
+
+/**
+ * Extracts optional element content as a validated decimal string (preserves original representation)
+ */
+export function getOptionalElementContentDecimalString(
+    parentEl: XmlElement,
+    tag: string,
+    ns: Record<string, string>,
+    options: ExtractionOptions = {}
+): string | undefined {
+    const content = getOptionalElementContent(parentEl, tag, ns, options);
+    if (content === undefined) {
+        return undefined;
+    }
+    const num = Number(content);
+    if (isNaN(num)) {
+        const err = new ValidationError(`Element '${tag}' ne sadrži valjani broj: ${content}`, content);
+        if (options.lenient) {
+            if (options.errors) {
+                options.errors.push(err);
+            }
+            return undefined;
+        } else {
+            throw err;
+        }
+    }
+    return content;
+}
+
 export function extractElement<T>(parentEl: XmlElement, tag: string, ns: Record<string, string>, fn: (el: XmlElement) => T): T {
     const el = parentEl.get(tag, ns) as XmlElement | null;
     if (!el) {
@@ -220,4 +273,30 @@ export function usingXmlDocument<T>(doc: string | Uint8Array | XmlDocument, fn: 
     } finally {
         doc.dispose();
     }
+}
+
+/**
+ * Converts a number or string to a validated decimal string (preserves original representation)
+ * Used in constructors to accept both input formats while storing as strings
+ */
+export function toValidatedDecimalString(value: number | string): string {
+    if (typeof value === "string") {
+        const num = Number(value);
+        if (isNaN(num)) {
+            throw new ValidationError(`Value is not a valid number: ${value}`, value);
+        }
+        return value;
+    } else {
+        return String(value);
+    }
+}
+
+/**
+ * Converts an optional number or string to a validated decimal string (preserves original representation)
+ */
+export function toValidatedDecimalStringOptional(value: number | string | undefined): string | undefined {
+    if (value === undefined) {
+        return undefined;
+    }
+    return toValidatedDecimalString(value);
 }

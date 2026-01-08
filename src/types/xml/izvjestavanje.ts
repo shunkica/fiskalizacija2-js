@@ -178,7 +178,7 @@ export interface IStavkaRacuna {
      * Količina artikala (robe ili usluga) koje se obračunavaju na stavki računa (BT-129 iz UBL 2.1)
      * @bt BT-129
      */
-    kolicina: number;
+    kolicina: number | string;
 
     /**
      * Jedinica mjere koja se primjenjuje na količinu fakturiranu na računu (BT-130 iz UBL 2.1)
@@ -198,20 +198,20 @@ export interface IStavkaRacuna {
      * Cijena artikla bez PDV-a, nakon oduzimanja popusta na cijenu artikla (BT-146 iz UBL 2.1)
      * @bt BT-146
      */
-    artiklNetoCijena: number;
+    artiklNetoCijena: number | string;
 
     /**
      * Jedinična cijena bez PDV-a prije oduzimanja popusta na cijenu artikla (BT-148 iz UBL 2.1)
      * @bt BT-148
      * @regex decimal
      */
-    artiklBrutoCijena?: number;
+    artiklBrutoCijena?: number | string;
 
     /**
      * Broj jedinica artikla na koji se primjenjuje cijena (BT-149 iz UBL 2.1)
      * @bt BT-149
      */
-    artiklOsnovnaKolicina?: number;
+    artiklOsnovnaKolicina?: number | string;
 
     /**
      * Šifra jedinica mjere koja se primjenjuje na osnovnu količinu za cijenu artikla. Iste vrijednosti kao i kod Jedinica mjere (BT-150 iz UBL 2.1)
@@ -231,7 +231,7 @@ export interface IStavkaRacuna {
      * Stopa PDV-a prikazana u obliku postotka koji vrijedi za fakturirani artikl (BT-152 iz UBL 2.1)
      * @bt BT-152
      */
-    artiklStopaPdv?: number;
+    artiklStopaPdv?: number | string;
 
     /**
      * Naziv artikla (BT-153 iz UBL 2.1)

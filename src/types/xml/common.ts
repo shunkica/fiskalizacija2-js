@@ -247,7 +247,7 @@ export interface IRaspodjelaPdv {
      * Stopa PDV-a prikazana kao postotak koji se primjenjuje na relevantnu kategoriju PDV-a (BT-119 iz UBL 2.1 ili HR-BT-19 ako se koristi).
      * @bt BT-119
      */
-    stopa?: number;
+    stopa?: number | string;
 
     /**
      * Šifra razloga za izuzeće iznosa od PDV-a po VATEX. Podatak je obvezan ako je kategorijaPdv jednaka prijenos porezne obveze ('AE') ili tekstRazlogaOslobodenja postoji (BT-121 iz UBL 2.1 ili HR-BT-21 ako se koristi).
@@ -297,7 +297,7 @@ export interface IDokumentPopust {
      * @bt BT-96
      * @regex decimal
      */
-    stopaPdv?: number;
+    stopaPdv?: number | string;
 
     /**
      * Razlog za popust na razini dokumenta izražen u obliku teksta.
@@ -347,7 +347,7 @@ export interface IDokumentTrosak {
      * @bt BT-103
      * @regex decimal
      */
-    stopaPdv?: number;
+    stopaPdv?: number | string;
 
     /**
      * Razlog oslobođenja od PDV-a izražen kao tekst.

@@ -23,7 +23,10 @@ import {
     getElementContent,
     getElementContentNumber,
     getOptionalElementContent,
-    getOptionalElementContentNumber,
+    getElementContentDecimalString,
+    getOptionalElementContentDecimalString,
+    toValidatedDecimalString,
+    toValidatedDecimalStringOptional,
     usingXmlDocument,
     xmlEscape
 } from "../util/xml";
@@ -291,30 +294,30 @@ export class PrethodniERacun implements PrethodniERacunSerializable {
 }
 
 export class StavkaERacuna implements StavkaERacunaSerializable {
-    kolicina: number;
+    kolicina: string;
     jedinicaMjere: string;
     neto: number;
-    artiklNetoCijena: number;
-    artiklBrutoCijena?: number | undefined;
-    artiklOsnovnaKolicina?: number | undefined;
+    artiklNetoCijena: string;
+    artiklBrutoCijena?: string | undefined;
+    artiklOsnovnaKolicina?: string | undefined;
     artiklJedinicaMjereZaOsnovnuKolicinu?: string | undefined;
     artiklKategorijaPdv: string;
-    artiklStopaPdv?: number | undefined;
+    artiklStopaPdv?: string | undefined;
     artiklNaziv: string;
     artiklOpis?: string | undefined;
     artiklHrOznakaKategorijaPdv?: string | undefined;
     ArtiklIdentifikatorKlasifikacija?: ArtiklIdentifikatorKlasifikacija[] | undefined;
 
     constructor(args: IStavkaERacuna) {
-        this.kolicina = args.kolicina;
+        this.kolicina = toValidatedDecimalString(args.kolicina);
         this.jedinicaMjere = args.jedinicaMjere;
         this.neto = args.neto;
-        this.artiklNetoCijena = args.artiklNetoCijena;
-        this.artiklBrutoCijena = args.artiklBrutoCijena;
-        this.artiklOsnovnaKolicina = args.artiklOsnovnaKolicina;
+        this.artiklNetoCijena = toValidatedDecimalString(args.artiklNetoCijena);
+        this.artiklBrutoCijena = toValidatedDecimalStringOptional(args.artiklBrutoCijena);
+        this.artiklOsnovnaKolicina = toValidatedDecimalStringOptional(args.artiklOsnovnaKolicina);
         this.artiklJedinicaMjereZaOsnovnuKolicinu = args.artiklJedinicaMjereZaOsnovnuKolicinu;
         this.artiklKategorijaPdv = args.artiklKategorijaPdv;
-        this.artiklStopaPdv = args.artiklStopaPdv;
+        this.artiklStopaPdv = toValidatedDecimalStringOptional(args.artiklStopaPdv);
         this.artiklNaziv = args.artiklNaziv;
         this.artiklOpis = args.artiklOpis;
         this.artiklHrOznakaKategorijaPdv = args.artiklHrOznakaKategorijaPdv;
@@ -324,22 +327,22 @@ export class StavkaERacuna implements StavkaERacunaSerializable {
     toXmlString(): string {
         let res = "";
         res += "<efis:StavkaERacuna>";
-        res += `<efis:kolicina>${this.kolicina.toFixed(2)}</efis:kolicina>`;
+        res += `<efis:kolicina>${xmlEscape(this.kolicina)}</efis:kolicina>`;
         res += `<efis:jedinicaMjere>${xmlEscape(this.jedinicaMjere)}</efis:jedinicaMjere>`;
         res += `<efis:neto>${this.neto.toFixed(2)}</efis:neto>`;
-        res += `<efis:artiklNetoCijena>${this.artiklNetoCijena.toFixed(2)}</efis:artiklNetoCijena>`;
+        res += `<efis:artiklNetoCijena>${xmlEscape(this.artiklNetoCijena)}</efis:artiklNetoCijena>`;
         if (this.artiklBrutoCijena !== undefined) {
-            res += `<efis:artiklBrutoCijena>${this.artiklBrutoCijena.toFixed(2)}</efis:artiklBrutoCijena>`;
+            res += `<efis:artiklBrutoCijena>${xmlEscape(this.artiklBrutoCijena)}</efis:artiklBrutoCijena>`;
         }
         if (this.artiklOsnovnaKolicina !== undefined) {
-            res += `<efis:artiklOsnovnaKolicina>${this.artiklOsnovnaKolicina.toFixed(2)}</efis:artiklOsnovnaKolicina>`;
+            res += `<efis:artiklOsnovnaKolicina>${xmlEscape(this.artiklOsnovnaKolicina)}</efis:artiklOsnovnaKolicina>`;
         }
         if (this.artiklJedinicaMjereZaOsnovnuKolicinu !== undefined) {
             res += `<efis:artiklJedinicaMjereZaOsnovnuKolicinu>${xmlEscape(this.artiklJedinicaMjereZaOsnovnuKolicinu)}</efis:artiklJedinicaMjereZaOsnovnuKolicinu>`;
         }
         res += `<efis:artiklKategorijaPdv>${xmlEscape(this.artiklKategorijaPdv)}</efis:artiklKategorijaPdv>`;
         if (this.artiklStopaPdv !== undefined) {
-            res += `<efis:artiklStopaPdv>${this.artiklStopaPdv.toFixed(2)}</efis:artiklStopaPdv>`;
+            res += `<efis:artiklStopaPdv>${xmlEscape(this.artiklStopaPdv)}</efis:artiklStopaPdv>`;
         }
         res += `<efis:artiklNaziv>${xmlEscape(this.artiklNaziv)}</efis:artiklNaziv>`;
         if (this.artiklOpis !== undefined) {
@@ -357,17 +360,17 @@ export class StavkaERacuna implements StavkaERacunaSerializable {
 
     static fromXmlElement(el: XmlElement): IStavkaERacuna {
         return {
-            kolicina: getElementContentNumber(el, "efis:kolicina", FISK_NS, { regexKey: "decimal" }),
+            kolicina: getElementContentDecimalString(el, "efis:kolicina", FISK_NS, { regexKey: "decimal" }),
             jedinicaMjere: getElementContent(el, "efis:jedinicaMjere", FISK_NS, { regexKey: "jedinicaMjere" }),
             neto: getElementContentNumber(el, "efis:neto", FISK_NS, { regexKey: "decimal2" }),
-            artiklNetoCijena: getElementContentNumber(el, "efis:artiklNetoCijena", FISK_NS, { regexKey: "decimal" }),
-            artiklBrutoCijena: getOptionalElementContentNumber(el, "efis:artiklBrutoCijena", FISK_NS, { regexKey: "decimal" }),
-            artiklOsnovnaKolicina: getOptionalElementContentNumber(el, "efis:artiklOsnovnaKolicina", FISK_NS, { regexKey: "decimal" }),
+            artiklNetoCijena: getElementContentDecimalString(el, "efis:artiklNetoCijena", FISK_NS, { regexKey: "decimal" }),
+            artiklBrutoCijena: getOptionalElementContentDecimalString(el, "efis:artiklBrutoCijena", FISK_NS, { regexKey: "decimal" }),
+            artiklOsnovnaKolicina: getOptionalElementContentDecimalString(el, "efis:artiklOsnovnaKolicina", FISK_NS, { regexKey: "decimal" }),
             artiklJedinicaMjereZaOsnovnuKolicinu: getOptionalElementContent(el, "efis:artiklJedinicaMjereZaOsnovnuKolicinu", FISK_NS, {
                 regexKey: "jedinicaMjere"
             }),
             artiklKategorijaPdv: getElementContent(el, "efis:artiklKategorijaPdv", FISK_NS, { regexKey: "kategorijaPdv" }),
-            artiklStopaPdv: getOptionalElementContentNumber(el, "efis:artiklStopaPdv", FISK_NS, { regexKey: "decimal" }),
+            artiklStopaPdv: getOptionalElementContentDecimalString(el, "efis:artiklStopaPdv", FISK_NS, { regexKey: "decimal" }),
             artiklNaziv: getElementContent(el, "efis:artiklNaziv", FISK_NS, { regexKey: "tekst100" }),
             artiklOpis: getOptionalElementContent(el, "efis:artiklOpis", FISK_NS, { regexKey: "tekst1024" }),
             artiklHrOznakaKategorijaPdv: getOptionalElementContent(el, "efis:artiklHrOznakaKategorijaPdv", FISK_NS, { regexKey: "hrKategorijaPdv" }),
@@ -387,21 +390,23 @@ export class StavkaERacuna implements StavkaERacunaSerializable {
         }
         return groups.map(groupEl => {
             return {
-                kolicina: getElementContentNumber(groupEl, getBusinessTermXpath("BT-129", type, "BG-25"), UBL_NS, { regexKey: "decimal" }),
+                kolicina: getElementContentDecimalString(groupEl, getBusinessTermXpath("BT-129", type, "BG-25"), UBL_NS, { regexKey: "decimal" }),
                 jedinicaMjere: getElementContent(groupEl, getBusinessTermXpath("BT-130", type, "BG-25"), UBL_NS, { regexKey: "jedinicaMjere" }),
                 neto: getElementContentNumber(groupEl, getBusinessTermXpath("BT-131", type, "BG-25"), UBL_NS, { regexKey: "decimal2" }),
-                artiklNetoCijena: getElementContentNumber(groupEl, getBusinessTermXpath("BT-146", type, "BG-25"), UBL_NS, { regexKey: "decimal" }),
-                artiklBrutoCijena: getOptionalElementContentNumber(groupEl, getBusinessTermXpath("BT-148", type, "BG-25"), UBL_NS, {
+                artiklNetoCijena: getElementContentDecimalString(groupEl, getBusinessTermXpath("BT-146", type, "BG-25"), UBL_NS, {
                     regexKey: "decimal"
                 }),
-                artiklOsnovnaKolicina: getOptionalElementContentNumber(groupEl, getBusinessTermXpath("BT-149", type, "BG-25"), UBL_NS, {
+                artiklBrutoCijena: getOptionalElementContentDecimalString(groupEl, getBusinessTermXpath("BT-148", type, "BG-25"), UBL_NS, {
+                    regexKey: "decimal"
+                }),
+                artiklOsnovnaKolicina: getOptionalElementContentDecimalString(groupEl, getBusinessTermXpath("BT-149", type, "BG-25"), UBL_NS, {
                     regexKey: "decimal"
                 }),
                 artiklJedinicaMjereZaOsnovnuKolicinu: getOptionalElementContent(groupEl, getBusinessTermXpath("BT-150", type, "BG-25"), UBL_NS, {
                     regexKey: "jedinicaMjere"
                 }),
                 artiklKategorijaPdv: getElementContent(groupEl, getBusinessTermXpath("BT-151", type, "BG-25"), UBL_NS, { regexKey: "kategorijaPdv" }),
-                artiklStopaPdv: getOptionalElementContentNumber(groupEl, getBusinessTermXpath("BT-152", type, "BG-25"), UBL_NS, {
+                artiklStopaPdv: getOptionalElementContentDecimalString(groupEl, getBusinessTermXpath("BT-152", type, "BG-25"), UBL_NS, {
                     regexKey: "decimal"
                 }),
                 artiklNaziv: getElementContent(groupEl, getBusinessTermXpath("BT-153", type, "BG-25"), UBL_NS, { regexKey: "tekst100" }),

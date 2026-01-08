@@ -30,6 +30,8 @@ import {
     getOptionalAttributeValue,
     getOptionalElementContent,
     getOptionalElementContentNumber,
+    getOptionalElementContentDecimalString,
+    toValidatedDecimalStringOptional,
     xmlEscape
 } from "../util/xml";
 import type { XmlElement } from "libxml2-wasm";
@@ -272,7 +274,7 @@ export class RaspodjelaPdv implements RaspodjelaPdvSerializable {
     kategorijaPdv: string;
     oporeziviIznos: number;
     iznosPoreza: number;
-    stopa?: number | undefined;
+    stopa?: string | undefined;
     razlogOslobodenja?: string | undefined;
     tekstRazlogaOslobodenja?: string | undefined;
     hrOznakaKategorijaPdv?: string | undefined;
@@ -282,7 +284,7 @@ export class RaspodjelaPdv implements RaspodjelaPdvSerializable {
         this.kategorijaPdv = args.kategorijaPdv;
         this.oporeziviIznos = args.oporeziviIznos;
         this.iznosPoreza = args.iznosPoreza;
-        this.stopa = args.stopa;
+        this.stopa = toValidatedDecimalStringOptional(args.stopa);
         this.razlogOslobodenja = args.razlogOslobodenja;
         this.tekstRazlogaOslobodenja = args.tekstRazlogaOslobodenja;
         this.hrOznakaKategorijaPdv = args.hrOznakaKategorijaPdv;
@@ -295,7 +297,7 @@ export class RaspodjelaPdv implements RaspodjelaPdvSerializable {
         res += `<${this._prefix}:oporeziviIznos>${this.oporeziviIznos.toFixed(2)}</${this._prefix}:oporeziviIznos>`;
         res += `<${this._prefix}:iznosPoreza>${this.iznosPoreza.toFixed(2)}</${this._prefix}:iznosPoreza>`;
         if (this.stopa !== undefined) {
-            res += `<${this._prefix}:stopa>${this.stopa.toFixed(2)}</${this._prefix}:stopa>`;
+            res += `<${this._prefix}:stopa>${xmlEscape(this.stopa)}</${this._prefix}:stopa>`;
         }
         if (this.razlogOslobodenja !== undefined) {
             res += `<${this._prefix}:razlogOslobodenja>${xmlEscape(this.razlogOslobodenja)}</${this._prefix}:razlogOslobodenja>`;
@@ -316,7 +318,7 @@ export class RaspodjelaPdv implements RaspodjelaPdvSerializable {
             kategorijaPdv: getElementContent(el, `${prefix}:kategorijaPdv`, FISK_NS, { regexKey: "kategorijaPdv" }),
             oporeziviIznos: getElementContentNumber(el, `${prefix}:oporeziviIznos`, FISK_NS, { regexKey: "decimal2" }),
             iznosPoreza: getElementContentNumber(el, `${prefix}:iznosPoreza`, FISK_NS, { regexKey: "decimal2" }),
-            stopa: getOptionalElementContentNumber(el, `${prefix}:stopa`, FISK_NS, { regexKey: "decimal" }),
+            stopa: getOptionalElementContentDecimalString(el, `${prefix}:stopa`, FISK_NS, { regexKey: "decimal" }),
             razlogOslobodenja: getOptionalElementContent(el, `${prefix}:razlogOslobodenja`, FISK_NS, { regexKey: "izuzecePdv" }),
             tekstRazlogaOslobodenja: getOptionalElementContent(el, `${prefix}:tekstRazlogaOslobodenja`, FISK_NS, { regexKey: "tekst1024" }),
             hrOznakaKategorijaPdv: getOptionalElementContent(el, `${prefix}:hrOznakaKategorijaPdv`, FISK_NS, { regexKey: "hrKategorijaPdv" })
@@ -337,7 +339,7 @@ export class RaspodjelaPdv implements RaspodjelaPdvSerializable {
                     iznosPoreza: getElementContentNumber(groupEl, getBusinessTermXpath("HR-BT-17", type, "HR-BG-2"), UBL_NS, {
                         regexKey: "decimal2"
                     }),
-                    stopa: getOptionalElementContentNumber(groupEl, getBusinessTermXpath("HR-BT-19", type, "HR-BG-2"), UBL_NS, {
+                    stopa: getOptionalElementContentDecimalString(groupEl, getBusinessTermXpath("HR-BT-19", type, "HR-BG-2"), UBL_NS, {
                         regexKey: "decimal"
                     }),
                     razlogOslobodenja: getOptionalElementContent(groupEl, getBusinessTermXpath("HR-BT-21", type, "HR-BG-2"), UBL_NS, {
@@ -362,7 +364,9 @@ export class RaspodjelaPdv implements RaspodjelaPdvSerializable {
                 kategorijaPdv: getElementContent(groupEl, getBusinessTermXpath("BT-118", type, "BG-23"), UBL_NS, { regexKey: "kategorijaPdv" }),
                 oporeziviIznos: getElementContentNumber(groupEl, getBusinessTermXpath("BT-116", type, "BG-23"), UBL_NS, { regexKey: "decimal2" }),
                 iznosPoreza: getElementContentNumber(groupEl, getBusinessTermXpath("BT-117", type, "BG-23"), UBL_NS, { regexKey: "decimal2" }),
-                stopa: getOptionalElementContentNumber(groupEl, getBusinessTermXpath("BT-119", type, "BG-23"), UBL_NS, { regexKey: "decimal" }),
+                stopa: getOptionalElementContentDecimalString(groupEl, getBusinessTermXpath("BT-119", type, "BG-23"), UBL_NS, {
+                    regexKey: "decimal"
+                }),
                 razlogOslobodenja: getOptionalElementContent(groupEl, getBusinessTermXpath("BT-121", type, "BG-23"), UBL_NS, {
                     regexKey: "izuzecePdv"
                 }),
@@ -494,7 +498,7 @@ export class DokumentPopust implements DokumentPopustSerializable {
     private readonly _prefix: "efis" | "eizv";
     iznosPopust: number;
     kategorijaPdv: string;
-    stopaPdv?: number | undefined;
+    stopaPdv?: string | undefined;
     tekstRazlogaPopusta?: string | undefined;
     razlogPopusta?: string | undefined;
 
@@ -502,7 +506,7 @@ export class DokumentPopust implements DokumentPopustSerializable {
         this._prefix = prefix;
         this.iznosPopust = args.iznosPopust;
         this.kategorijaPdv = args.kategorijaPdv;
-        this.stopaPdv = args.stopaPdv;
+        this.stopaPdv = toValidatedDecimalStringOptional(args.stopaPdv);
         this.tekstRazlogaPopusta = args.tekstRazlogaPopusta;
         this.razlogPopusta = args.razlogPopusta;
     }
@@ -513,7 +517,7 @@ export class DokumentPopust implements DokumentPopustSerializable {
         res += `<${this._prefix}:iznosPopust>${this.iznosPopust.toFixed(2)}</${this._prefix}:iznosPopust>`;
         res += `<${this._prefix}:kategorijaPdv>${xmlEscape(this.kategorijaPdv)}</${this._prefix}:kategorijaPdv>`;
         if (this.stopaPdv !== undefined) {
-            res += `<${this._prefix}:stopaPdv>${this.stopaPdv.toFixed(2)}</${this._prefix}:stopaPdv>`;
+            res += `<${this._prefix}:stopaPdv>${xmlEscape(this.stopaPdv)}</${this._prefix}:stopaPdv>`;
         }
         if (this.tekstRazlogaPopusta !== undefined) {
             res += `<${this._prefix}:tekstRazlogaPopusta>${xmlEscape(this.tekstRazlogaPopusta)}</${this._prefix}:tekstRazlogaPopusta>`;
@@ -530,7 +534,7 @@ export class DokumentPopust implements DokumentPopustSerializable {
         return {
             iznosPopust: getElementContentNumber(el, `${prefix}:iznosPopust`, FISK_NS, { regexKey: "decimal2" }),
             kategorijaPdv: getElementContent(el, `${prefix}:kategorijaPdv`, FISK_NS, { regexKey: "kategorijaPdv" }),
-            stopaPdv: getOptionalElementContentNumber(el, `${prefix}:stopaPdv`, FISK_NS, { regexKey: "decimal" }),
+            stopaPdv: getOptionalElementContentDecimalString(el, `${prefix}:stopaPdv`, FISK_NS, { regexKey: "decimal" }),
             tekstRazlogaPopusta: getOptionalElementContent(el, `${prefix}:tekstRazlogaPopusta`, FISK_NS, { regexKey: "tekst1024" }),
             razlogPopusta: getOptionalElementContent(el, `${prefix}:razlogPopusta`, FISK_NS, { regexKey: "razlogPopusta" })
         };
@@ -545,7 +549,9 @@ export class DokumentPopust implements DokumentPopustSerializable {
             return {
                 iznosPopust: getElementContentNumber(groupEl, getBusinessTermXpath("BT-92", type, "BG-20"), UBL_NS, { regexKey: "decimal2" }),
                 kategorijaPdv: getElementContent(groupEl, getBusinessTermXpath("BT-95", type, "BG-20"), UBL_NS, { regexKey: "kategorijaPdv" }),
-                stopaPdv: getOptionalElementContentNumber(groupEl, getBusinessTermXpath("BT-96", type, "BG-20"), UBL_NS, { regexKey: "decimal" }),
+                stopaPdv: getOptionalElementContentDecimalString(groupEl, getBusinessTermXpath("BT-96", type, "BG-20"), UBL_NS, {
+                    regexKey: "decimal"
+                }),
                 tekstRazlogaPopusta: getOptionalElementContent(groupEl, getBusinessTermXpath("BT-97", type, "BG-20"), UBL_NS, {
                     regexKey: "tekst1024"
                 }),
@@ -560,7 +566,7 @@ export class DokumentTrosak implements DokumentTrosakSerializable {
     iznosTrosak: number;
     kategorijaPdv: string;
     hrOznakaPorezneKategorije?: string | undefined;
-    stopaPdv?: number | undefined;
+    stopaPdv?: string | undefined;
     tekstRazlogaOslobodenjaPdv?: string | undefined;
     razlogOslobodenjaPdv?: string | undefined;
 
@@ -569,7 +575,7 @@ export class DokumentTrosak implements DokumentTrosakSerializable {
         this.iznosTrosak = args.iznosTrosak;
         this.kategorijaPdv = args.kategorijaPdv;
         this.hrOznakaPorezneKategorije = args.hrOznakaPorezneKategorije;
-        this.stopaPdv = args.stopaPdv;
+        this.stopaPdv = toValidatedDecimalStringOptional(args.stopaPdv);
         this.tekstRazlogaOslobodenjaPdv = args.tekstRazlogaOslobodenjaPdv;
         this.razlogOslobodenjaPdv = args.razlogOslobodenjaPdv;
     }
@@ -583,7 +589,7 @@ export class DokumentTrosak implements DokumentTrosakSerializable {
             res += `<${this._prefix}:hrOznakaPorezneKategorije>${xmlEscape(this.hrOznakaPorezneKategorije)}</${this._prefix}:hrOznakaPorezneKategorije>`;
         }
         if (this.stopaPdv !== undefined) {
-            res += `<${this._prefix}:stopaPdv>${this.stopaPdv.toFixed(2)}</${this._prefix}:stopaPdv>`;
+            res += `<${this._prefix}:stopaPdv>${xmlEscape(this.stopaPdv)}</${this._prefix}:stopaPdv>`;
         }
         if (this.tekstRazlogaOslobodenjaPdv !== undefined) {
             res += `<${this._prefix}:tekstRazlogaOslobodenjaPdv>${xmlEscape(this.tekstRazlogaOslobodenjaPdv)}</${this._prefix}:tekstRazlogaOslobodenjaPdv>`;
@@ -601,7 +607,7 @@ export class DokumentTrosak implements DokumentTrosakSerializable {
             iznosTrosak: getElementContentNumber(el, `${prefix}:iznosTrosak`, FISK_NS, { regexKey: "decimal2" }),
             kategorijaPdv: getElementContent(el, `${prefix}:kategorijaPdv`, FISK_NS, { regexKey: "kategorijaPdv" }),
             hrOznakaPorezneKategorije: getOptionalElementContent(el, `${prefix}:hrOznakaPorezneKategorije`, FISK_NS, { regexKey: "hrKategorijaPdv" }),
-            stopaPdv: getOptionalElementContentNumber(el, `${prefix}:stopaPdv`, FISK_NS, { regexKey: "decimal" }),
+            stopaPdv: getOptionalElementContentDecimalString(el, `${prefix}:stopaPdv`, FISK_NS, { regexKey: "decimal" }),
             tekstRazlogaOslobodenjaPdv: getOptionalElementContent(el, `${prefix}:tekstRazlogaOslobodenjaPdv`, FISK_NS, { regexKey: "tekst1024" }),
             razlogOslobodenjaPdv: getOptionalElementContent(el, `${prefix}:razlogOslobodenjaPdv`, FISK_NS, { regexKey: "izuzecePdv" })
         };
@@ -619,7 +625,9 @@ export class DokumentTrosak implements DokumentTrosakSerializable {
                 hrOznakaPorezneKategorije: getOptionalElementContent(groupEl, getBusinessTermXpath("HR-BT-6", type, "BG-21"), UBL_NS, {
                     regexKey: "hrKategorijaPdv"
                 }),
-                stopaPdv: getOptionalElementContentNumber(groupEl, getBusinessTermXpath("BT-103", type, "BG-21"), UBL_NS, { regexKey: "decimal" }),
+                stopaPdv: getOptionalElementContentDecimalString(groupEl, getBusinessTermXpath("BT-103", type, "BG-21"), UBL_NS, {
+                    regexKey: "decimal"
+                }),
                 tekstRazlogaOslobodenjaPdv: getOptionalElementContent(groupEl, getBusinessTermXpath("HR-BT-7", type, "BG-21"), UBL_NS, {
                     regexKey: "tekst1024"
                 }),
