@@ -22,6 +22,8 @@ export class XmlTestProvider {
 
     static ublInvoiceMinimal = fs.readFileSync(path.join(__dirname, "ubl-invoice-minimal.xml"), "utf8");
 
+    static ublInvoiceHrTaxTotal = fs.readFileSync(path.join(__dirname, "ubl-invoice-hrtaxtotal.xml"), "utf8");
+
     static ublInvoiceInvalid = fs.readFileSync(path.join(__dirname, "ubl-invoice-invalid.xml"), "utf8");
 
     static EvidentirajERacunZahtjev = fs.readFileSync(path.join(__dirname, "EvidentirajERacunZahtjev.xml"), "utf8");

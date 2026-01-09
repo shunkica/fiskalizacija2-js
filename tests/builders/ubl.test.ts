@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getERacunFromUbl, getRacunFromUbl } from "../../src/builders/ubl";
+import { getERacunFromUbl, getRacunFromUbl } from "../../src";
 import { usingXmlDocument } from "../../src/util/xml";
 import type { XmlElement } from "libxml2-wasm";
 import { ValidationError } from "../../src/util/error";

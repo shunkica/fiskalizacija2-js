@@ -1445,8 +1445,8 @@ export const BUSINESS_TERMS: Record<string, IBusinessTermXpath> = {
         id: "HR-BT-15",
         name: "Obračun PDV-a po naplaćenoj naknadi",
         xpath: {
-            Invoice: ["ext:Extensions", "ext:Extension", "ext:ExtensionContent", "hrextac:HRFISK20Data", "hrextac:HRObracunPDVPoNaplati"],
-            CreditNote: ["ext:Extensions", "ext:Extension", "ext:ExtensionContent", "hrextac:HRFISK20Data", "hrextac:HRObracunPDVPoNaplati"]
+            Invoice: ["ext:UBLExtensions", "ext:UBLExtension", "ext:ExtensionContent", "hrextac:HRFISK20Data", "hrextac:HRObracunPDVPoNaplati"],
+            CreditNote: ["ext:UBLExtensions", "ext:UBLExtension", "ext:ExtensionContent", "hrextac:HRFISK20Data", "hrextac:HRObracunPDVPoNaplati"]
         }
     },
     "HR-BT-16": {
@@ -1454,8 +1454,8 @@ export const BUSINESS_TERMS: Record<string, IBusinessTermXpath> = {
         name: "HR iznos osnovice kategorije PDV",
         xpath: {
             Invoice: [
-                "ext:Extensions",
-                "ext:Extension",
+                "ext:UBLExtensions",
+                "ext:UBLExtension",
                 "ext:ExtensionContent",
                 "hrextac:HRFISK20Data",
                 "hrextac:HRTaxTotal",
@@ -1463,8 +1463,8 @@ export const BUSINESS_TERMS: Record<string, IBusinessTermXpath> = {
                 "cbc:TaxableAmount"
             ],
             CreditNote: [
-                "ext:Extensions",
-                "ext:Extension",
+                "ext:UBLExtensions",
+                "ext:UBLExtension",
                 "ext:ExtensionContent",
                 "hrextac:HRFISK20Data",
                 "hrextac:HRTaxTotal",
@@ -1478,15 +1478,22 @@ export const BUSINESS_TERMS: Record<string, IBusinessTermXpath> = {
         name: "HR iznos kategorije PDV",
         xpath: {
             Invoice: [
-                "ext:Extensions",
-                "ext:Extension",
+                "ext:UBLExtensions",
+                "ext:UBLExtension",
                 "ext:ExtensionContent",
                 "hrextac:HRFISK20Data",
                 "hrextac:HRTaxTotal",
                 "hrextac:HRTaxSubtotal",
                 "cbc:TaxAmount"
             ],
-            CreditNote: ["ext:Extensions", "ext:Extension", "ext:ExtensionContent", "hrextac:HRFISK20Data", "hrextac:HRTaxSubtotal", "cbc:TaxAmount"]
+            CreditNote: [
+                "ext:UBLExtensions",
+                "ext:UBLExtension",
+                "ext:ExtensionContent",
+                "hrextac:HRFISK20Data",
+                "hrextac:HRTaxSubtotal",
+                "cbc:TaxAmount"
+            ]
         }
     },
     "HR-BT-18": {
@@ -1494,8 +1501,8 @@ export const BUSINESS_TERMS: Record<string, IBusinessTermXpath> = {
         name: "HR kod kategorije PDV",
         xpath: {
             Invoice: [
-                "ext:Extensions",
-                "ext:Extension",
+                "ext:UBLExtensions",
+                "ext:UBLExtension",
                 "ext:ExtensionContent",
                 "hrextac:HRFISK20Data",
                 "hrextac:HRTaxTotal",
@@ -1504,8 +1511,8 @@ export const BUSINESS_TERMS: Record<string, IBusinessTermXpath> = {
                 "cbc:ID"
             ],
             CreditNote: [
-                "ext:Extensions",
-                "ext:Extension",
+                "ext:UBLExtensions",
+                "ext:UBLExtension",
                 "ext:ExtensionContent",
                 "hrextac:HRFISK20Data",
                 "hrextac:HRTaxTotal",
@@ -1520,8 +1527,8 @@ export const BUSINESS_TERMS: Record<string, IBusinessTermXpath> = {
         name: "HR stopa kategorije PDV",
         xpath: {
             Invoice: [
-                "ext:Extensions",
-                "ext:Extension",
+                "ext:UBLExtensions",
+                "ext:UBLExtension",
                 "ext:ExtensionContent",
                 "hrextac:HRFISK20Data",
                 "hrextac:HRTaxTotal",
@@ -1530,8 +1537,8 @@ export const BUSINESS_TERMS: Record<string, IBusinessTermXpath> = {
                 "cbc:Percent"
             ],
             CreditNote: [
-                "ext:Extensions",
-                "ext:Extension",
+                "ext:UBLExtensions",
+                "ext:UBLExtension",
                 "ext:ExtensionContent",
                 "hrextac:HRFISK20Data",
                 "hrextac:HRTaxTotal",
@@ -1546,8 +1553,8 @@ export const BUSINESS_TERMS: Record<string, IBusinessTermXpath> = {
         name: "HR tekst razloga oslobođenja kategorije PDV",
         xpath: {
             Invoice: [
-                "ext:Extensions",
-                "ext:Extension",
+                "ext:UBLExtensions",
+                "ext:UBLExtension",
                 "ext:ExtensionContent",
                 "hrextac:HRFISK20Data",
                 "hrextac:HRTaxTotal",
@@ -1556,8 +1563,8 @@ export const BUSINESS_TERMS: Record<string, IBusinessTermXpath> = {
                 "cbc:TaxExemptionReason"
             ],
             CreditNote: [
-                "ext:Extensions",
-                "ext:Extension",
+                "ext:UBLExtensions",
+                "ext:UBLExtension",
                 "ext:ExtensionContent",
                 "hrextac:HRFISK20Data",
                 "hrextac:HRTaxTotal",
@@ -1572,8 +1579,8 @@ export const BUSINESS_TERMS: Record<string, IBusinessTermXpath> = {
         name: "HR kod razloga oslobođenja kategorije PDV",
         xpath: {
             Invoice: [
-                "ext:Extensions",
-                "ext:Extension",
+                "ext:UBLExtensions",
+                "ext:UBLExtension",
                 "ext:ExtensionContent",
                 "hrextac:HRFISK20Data",
                 "hrextac:HRTaxTotal",
@@ -1582,8 +1589,8 @@ export const BUSINESS_TERMS: Record<string, IBusinessTermXpath> = {
                 "cbc:TaxExemptionReasonCode"
             ],
             CreditNote: [
-                "ext:Extensions",
-                "ext:Extension",
+                "ext:UBLExtensions",
+                "ext:UBLExtension",
                 "ext:ExtensionContent",
                 "hrextac:HRFISK20Data",
                 "hrextac:HRTaxTotal",
@@ -1598,8 +1605,8 @@ export const BUSINESS_TERMS: Record<string, IBusinessTermXpath> = {
         name: "HR Oznaka kategorije PDV",
         xpath: {
             Invoice: [
-                "ext:Extensions",
-                "ext:Extension",
+                "ext:UBLExtensions",
+                "ext:UBLExtension",
                 "ext:ExtensionContent",
                 "hrextac:HRFISK20Data",
                 "hrextac:HRTaxTotal",
@@ -1608,8 +1615,8 @@ export const BUSINESS_TERMS: Record<string, IBusinessTermXpath> = {
                 "cbc:Name"
             ],
             CreditNote: [
-                "ext:Extensions",
-                "ext:Extension",
+                "ext:UBLExtensions",
+                "ext:UBLExtension",
                 "ext:ExtensionContent",
                 "hrextac:HRFISK20Data",
                 "hrextac:HRTaxTotal",
@@ -1624,16 +1631,16 @@ export const BUSINESS_TERMS: Record<string, IBusinessTermXpath> = {
         name: "HR iznos osnovice za PDV",
         xpath: {
             Invoice: [
-                "ext:Extensions",
-                "ext:Extension",
+                "ext:UBLExtensions",
+                "ext:UBLExtension",
                 "ext:ExtensionContent",
                 "hrextac:HRFISK20Data",
                 "hrextac:HRLegalMonetaryTotal",
                 "cbc:TaxExclusiveAmount"
             ],
             CreditNote: [
-                "ext:Extensions",
-                "ext:Extension",
+                "ext:UBLExtensions",
+                "ext:UBLExtension",
                 "ext:ExtensionContent",
                 "hrextac:HRFISK20Data",
                 "hrextac:HRLegalMonetaryTotal",
@@ -1646,16 +1653,16 @@ export const BUSINESS_TERMS: Record<string, IBusinessTermXpath> = {
         name: "HR Neoporezivi iznos",
         xpath: {
             Invoice: [
-                "ext:Extensions",
-                "ext:Extension",
+                "ext:UBLExtensions",
+                "ext:UBLExtension",
                 "ext:ExtensionContent",
                 "hrextac:HRFISK20Data",
                 "hrextac:HRLegalMonetaryTotal",
                 "hrextac:OutOfScopeOfVATAmount"
             ],
             CreditNote: [
-                "ext:Extensions",
-                "ext:Extension",
+                "ext:UBLExtensions",
+                "ext:UBLExtension",
                 "ext:ExtensionContent",
                 "hrextac:HRFISK20Data",
                 "hrextac:HRLegalMonetaryTotal",
@@ -1667,8 +1674,15 @@ export const BUSINESS_TERMS: Record<string, IBusinessTermXpath> = {
         id: "HR-BT-25",
         name: "HR ukupni iznos PDV",
         xpath: {
-            Invoice: ["ext:Extensions", "ext:Extension", "ext:ExtensionContent", "hrextac:HRFISK20Data", "hrextac:HRTaxTotal", "cbc:TaxAmount"],
-            CreditNote: ["ext:Extensions", "ext:Extension", "ext:ExtensionContent", "hrextac:HRFISK20Data", "hrextac:HRTaxTotal", "cbc:TaxAmount"]
+            Invoice: ["ext:UBLExtensions", "ext:UBLExtension", "ext:ExtensionContent", "hrextac:HRFISK20Data", "hrextac:HRTaxTotal", "cbc:TaxAmount"],
+            CreditNote: [
+                "ext:UBLExtensions",
+                "ext:UBLExtension",
+                "ext:ExtensionContent",
+                "hrextac:HRFISK20Data",
+                "hrextac:HRTaxTotal",
+                "cbc:TaxAmount"
+            ]
         }
     }
 };

@@ -261,8 +261,8 @@ export const BUSINESS_GROUPS: Record<string, IBusinessTermXpath> = {
         id: "HR-BG-1",
         name: "HR proširenja",
         xpath: {
-            Invoice: ["ext:Extensions", "ext:Extension", "ext:ExtensionContent", "hrextac:HRFISK20Data"],
-            CreditNote: ["ext:Extensions", "ext:Extension", "ext:ExtensionContent", "hrextac:HRFISK20Data"]
+            Invoice: ["ext:UBLExtensions", "ext:UBLExtension", "ext:ExtensionContent", "hrextac:HRFISK20Data"],
+            CreditNote: ["ext:UBLExtensions", "ext:UBLExtension", "ext:ExtensionContent", "hrextac:HRFISK20Data"]
         }
     },
     "HR-BG-2": {
@@ -270,16 +270,16 @@ export const BUSINESS_GROUPS: Record<string, IBusinessTermXpath> = {
         name: "HR Raspodjela PDV",
         xpath: {
             Invoice: [
-                "ext:Extensions",
-                "ext:Extension",
+                "ext:UBLExtensions",
+                "ext:UBLExtension",
                 "ext:ExtensionContent",
                 "hrextac:HRFISK20Data",
                 "hrextac:HRTaxTotal",
                 "hrextac:HRTaxSubtotal"
             ],
             CreditNote: [
-                "ext:Extensions",
-                "ext:Extension",
+                "ext:UBLExtensions",
+                "ext:UBLExtension",
                 "ext:ExtensionContent",
                 "hrextac:HRFISK20Data",
                 "hrextac:HRTaxTotal",
@@ -291,8 +291,8 @@ export const BUSINESS_GROUPS: Record<string, IBusinessTermXpath> = {
         id: "HR-BG-3",
         name: "HR ukupni iznosi",
         xpath: {
-            Invoice: ["ext:Extensions", "ext:Extension", "ext:ExtensionContent", "hrextac:HRFISK20Data", "hrextac:HRLegalMonetaryTotal"],
-            CreditNote: ["ext:Extensions", "ext:Extension", "ext:ExtensionContent", "hrextac:HRFISK20Data", "hrextac:HRLegalMonetaryTotal"]
+            Invoice: ["ext:UBLExtensions", "ext:UBLExtension", "ext:ExtensionContent", "hrextac:HRFISK20Data", "hrextac:HRLegalMonetaryTotal"],
+            CreditNote: ["ext:UBLExtensions", "ext:UBLExtension", "ext:ExtensionContent", "hrextac:HRFISK20Data", "hrextac:HRLegalMonetaryTotal"]
         }
     }
 };
