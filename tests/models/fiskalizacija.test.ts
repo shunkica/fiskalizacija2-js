@@ -9,6 +9,8 @@ import {
     EvidentirajNaplatuZahtjev,
     EvidentirajOdbijanjeZahtjev
 } from "../../src/models/izvjestavanje";
+import * as fs from "node:fs";
+import * as path from "node:path";
 
 describe("ERacun", () => {
     describe("fromUbl", () => {
@@ -105,6 +107,32 @@ describe("ERacun", () => {
                 expect(eracun.RaspodjelaPdv[2].stopa).toBe("0");
                 expect(eracun.RaspodjelaPdv[2].tekstRazlogaOslobodenja).toBe("PDV nije obračunat temeljem čl.40 st. 1 Zakona o PDVu");
                 expect(eracun.RaspodjelaPdv[2].hrOznakaKategorijaPdv).toBe("HR:E");
+            } finally {
+                doc.dispose();
+            }
+        });
+
+        it("should correctly filter AllowanceCharge by ChargeIndicator", () => {
+            const ublInvoiceAllowanceCharge = fs.readFileSync(path.join(__dirname, "../fixtures/ubl-invoice-allowance-charge.xml"), "utf8");
+            const doc = XmlDocument.fromString(ublInvoiceAllowanceCharge);
+
+            try {
+                const root = doc.root;
+                const eracun = ERacun.fromUblElement(root, "Invoice");
+
+                // Should have 1 discount (ChargeIndicator=false)
+                expect(eracun.DokumentPopust).toBeDefined();
+                expect(eracun.DokumentPopust).toHaveLength(1);
+                expect(eracun.DokumentPopust![0].iznosPopust).toBe(50.0);
+                expect(eracun.DokumentPopust![0].kategorijaPdv).toBe("S");
+
+                // Should have 2 charges (ChargeIndicator=true)
+                expect(eracun.DokumentTrosak).toBeDefined();
+                expect(eracun.DokumentTrosak).toHaveLength(2);
+                expect(eracun.DokumentTrosak![0].iznosTrosak).toBe(20.0);
+                expect(eracun.DokumentTrosak![0].kategorijaPdv).toBe("S");
+                expect(eracun.DokumentTrosak![1].iznosTrosak).toBe(10.0);
+                expect(eracun.DokumentTrosak![1].kategorijaPdv).toBe("S");
             } finally {
                 doc.dispose();
             }

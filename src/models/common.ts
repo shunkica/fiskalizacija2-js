@@ -545,7 +545,17 @@ export class DokumentPopust implements DokumentPopustSerializable {
         if (groups.length === 0) {
             return undefined;
         }
-        return groups.map(groupEl => {
+        // Filter only AllowanceCharge elements where ChargeIndicator is false (discounts)
+        const filteredGroups = groups.filter(groupEl => {
+            const chargeIndicator = getOptionalElementContent(groupEl, "cbc:ChargeIndicator", UBL_NS, {
+                regexKey: "boolean"
+            });
+            return chargeIndicator === "false";
+        });
+        if (filteredGroups.length === 0) {
+            return undefined;
+        }
+        return filteredGroups.map(groupEl => {
             return {
                 iznosPopust: getElementContentNumber(groupEl, getBusinessTermXpath("BT-92", type, "BG-20"), UBL_NS, { regexKey: "decimal2" }),
                 kategorijaPdv: getElementContent(groupEl, getBusinessTermXpath("BT-95", type, "BG-20"), UBL_NS, { regexKey: "kategorijaPdv" }),
@@ -618,7 +628,17 @@ export class DokumentTrosak implements DokumentTrosakSerializable {
         if (groups.length === 0) {
             return undefined;
         }
-        return groups.map(groupEl => {
+        // Filter only AllowanceCharge elements where ChargeIndicator is true (charges)
+        const filteredGroups = groups.filter(groupEl => {
+            const chargeIndicator = getOptionalElementContent(groupEl, "cbc:ChargeIndicator", UBL_NS, {
+                regexKey: "boolean"
+            });
+            return chargeIndicator === "true";
+        });
+        if (filteredGroups.length === 0) {
+            return undefined;
+        }
+        return filteredGroups.map(groupEl => {
             return {
                 iznosTrosak: getElementContentNumber(groupEl, getBusinessTermXpath("BT-99", type, "BG-21"), UBL_NS, { regexKey: "decimal2" }),
                 kategorijaPdv: getElementContent(groupEl, getBusinessTermXpath("BT-102", type, "BG-21"), UBL_NS, { regexKey: "kategorijaPdv" }),
