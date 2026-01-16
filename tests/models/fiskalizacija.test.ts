@@ -90,7 +90,7 @@ describe("ERacun", () => {
                 expect(eracun.RaspodjelaPdv[0].oporeziviIznos).toBe(28.95);
                 expect(eracun.RaspodjelaPdv[0].iznosPoreza).toBe(0.0);
                 expect(eracun.RaspodjelaPdv[0].stopa).toBe("0");
-                expect(eracun.RaspodjelaPdv[0].tekstRazlogaOslobodenja).toBe("PDV nije obračunat temeljem čl.33 st 3 Zakona o PDVu");
+                expect(eracun.RaspodjelaPdv[0].tekstRazlogaOslobodenja).toBe("PDV nije obračunat temeljem čl.33 st  3 Zakona o PDVu");
                 expect(eracun.RaspodjelaPdv[0].hrOznakaKategorijaPdv).toBe("HR:N");
 
                 // Second subtotal: HR:PDV25

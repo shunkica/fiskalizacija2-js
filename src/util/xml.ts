@@ -34,7 +34,7 @@ interface ExtractionOptions {
 }
 
 function normalizeContent(content: string, regexKey: string | undefined): string {
-    let result = content.replace(/\s+/g, " ").trim();
+    let result = content.trim();
     if (content && regexKey && regexKey in REGEX_TRUNCATE) {
         const maxLength = REGEX_TRUNCATE[regexKey as keyof typeof REGEX_TRUNCATE];
         if (result.length > maxLength) {
