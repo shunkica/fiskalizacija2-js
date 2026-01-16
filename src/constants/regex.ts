@@ -31,7 +31,7 @@ export const REGEX = {
     razlogOdbijanja: /^[NUO]$/,
     drzava: /^[A-Z]{2}$/,
     shemaIdentifikator: /^[0-9]{4}$/,
-    boolean: /^(true|false)$/,
+    boolean: /^(true|false|1|0)$/,
     redniBroj: /^(0|[1-9][0-9]*)$/,
     hrKategorijaPdv: /^([Hh][Rr]):(([Pp][Dd][Vv][0-9]{1,2})|([A-Za-z]{1,10}))$/,
     razlogPopusta: /^[0-9]{1,3}$/

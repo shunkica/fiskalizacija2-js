@@ -226,7 +226,7 @@ export class ERacun implements ERacunSerializable {
             DokumentPopust: extractOptionalElements(el, "efis:DokumentPopust", FISK_NS, DokumentPopust.fromXmlElement),
             DokumentTrosak: extractOptionalElements(el, "efis:DokumentTrosak", FISK_NS, DokumentTrosak.fromXmlElement),
             StavkaERacuna: extractElements(el, "efis:StavkaERacuna", FISK_NS, StavkaERacuna.fromXmlElement),
-            indikatorKopije: getElementContent(el, "efis:indikatorKopije", FISK_NS, { regexKey: "boolean" }) === "true"
+            indikatorKopije: ["true", "1"].includes(getElementContent(el, "efis:indikatorKopije", FISK_NS, { regexKey: "boolean" }))
         };
     }
 
@@ -249,7 +249,9 @@ export class ERacun implements ERacunSerializable {
             DokumentPopust: DokumentPopust.fromUblElement(el, type),
             DokumentTrosak: DokumentTrosak.fromUblElement(el, type),
             StavkaERacuna: StavkaERacuna.fromUblElement(el, type),
-            indikatorKopije: getOptionalElementContent(el, getBusinessTermXpath("HR-BT-1", type), UBL_NS, { regexKey: "boolean" }) === "true"
+            indikatorKopije: ["true", "1"].includes(
+                getOptionalElementContent(el, getBusinessTermXpath("HR-BT-1", type), UBL_NS, { regexKey: "boolean" }) || ""
+            )
         };
     }
 }

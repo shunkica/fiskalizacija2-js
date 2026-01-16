@@ -637,7 +637,7 @@ export class Racun implements RacunSerializable {
             DokumentPopust: extractOptionalElements(el, "eizv:DokumentPopust", FISK_NS, DokumentPopust.fromXmlElement),
             DokumentTrosak: extractOptionalElements(el, "eizv:DokumentTrosak", FISK_NS, DokumentTrosak.fromXmlElement),
             StavkaRacuna: extractElements(el, "eizv:StavkaRacuna", FISK_NS, StavkaRacuna.fromXmlElement),
-            indikatorKopije: getElementContent(el, "eizv:indikatorKopije", FISK_NS, { regexKey: "boolean" }) === "true"
+            indikatorKopije: ["true", "1"].includes(getElementContent(el, "eizv:indikatorKopije", FISK_NS, { regexKey: "boolean" }))
         };
     }
 
@@ -660,7 +660,9 @@ export class Racun implements RacunSerializable {
             DokumentPopust: DokumentPopust.fromUblElement(el, type),
             DokumentTrosak: DokumentTrosak.fromUblElement(el, type),
             StavkaRacuna: StavkaRacuna.fromUblElement(el, type),
-            indikatorKopije: getOptionalElementContent(el, getBusinessTermXpath("HR-BT-1", type), UBL_NS, { regexKey: "boolean" }) === "true"
+            indikatorKopije: ["true", "1"].includes(
+                getOptionalElementContent(el, getBusinessTermXpath("HR-BT-1", type), UBL_NS, { regexKey: "boolean" }) || ""
+            )
         };
     }
 }
