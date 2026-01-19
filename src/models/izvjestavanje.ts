@@ -26,6 +26,7 @@ import type {
     ZaglavljeIsporukaSerializable,
     ZaglavljeIzvjestavanjeSerializable
 } from "../types";
+import type { ExtractionOptions } from "../util/xml";
 import {
     extractElement,
     extractElements,
@@ -389,15 +390,15 @@ export class PrethodniRacun implements PrethodniRacunSerializable {
         };
     }
 
-    static fromUblElement(el: XmlElement, type: "Invoice" | "CreditNote"): IPrethodniRacun[] | undefined {
+    static fromUblElement(el: XmlElement, type: "Invoice" | "CreditNote", options?: ExtractionOptions): IPrethodniRacun[] | undefined {
         const groups = el.find(getBusinessGroupXpath("BG-3", type), UBL_NS) as XmlElement[];
         if (groups.length === 0) {
             return undefined;
         }
         return groups.map(groupEl => {
             return {
-                brojDokumenta: getElementContent(groupEl, getBusinessTermXpath("BT-25", type, "BG-3"), UBL_NS, { regexKey: "tekst100" }),
-                datumIzdavanja: getElementContent(groupEl, getBusinessTermXpath("BT-26", type, "BG-3"), UBL_NS, { regexKey: "datum" })
+                brojDokumenta: getElementContent(groupEl, getBusinessTermXpath("BT-25", type, "BG-3"), UBL_NS, { ...options, regexKey: "tekst100" }),
+                datumIzdavanja: getElementContent(groupEl, getBusinessTermXpath("BT-26", type, "BG-3"), UBL_NS, { ...options, regexKey: "datum" })
             };
         });
     }
@@ -493,39 +494,67 @@ export class StavkaRacuna implements StavkaRacunaSerializable {
         };
     }
 
-    static fromUblElement(el: XmlElement, type: "Invoice" | "CreditNote") {
+    static fromUblElement(el: XmlElement, type: "Invoice" | "CreditNote", options?: ExtractionOptions) {
         const groups = el.find(getBusinessGroupXpath("BG-25", type), UBL_NS) as XmlElement[];
         if (groups.length === 0) {
-            throw new ValidationError(`Nije pronađena ni jedna grupa 'BG-25' u dokumentu '${type}'`, undefined);
+            const err = new ValidationError(
+                `Nije pronađena ni jedna grupa 'BG-25' (${getBusinessGroupXpath("BG-25", type)}) u dokumentu '${type}'`,
+                undefined
+            );
+            if (options?.lenient) {
+                if (options.errors) {
+                    options.errors.push(err);
+                }
+                return [];
+            }
+            throw err;
         }
         return groups.map(groupEl => {
             return {
-                kolicina: getElementContentDecimalString(groupEl, getBusinessTermXpath("BT-129", type, "BG-25"), UBL_NS, { regexKey: "decimal" }),
-                jedinicaMjere: getElementContent(groupEl, getBusinessTermXpath("BT-130", type, "BG-25"), UBL_NS, { regexKey: "jedinicaMjere" }),
-                neto: getElementContentNumber(groupEl, getBusinessTermXpath("BT-131", type, "BG-25"), UBL_NS, { regexKey: "decimal2" }),
+                kolicina: getElementContentDecimalString(groupEl, getBusinessTermXpath("BT-129", type, "BG-25"), UBL_NS, {
+                    ...options,
+                    regexKey: "decimal"
+                }),
+                jedinicaMjere: getElementContent(groupEl, getBusinessTermXpath("BT-130", type, "BG-25"), UBL_NS, {
+                    ...options,
+                    regexKey: "jedinicaMjere"
+                }),
+                neto: getElementContentNumber(groupEl, getBusinessTermXpath("BT-131", type, "BG-25"), UBL_NS, { ...options, regexKey: "decimal2" }),
                 artiklNetoCijena: getElementContentDecimalString(groupEl, getBusinessTermXpath("BT-146", type, "BG-25"), UBL_NS, {
+                    ...options,
                     regexKey: "decimal"
                 }),
                 artiklBrutoCijena: getOptionalElementContentDecimalString(groupEl, getBusinessTermXpath("BT-148", type, "BG-25"), UBL_NS, {
+                    ...options,
                     regexKey: "decimal"
                 }),
                 artiklOsnovnaKolicina: getOptionalElementContentDecimalString(groupEl, getBusinessTermXpath("BT-149", type, "BG-25"), UBL_NS, {
+                    ...options,
                     regexKey: "decimal"
                 }),
                 artiklJedinicaMjereZaOsnovnuKolicinu: getOptionalElementContent(groupEl, getBusinessTermXpath("BT-150", type, "BG-25"), UBL_NS, {
+                    ...options,
                     regexKey: "jedinicaMjere"
                 }),
-                artiklKategorijaPdv: getElementContent(groupEl, getBusinessTermXpath("BT-151", type, "BG-25"), UBL_NS, { regexKey: "kategorijaPdv" }),
+                artiklKategorijaPdv: getElementContent(groupEl, getBusinessTermXpath("BT-151", type, "BG-25"), UBL_NS, {
+                    ...options,
+                    regexKey: "kategorijaPdv"
+                }),
                 artiklStopaPdv: getOptionalElementContentDecimalString(groupEl, getBusinessTermXpath("BT-152", type, "BG-25"), UBL_NS, {
+                    ...options,
                     regexKey: "decimal"
                 }),
-                artiklNaziv: getElementContent(groupEl, getBusinessTermXpath("BT-153", type, "BG-25"), UBL_NS, { regexKey: "tekst100" }),
-                artiklOpis: getOptionalElementContent(groupEl, getBusinessTermXpath("BT-154", type, "BG-25"), UBL_NS, { regexKey: "tekst1024" }),
+                artiklNaziv: getElementContent(groupEl, getBusinessTermXpath("BT-153", type, "BG-25"), UBL_NS, { ...options, regexKey: "tekst100" }),
+                artiklOpis: getOptionalElementContent(groupEl, getBusinessTermXpath("BT-154", type, "BG-25"), UBL_NS, {
+                    ...options,
+                    regexKey: "tekst1024"
+                }),
                 artiklHrOznakaKategorijaPdv: getOptionalElementContent(groupEl, getBusinessTermXpath("HR-BT-12", type, "BG-25"), UBL_NS, {
+                    ...options,
                     regexKey: "hrKategorijaPdv"
                 }),
                 ArtiklIdentifikatorKlasifikacija: extractOptionalElements(groupEl, getBusinessTermXpath("BT-158", type, "BG-25"), UBL_NS, el =>
-                    ArtiklIdentifikatorKlasifikacija.fromUblElement(el, type)
+                    ArtiklIdentifikatorKlasifikacija.fromUblElement(el, type, options)
                 )
             };
         });
@@ -641,27 +670,27 @@ export class Racun implements RacunSerializable {
         };
     }
 
-    static fromUblElement(el: XmlElement, type: "Invoice" | "CreditNote"): IRacun {
+    static fromUblElement(el: XmlElement, type: "Invoice" | "CreditNote", options?: ExtractionOptions): IRacun {
         return {
-            brojDokumenta: getElementContent(el, getBusinessTermXpath("BT-1", type), UBL_NS, { regexKey: "tekst100" }),
-            datumIzdavanja: getElementContent(el, getBusinessTermXpath("BT-2", type), UBL_NS, { regexKey: "datum" }),
-            vrstaDokumenta: getElementContent(el, getBusinessTermXpath("BT-3", type), UBL_NS, { regexKey: "vrstaDokumenta" }),
-            valutaRacuna: getElementContent(el, getBusinessTermXpath("BT-5", type), UBL_NS, { regexKey: "valuta" }),
-            datumDospijecaPlacanja: getOptionalElementContent(el, getBusinessTermXpath("BT-9", type), UBL_NS, { regexKey: "datum" }),
-            vrstaPoslovnogProcesa: getElementContent(el, getBusinessTermXpath("BT-23", type), UBL_NS, { regexKey: "tekst100" }),
-            referencaNaUgovor: getOptionalElementContent(el, getBusinessTermXpath("BT-12", type), UBL_NS, { regexKey: "tekst100" }),
-            datumIsporuke: getOptionalElementContent(el, getBusinessTermXpath("BT-72", type), UBL_NS, { regexKey: "datum" }),
-            PrethodniRacun: PrethodniRacun.fromUblElement(el, type),
-            Izdavatelj: Izdavatelj.fromUblElement(el, type),
-            Primatelj: Primatelj.fromUblElement(el, type),
-            PrijenosSredstava: PrijenosSredstava.fromUblElement(el, type),
-            DokumentUkupanIznos: DokumentUkupanIznos.fromUblElement(el, type),
-            RaspodjelaPdv: RaspodjelaPdv.fromUblElement(el, type),
-            DokumentPopust: DokumentPopust.fromUblElement(el, type),
-            DokumentTrosak: DokumentTrosak.fromUblElement(el, type),
-            StavkaRacuna: StavkaRacuna.fromUblElement(el, type),
+            brojDokumenta: getElementContent(el, getBusinessTermXpath("BT-1", type), UBL_NS, { ...options, regexKey: "tekst100" }),
+            datumIzdavanja: getElementContent(el, getBusinessTermXpath("BT-2", type), UBL_NS, { ...options, regexKey: "datum" }),
+            vrstaDokumenta: getElementContent(el, getBusinessTermXpath("BT-3", type), UBL_NS, { ...options, regexKey: "vrstaDokumenta" }),
+            valutaRacuna: getElementContent(el, getBusinessTermXpath("BT-5", type), UBL_NS, { ...options, regexKey: "valuta" }),
+            datumDospijecaPlacanja: getOptionalElementContent(el, getBusinessTermXpath("BT-9", type), UBL_NS, { ...options, regexKey: "datum" }),
+            vrstaPoslovnogProcesa: getElementContent(el, getBusinessTermXpath("BT-23", type), UBL_NS, { ...options, regexKey: "tekst100" }),
+            referencaNaUgovor: getOptionalElementContent(el, getBusinessTermXpath("BT-12", type), UBL_NS, { ...options, regexKey: "tekst100" }),
+            datumIsporuke: getOptionalElementContent(el, getBusinessTermXpath("BT-72", type), UBL_NS, { ...options, regexKey: "datum" }),
+            PrethodniRacun: PrethodniRacun.fromUblElement(el, type, options),
+            Izdavatelj: Izdavatelj.fromUblElement(el, type, options),
+            Primatelj: Primatelj.fromUblElement(el, type, options),
+            PrijenosSredstava: PrijenosSredstava.fromUblElement(el, type, options),
+            DokumentUkupanIznos: DokumentUkupanIznos.fromUblElement(el, type, options),
+            RaspodjelaPdv: RaspodjelaPdv.fromUblElement(el, type, options),
+            DokumentPopust: DokumentPopust.fromUblElement(el, type, options),
+            DokumentTrosak: DokumentTrosak.fromUblElement(el, type, options),
+            StavkaRacuna: StavkaRacuna.fromUblElement(el, type, options),
             indikatorKopije: ["true", "1"].includes(
-                getOptionalElementContent(el, getBusinessTermXpath("HR-BT-1", type), UBL_NS, { regexKey: "boolean" }) || ""
+                getOptionalElementContent(el, getBusinessTermXpath("HR-BT-1", type), UBL_NS, { ...options, regexKey: "boolean" }) || ""
             )
         };
     }

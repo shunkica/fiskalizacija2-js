@@ -126,6 +126,49 @@ describe("getERacunFromUbl", () => {
             expect(() => getERacunFromUbl(sbdWithoutUbl)).toThrow(ValidationError);
         });
     });
+
+    describe("Lenient extraction", () => {
+        it("should partially extract fields from invalid UBL when lenient is true", () => {
+            const result = getERacunFromUbl(XmlTestProvider.ublInvoiceInvalid, { lenient: true });
+            expect(result).toBeDefined();
+            expect(result.brojDokumenta).toBe("INVALID-001");
+            expect(result.datumIzdavanja).toBe("2024-01-15");
+            // Check that required but missing fields are empty or default
+            expect(result.Izdavatelj.ime).toBe("");
+            expect(result.StavkaERacuna).toEqual([]);
+            expect(result.DokumentUkupanIznos.neto).toBe(0);
+        });
+
+        it("should report ValidationErrors even when lenient is true", () => {
+            const errors: ValidationError[] = [];
+            getERacunFromUbl(XmlTestProvider.ublInvoiceInvalid, { lenient: true, errors });
+            expect(errors.length).toEqual(11);
+            expect(errors.some(e => e.message.includes("cbc:InvoiceTypeCode"))).toBe(true);
+            expect(errors.some(e => e.message.includes("cac:AccountingSupplierParty"))).toBe(true);
+            expect(errors.some(e => e.message.includes("cac:AccountingCustomerParty"))).toBe(true);
+            expect(errors.some(e => e.message.includes("cac:LegalMonetaryTotal"))).toBe(true);
+        });
+
+        it("should throw ValidationError from invalid UBL when lenient is false (default)", () => {
+            expect(() => getERacunFromUbl(XmlTestProvider.ublInvoiceInvalid)).toThrow(ValidationError);
+        });
+
+        it("should handle regex validation failure lenietly", () => {
+            const ublWithInvalidDate = XmlTestProvider.ublInvoiceMinimal.replace(
+                "<cbc:IssueDate>2024-01-15</cbc:IssueDate>",
+                "<cbc:IssueDate>INVALID-DATE</cbc:IssueDate>"
+            );
+            const result = getERacunFromUbl(ublWithInvalidDate, { lenient: true });
+            expect(result.datumIzdavanja).toBe("INVALID-DATE");
+        });
+
+        it("should collect errors when errors array is provided", () => {
+            const errors: ValidationError[] = [];
+            getERacunFromUbl(XmlTestProvider.ublInvoiceInvalid, { lenient: true, errors });
+            expect(errors.length).toBeGreaterThan(0);
+            expect(errors.some(e => e.message.includes("BG-4"))).toBe(true); // Issuer Group missing
+        });
+    });
 });
 
 describe("getRacunFromUbl", () => {
@@ -205,6 +248,33 @@ describe("getRacunFromUbl", () => {
   </SomeOtherDocument>
 </StandardBusinessDocument>`;
             expect(() => getRacunFromUbl(sbdWithoutUbl)).toThrow(ValidationError);
+        });
+    });
+
+    describe("Lenient extraction", () => {
+        it("should partially extract fields from invalid UBL when lenient is true", () => {
+            const result = getRacunFromUbl(XmlTestProvider.ublInvoiceInvalid, { lenient: true });
+            expect(result).toBeDefined();
+            expect(result.brojDokumenta).toBe("INVALID-001");
+            expect(result.datumIzdavanja).toBe("2024-01-15");
+            // Check that required but missing fields are empty or default
+            expect(result.Izdavatelj.ime).toBe("");
+            expect(result.StavkaRacuna).toEqual([]);
+            expect(result.DokumentUkupanIznos.neto).toBe(0);
+        });
+
+        it("should report ValidationErrors even when lenient is true", () => {
+            const errors: ValidationError[] = [];
+            getRacunFromUbl(XmlTestProvider.ublInvoiceInvalid, { lenient: true, errors });
+            expect(errors.length).toEqual(11);
+            expect(errors.some(e => e.message.includes("cbc:InvoiceTypeCode"))).toBe(true);
+            expect(errors.some(e => e.message.includes("cac:AccountingSupplierParty"))).toBe(true);
+            expect(errors.some(e => e.message.includes("cac:AccountingCustomerParty"))).toBe(true);
+            expect(errors.some(e => e.message.includes("cac:LegalMonetaryTotal"))).toBe(true);
+        });
+
+        it("should throw ValidationError from invalid UBL when lenient is false (default)", () => {
+            expect(() => getRacunFromUbl(XmlTestProvider.ublInvoiceInvalid)).toThrow(ValidationError);
         });
     });
 });

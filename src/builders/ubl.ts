@@ -1,5 +1,6 @@
 import { XmlDocument, XmlElement } from "libxml2-wasm";
 import type { IERacun, IRacun } from "../types";
+import type { ExtractionOptions } from "../util/xml";
 import { usingXmlDocument } from "../util/xml";
 import { ERacun } from "../models/fiskalizacija";
 import { Racun } from "../models/izvjestavanje";
@@ -20,12 +21,12 @@ function findUblElement(el: XmlElement): XmlElement {
     return ublElement;
 }
 
-export function getERacunFromUbl(doc: string | Buffer | XmlDocument | XmlElement): IERacun {
+export function getERacunFromUbl(doc: string | Buffer | XmlDocument | XmlElement, options?: ExtractionOptions): IERacun {
     // If it's a string or Buffer, parse it and process within the document's lifetime
     if (!(doc instanceof XmlElement) && !(doc instanceof XmlDocument)) {
         try {
             return usingXmlDocument(doc, (xmlDoc: XmlDocument) => {
-                return getERacunFromUbl(xmlDoc);
+                return getERacunFromUbl(xmlDoc, options);
             });
         } catch (error) {
             if (error instanceof ValidationError) {
@@ -42,14 +43,14 @@ export function getERacunFromUbl(doc: string | Buffer | XmlDocument | XmlElement
     const ublEl = findUblElement(rootEl);
     const type = ublEl.name as "Invoice" | "CreditNote";
 
-    return ERacun.fromUblElement(ublEl, type);
+    return ERacun.fromUblElement(ublEl, type, options);
 }
 
-export function getRacunFromUbl(doc: string | Buffer | XmlDocument | XmlElement): IRacun {
+export function getRacunFromUbl(doc: string | Buffer | XmlDocument | XmlElement, options?: ExtractionOptions): IRacun {
     // If it's a string or Buffer, parse it and process within the document's lifetime
     if (!(doc instanceof XmlElement) && !(doc instanceof XmlDocument)) {
         return usingXmlDocument(doc, (xmlDoc: XmlDocument) => {
-            return getRacunFromUbl(xmlDoc);
+            return getRacunFromUbl(xmlDoc, options);
         });
     }
 
@@ -60,5 +61,5 @@ export function getRacunFromUbl(doc: string | Buffer | XmlDocument | XmlElement)
     const ublEl = findUblElement(rootEl);
     const type = ublEl.name as "Invoice" | "CreditNote";
 
-    return Racun.fromUblElement(ublEl, type);
+    return Racun.fromUblElement(ublEl, type, options);
 }

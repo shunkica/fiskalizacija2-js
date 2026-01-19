@@ -20,6 +20,7 @@ import type {
     PrimateljSerializable,
     RaspodjelaPdvSerializable
 } from "../types";
+import type { ExtractionOptions } from "../util/xml";
 import {
     extractOptionalElement,
     getAttributeValue,
@@ -70,22 +71,33 @@ export class Izdavatelj implements IzdavateljSerializable {
         };
     }
 
-    static fromUblElement(el: XmlElement, type: "Invoice" | "CreditNote"): IIzdavatelj {
+    static fromUblElement(el: XmlElement, type: "Invoice" | "CreditNote", options?: ExtractionOptions): IIzdavatelj {
         const groupEl = el.get(getBusinessGroupXpath("BG-4", type), UBL_NS) as XmlElement | null;
         if (!groupEl) {
-            throw new ValidationError(`Grupa 'BG-4' nije pronađena u dokumentu '${type}'`, undefined);
+            const err = new ValidationError(`Grupa 'BG-4' (${getBusinessGroupXpath("BG-4", type)}) nije pronađena u dokumentu '${type}'`, undefined);
+            if (options?.lenient) {
+                if (options.errors) {
+                    options.errors.push(err);
+                }
+                return {
+                    ime: "",
+                    oibPorezniBroj: "",
+                    oibOperatera: ""
+                };
+            }
+            throw err;
         }
         return {
-            ime: getElementContent(groupEl, getBusinessTermXpath("BT-27", type, "BG-4"), UBL_NS, { regexKey: "tekst500" }),
+            ime: getElementContent(groupEl, getBusinessTermXpath("BT-27", type, "BG-4"), UBL_NS, { ...options, regexKey: "tekst500" }),
             // TODO: Iako je u specifikaciji navedeno da u ovo polje može ići OIB ili porezni broj,
             //       ako se šalje porezni broj, na demo serveru se poruka odbija sa greškom:
             //       S006: PT nije ovlaštena za dostavu podataka na fiskalizaciju.Inicijalna provjera za valjanost oib-a kod evidentiranja izlaznog eRačuna (Record: 1)
             //       stoga za sada mičemo "HR" dio iz polja BT-31
-            oibPorezniBroj: getElementContent(groupEl, getBusinessTermXpath("BT-31", type, "BG-4"), UBL_NS, { regexKey: "tekst200" }).replace(
-                /^HR/,
-                ""
-            ),
-            oibOperatera: getElementContent(groupEl, getBusinessTermXpath("HR-BT-5", type, "BG-4"), UBL_NS, { regexKey: "tekst200" })
+            oibPorezniBroj: getElementContent(groupEl, getBusinessTermXpath("BT-31", type, "BG-4"), UBL_NS, {
+                ...options,
+                regexKey: "tekst200"
+            }).replace(/^HR/, ""),
+            oibOperatera: getElementContent(groupEl, getBusinessTermXpath("HR-BT-5", type, "BG-4"), UBL_NS, { ...options, regexKey: "tekst200" })
         };
     }
 }
@@ -118,21 +130,31 @@ export class Primatelj implements PrimateljSerializable {
         };
     }
 
-    static fromUblElement(el: XmlElement, type: "Invoice" | "CreditNote"): IPrimatelj {
+    static fromUblElement(el: XmlElement, type: "Invoice" | "CreditNote", options?: ExtractionOptions): IPrimatelj {
         const groupEl = el.get(getBusinessGroupXpath("BG-7", type), UBL_NS) as XmlElement | null;
         if (!groupEl) {
-            throw new ValidationError(`Grupa 'BG-7' nije pronađena u dokumentu '${type}'`, undefined);
+            const err = new ValidationError(`Grupa 'BG-7' (${getBusinessGroupXpath("BG-7", type)}) nije pronađena u dokumentu '${type}'`, undefined);
+            if (options?.lenient) {
+                if (options.errors) {
+                    options.errors.push(err);
+                }
+                return {
+                    ime: "",
+                    oibPorezniBroj: ""
+                };
+            }
+            throw err;
         }
         return {
-            ime: getElementContent(groupEl, getBusinessTermXpath("BT-44", type, "BG-7"), UBL_NS, { regexKey: "tekst500" }),
+            ime: getElementContent(groupEl, getBusinessTermXpath("BT-44", type, "BG-7"), UBL_NS, { ...options, regexKey: "tekst500" }),
             // TODO: Iako je u specifikaciji navedeno da u ovo polje može ići OIB ili porezni broj,
             //       ako se šalje porezni broj, na demo serveru se poruka odbija sa greškom:
             //       S006: PT nije ovlaštena za dostavu podataka na fiskalizaciju.Inicijalna provjera za valjanost oib-a kod evidentiranja ulaznog eRačuna (Record: 1)
             //       stoga za sada mičemo "HR" dio iz polja BT-48
-            oibPorezniBroj: getElementContent(groupEl, getBusinessTermXpath("BT-48", type, "BG-7"), UBL_NS, { regexKey: "tekst200" }).replace(
-                /^HR/,
-                ""
-            )
+            oibPorezniBroj: getElementContent(groupEl, getBusinessTermXpath("BT-48", type, "BG-7"), UBL_NS, {
+                ...options,
+                regexKey: "tekst200"
+            }).replace(/^HR/, "")
         };
     }
 }
@@ -175,7 +197,7 @@ export class PrijenosSredstava implements PrijenosSredstavaSerializable {
         };
     }
 
-    static fromUblElement(el: XmlElement, type: "Invoice" | "CreditNote"): IPrijenosSredstava[] | undefined {
+    static fromUblElement(el: XmlElement, type: "Invoice" | "CreditNote", options?: ExtractionOptions): IPrijenosSredstava[] | undefined {
         const groups = el.find(getBusinessGroupXpath("BG-17", type), UBL_NS) as XmlElement[];
         if (groups.length === 0) {
             return undefined;
@@ -183,12 +205,15 @@ export class PrijenosSredstava implements PrijenosSredstavaSerializable {
         return groups.map(groupEl => {
             return {
                 identifikatorRacunaZaPlacanje: getElementContent(groupEl, getBusinessTermXpath("BT-84", type, "BG-17"), UBL_NS, {
+                    ...options,
                     regexKey: "tekst34"
                 }),
                 nazivRacunaZaPlacanje: getOptionalElementContent(groupEl, getBusinessTermXpath("BT-85", type, "BG-17"), UBL_NS, {
+                    ...options,
                     regexKey: "tekst35"
                 }),
                 identifikatorPruzateljaPlatnihUsluga: getOptionalElementContent(groupEl, getBusinessTermXpath("BT-86", type, "BG-17"), UBL_NS, {
+                    ...options,
                     regexKey: "tekst25"
                 })
             };
@@ -254,17 +279,20 @@ export class DokumentUkupanIznos implements DokumentUkupanIznosSerializable {
         };
     }
 
-    static fromUblElement(el: XmlElement, type: "Invoice" | "CreditNote"): IDokumentUkupanIznos {
+    static fromUblElement(el: XmlElement, type: "Invoice" | "CreditNote", options?: ExtractionOptions): IDokumentUkupanIznos {
         return {
-            neto: getElementContentNumber(el, getBusinessTermXpath("BT-106", type), UBL_NS, { regexKey: "decimal2" }),
-            popust: getOptionalElementContentNumber(el, getBusinessTermXpath("BT-107", type), UBL_NS, { regexKey: "decimal2" }),
-            trosak: getOptionalElementContentNumber(el, getBusinessTermXpath("BT-108", type), UBL_NS, { regexKey: "decimal2" }),
-            iznosBezPdv: getElementContentNumber(el, getBusinessTermXpath("BT-109", type), UBL_NS, { regexKey: "decimal2" }),
+            neto: getElementContentNumber(el, getBusinessTermXpath("BT-106", type), UBL_NS, { ...options, regexKey: "decimal2" }),
+            popust: getOptionalElementContentNumber(el, getBusinessTermXpath("BT-107", type), UBL_NS, { ...options, regexKey: "decimal2" }),
+            trosak: getOptionalElementContentNumber(el, getBusinessTermXpath("BT-108", type), UBL_NS, { ...options, regexKey: "decimal2" }),
+            iznosBezPdv: getElementContentNumber(el, getBusinessTermXpath("BT-109", type), UBL_NS, { ...options, regexKey: "decimal2" }),
             /** BT-110 nije obvezan u specifikaciji eRacuna, ali je pdv obvezan u specifikaciji fiskalizacije */
-            pdv: getOptionalElementContentNumber(el, getBusinessTermXpath("BT-110", type), UBL_NS, { regexKey: "decimal2" }) || 0,
-            iznosSPdv: getElementContentNumber(el, getBusinessTermXpath("BT-112", type), UBL_NS, { regexKey: "decimal2" }),
-            placeniIznos: getOptionalElementContentNumber(el, getBusinessTermXpath("BT-113", type), UBL_NS, { regexKey: "decimal2" }),
-            iznosKojiDospijevaZaPlacanje: getElementContentNumber(el, getBusinessTermXpath("BT-115", type), UBL_NS, { regexKey: "decimal2" })
+            pdv: getOptionalElementContentNumber(el, getBusinessTermXpath("BT-110", type), UBL_NS, { ...options, regexKey: "decimal2" }) || 0,
+            iznosSPdv: getElementContentNumber(el, getBusinessTermXpath("BT-112", type), UBL_NS, { ...options, regexKey: "decimal2" }),
+            placeniIznos: getOptionalElementContentNumber(el, getBusinessTermXpath("BT-113", type), UBL_NS, { ...options, regexKey: "decimal2" }),
+            iznosKojiDospijevaZaPlacanje: getElementContentNumber(el, getBusinessTermXpath("BT-115", type), UBL_NS, {
+                ...options,
+                regexKey: "decimal2"
+            })
         };
     }
 }
@@ -325,30 +353,37 @@ export class RaspodjelaPdv implements RaspodjelaPdvSerializable {
         };
     }
 
-    static fromUblElement(el: XmlElement, type: "Invoice" | "CreditNote"): IRaspodjelaPdv[] {
+    static fromUblElement(el: XmlElement, type: "Invoice" | "CreditNote", options?: ExtractionOptions): IRaspodjelaPdv[] {
         const hrfiskGroups = el.find(getBusinessGroupXpath("HR-BG-2", type), UBL_NS) as XmlElement[];
         if (hrfiskGroups.length > 0) {
             return hrfiskGroups.map(groupEl => {
                 return {
                     kategorijaPdv: getElementContent(groupEl, getBusinessTermXpath("HR-BT-18", type, "HR-BG-2"), UBL_NS, {
+                        ...options,
                         regexKey: "kategorijaPdv"
                     }),
                     oporeziviIznos: getElementContentNumber(groupEl, getBusinessTermXpath("HR-BT-16", type, "HR-BG-2"), UBL_NS, {
+                        ...options,
                         regexKey: "decimal2"
                     }),
                     iznosPoreza: getElementContentNumber(groupEl, getBusinessTermXpath("HR-BT-17", type, "HR-BG-2"), UBL_NS, {
+                        ...options,
                         regexKey: "decimal2"
                     }),
                     stopa: getOptionalElementContentDecimalString(groupEl, getBusinessTermXpath("HR-BT-19", type, "HR-BG-2"), UBL_NS, {
+                        ...options,
                         regexKey: "decimal"
                     }),
                     razlogOslobodenja: getOptionalElementContent(groupEl, getBusinessTermXpath("HR-BT-21", type, "HR-BG-2"), UBL_NS, {
+                        ...options,
                         regexKey: "izuzecePdv"
                     }),
                     tekstRazlogaOslobodenja: getOptionalElementContent(groupEl, getBusinessTermXpath("HR-BT-20", type, "HR-BG-2"), UBL_NS, {
+                        ...options,
                         regexKey: "tekst1024"
                     }),
                     hrOznakaKategorijaPdv: getOptionalElementContent(groupEl, getBusinessTermXpath("HR-BT-22", type, "HR-BG-2"), UBL_NS, {
+                        ...options,
                         regexKey: "hrKategorijaPdv"
                     })
                 };
@@ -357,20 +392,42 @@ export class RaspodjelaPdv implements RaspodjelaPdvSerializable {
 
         const groups = el.find(getBusinessGroupXpath("BG-23", type), UBL_NS) as XmlElement[];
         if (groups.length === 0) {
-            throw new ValidationError(`Nije pronađena ni jedna grupa 'BG-23' u dokumentu '${type}'`, undefined);
+            const err = new ValidationError(
+                `Nije pronađena ni jedna grupa 'BG-23' (${getBusinessGroupXpath("BG-23", type)}) u dokumentu '${type}'`,
+                undefined
+            );
+            if (options?.lenient) {
+                if (options.errors) {
+                    options.errors.push(err);
+                }
+                return [];
+            }
+            throw err;
         }
         return groups.map(groupEl => {
             return {
-                kategorijaPdv: getElementContent(groupEl, getBusinessTermXpath("BT-118", type, "BG-23"), UBL_NS, { regexKey: "kategorijaPdv" }),
-                oporeziviIznos: getElementContentNumber(groupEl, getBusinessTermXpath("BT-116", type, "BG-23"), UBL_NS, { regexKey: "decimal2" }),
-                iznosPoreza: getElementContentNumber(groupEl, getBusinessTermXpath("BT-117", type, "BG-23"), UBL_NS, { regexKey: "decimal2" }),
+                kategorijaPdv: getElementContent(groupEl, getBusinessTermXpath("BT-118", type, "BG-23"), UBL_NS, {
+                    ...options,
+                    regexKey: "kategorijaPdv"
+                }),
+                oporeziviIznos: getElementContentNumber(groupEl, getBusinessTermXpath("BT-116", type, "BG-23"), UBL_NS, {
+                    ...options,
+                    regexKey: "decimal2"
+                }),
+                iznosPoreza: getElementContentNumber(groupEl, getBusinessTermXpath("BT-117", type, "BG-23"), UBL_NS, {
+                    ...options,
+                    regexKey: "decimal2"
+                }),
                 stopa: getOptionalElementContentDecimalString(groupEl, getBusinessTermXpath("BT-119", type, "BG-23"), UBL_NS, {
+                    ...options,
                     regexKey: "decimal"
                 }),
                 razlogOslobodenja: getOptionalElementContent(groupEl, getBusinessTermXpath("BT-121", type, "BG-23"), UBL_NS, {
+                    ...options,
                     regexKey: "izuzecePdv"
                 }),
                 tekstRazlogaOslobodenja: getOptionalElementContent(groupEl, getBusinessTermXpath("BT-120", type, "BG-23"), UBL_NS, {
+                    ...options,
                     regexKey: "tekst1024"
                 }),
                 hrOznakaKategorijaPdv: undefined
@@ -413,9 +470,9 @@ export class ArtiklIdentifikatorKlasifikacija implements ArtiklIdentifikatorKlas
         };
     }
 
-    static fromUblElement(el: XmlElement, _type: "Invoice" | "CreditNote") {
+    static fromUblElement(el: XmlElement, _type: "Invoice" | "CreditNote", options?: ExtractionOptions) {
         return {
-            identifikatorKlasifikacije: getElementContent(el, ".", UBL_NS, { regexKey: "tekst10" }),
+            identifikatorKlasifikacije: getElementContent(el, ".", UBL_NS, { ...options, regexKey: "tekst10" }),
             identifikatorSheme: getAttributeValue(el, "listID", UBL_NS),
             verzijaSheme: getOptionalAttributeValue(el, "listVersionID", UBL_NS) || undefined
         };
@@ -540,7 +597,7 @@ export class DokumentPopust implements DokumentPopustSerializable {
         };
     }
 
-    static fromUblElement(el: XmlElement, type: "Invoice" | "CreditNote"): IDokumentPopust[] | undefined {
+    static fromUblElement(el: XmlElement, type: "Invoice" | "CreditNote", options?: ExtractionOptions): IDokumentPopust[] | undefined {
         const groups = el.find(getBusinessGroupXpath("BG-20", type), UBL_NS) as XmlElement[];
         if (groups.length === 0) {
             return undefined;
@@ -557,15 +614,26 @@ export class DokumentPopust implements DokumentPopustSerializable {
         }
         return filteredGroups.map(groupEl => {
             return {
-                iznosPopust: getElementContentNumber(groupEl, getBusinessTermXpath("BT-92", type, "BG-20"), UBL_NS, { regexKey: "decimal2" }),
-                kategorijaPdv: getElementContent(groupEl, getBusinessTermXpath("BT-95", type, "BG-20"), UBL_NS, { regexKey: "kategorijaPdv" }),
+                iznosPopust: getElementContentNumber(groupEl, getBusinessTermXpath("BT-92", type, "BG-20"), UBL_NS, {
+                    ...options,
+                    regexKey: "decimal2"
+                }),
+                kategorijaPdv: getElementContent(groupEl, getBusinessTermXpath("BT-95", type, "BG-20"), UBL_NS, {
+                    ...options,
+                    regexKey: "kategorijaPdv"
+                }),
                 stopaPdv: getOptionalElementContentDecimalString(groupEl, getBusinessTermXpath("BT-96", type, "BG-20"), UBL_NS, {
+                    ...options,
                     regexKey: "decimal"
                 }),
                 tekstRazlogaPopusta: getOptionalElementContent(groupEl, getBusinessTermXpath("BT-97", type, "BG-20"), UBL_NS, {
+                    ...options,
                     regexKey: "tekst1024"
                 }),
-                razlogPopusta: getOptionalElementContent(groupEl, getBusinessTermXpath("BT-98", type, "BG-20"), UBL_NS, { regexKey: "razlogPopusta" })
+                razlogPopusta: getOptionalElementContent(groupEl, getBusinessTermXpath("BT-98", type, "BG-20"), UBL_NS, {
+                    ...options,
+                    regexKey: "razlogPopusta"
+                })
             };
         });
     }
@@ -623,7 +691,7 @@ export class DokumentTrosak implements DokumentTrosakSerializable {
         };
     }
 
-    static fromUblElement(el: XmlElement, type: "Invoice" | "CreditNote"): IDokumentTrosak[] | undefined {
+    static fromUblElement(el: XmlElement, type: "Invoice" | "CreditNote", options?: ExtractionOptions): IDokumentTrosak[] | undefined {
         const groups = el.find(getBusinessGroupXpath("BG-21", type), UBL_NS) as XmlElement[];
         if (groups.length === 0) {
             return undefined;
@@ -640,18 +708,28 @@ export class DokumentTrosak implements DokumentTrosakSerializable {
         }
         return filteredGroups.map(groupEl => {
             return {
-                iznosTrosak: getElementContentNumber(groupEl, getBusinessTermXpath("BT-99", type, "BG-21"), UBL_NS, { regexKey: "decimal2" }),
-                kategorijaPdv: getElementContent(groupEl, getBusinessTermXpath("BT-102", type, "BG-21"), UBL_NS, { regexKey: "kategorijaPdv" }),
+                iznosTrosak: getElementContentNumber(groupEl, getBusinessTermXpath("BT-99", type, "BG-21"), UBL_NS, {
+                    ...options,
+                    regexKey: "decimal2"
+                }),
+                kategorijaPdv: getElementContent(groupEl, getBusinessTermXpath("BT-102", type, "BG-21"), UBL_NS, {
+                    ...options,
+                    regexKey: "kategorijaPdv"
+                }),
                 hrOznakaPorezneKategorije: getOptionalElementContent(groupEl, getBusinessTermXpath("HR-BT-6", type, "BG-21"), UBL_NS, {
+                    ...options,
                     regexKey: "hrKategorijaPdv"
                 }),
                 stopaPdv: getOptionalElementContentDecimalString(groupEl, getBusinessTermXpath("BT-103", type, "BG-21"), UBL_NS, {
+                    ...options,
                     regexKey: "decimal"
                 }),
                 tekstRazlogaOslobodenjaPdv: getOptionalElementContent(groupEl, getBusinessTermXpath("HR-BT-7", type, "BG-21"), UBL_NS, {
+                    ...options,
                     regexKey: "tekst1024"
                 }),
                 razlogOslobodenjaPdv: getOptionalElementContent(groupEl, getBusinessTermXpath("HR-BT-8", type, "BG-21"), UBL_NS, {
+                    ...options,
                     regexKey: "izuzecePdv"
                 })
             };

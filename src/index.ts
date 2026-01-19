@@ -8,3 +8,4 @@ export {
 export { getERacunFromUbl, getRacunFromUbl } from "./builders/ubl";
 export { FiskalizacijaServiceURL } from "./constants/api";
 export { FiskalizacijaClient } from "./fiskalizacija";
+export type { ExtractionOptions } from "./util/xml";

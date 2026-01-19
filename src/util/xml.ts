@@ -27,7 +27,7 @@ export function getBusinessGroupXpath(id: keyof typeof BUSINESS_GROUPS, type: "I
     return term.xpath[type].join("/");
 }
 
-interface ExtractionOptions {
+export interface ExtractionOptions {
     regexKey?: RegexKey;
     lenient?: boolean;
     errors?: ValidationError[];
@@ -48,7 +48,14 @@ export function getElementContent(parentEl: XmlElement, tag: string, ns: Record<
     const { regexKey, lenient, errors } = options;
     const el = parentEl.get(tag, ns) as XmlElement | null;
     if (!el) {
-        throw new ValidationError(`Element '${tag}' nije pronađen u elementu '${parentEl.prefix}:${parentEl.name}'`, undefined);
+        const err = new ValidationError(`Element '${tag}' nije pronađen u elementu '${parentEl.prefix}:${parentEl.name}'`, undefined);
+        if (lenient) {
+            if (errors) {
+                errors.push(err);
+            }
+            return "";
+        }
+        throw err;
     }
     const trimmedContent = normalizeContent(el.content, regexKey);
     if (regexKey && !REGEX[regexKey].test(trimmedContent)) {

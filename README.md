@@ -65,10 +65,26 @@ Moguće generiranje zahtjeva koristeći pomoćne metode:
 
 Objekti koji zadovoljavaju sučelja `IERacun` odnosno `IRacun` mogu se generirati iz UBL dokumenata `Invoice` ili `CreditNote`:
 
-- `getERacunFromUbl(doc: string | Buffer | XmlDocument | XmlElement): IERacun`
-- `getRacunFromUbl(doc: string | Buffer | XmlDocument | XmlElement): IRacun`
+- `getERacunFromUbl(doc: string | Buffer | XmlDocument | XmlElement, options?: ExtractionOptions): IERacun`
+- `getRacunFromUbl(doc: string | Buffer | XmlDocument | XmlElement, options?: ExtractionOptions): IRacun`
 
 Funkcije prihvaćaju XML kao string, Buffer, ili već parsirane `XmlDocument`/`XmlElement` objekte iz `libxml2-wasm` biblioteke. Automatski prepoznaju i obrađuju StandardBusinessDocument (SBD) omot oko UBL dokumenta.
+
+### Kreiranje zahtjeva iz nepotpunih/neispravnih dokumenata
+
+Ako UBL dokument nije u potpunosti ispravan (npr. nedostaju obvezna polja ili polja ne zadovoljavaju regex), metode će baciti `ValidationError`. Prosljeđivanjem `lenient: true` opcije moguće je izvući djelomične podatke:
+
+```typescript
+const options = {
+    lenient: true,
+    errors: [] // Opcionalno: polje u koje će se prikupiti sve validacijske greške
+};
+const eRacun = getERacunFromUbl(ublDocument, options);
+
+// IERacun objekt će sadržavati sve podatke koji postoje, neovisno o tome da li zadovoljavaju regex.
+// Polja koja nedostaju će biti prazni stringovi/nizovi
+```
+
 
 ## Primjeri
 
