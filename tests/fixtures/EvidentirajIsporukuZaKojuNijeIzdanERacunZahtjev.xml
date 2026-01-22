@@ -2,19 +2,19 @@
     xmlns:eizv="http://www.porezna-uprava.gov.hr/fin/2024/types/eIzvjestavanje"
     eizv:id="unique-request-id-12345">
   <eizv:Zaglavlje>
-    <eizv:datumVrijemeSlanja>2024-11-06T10:15:00.0000</eizv:datumVrijemeSlanja>
+    <eizv:datumVrijemeSlanja>2026-11-06T10:15:00.0000</eizv:datumVrijemeSlanja>
     <eizv:vrstaRacuna>IR</eizv:vrstaRacuna>
   </eizv:Zaglavlje>
   <eizv:Racun>
-    <eizv:brojDokumenta>1234/2024/01</eizv:brojDokumenta>
-    <eizv:datumIzdavanja>2024-09-02</eizv:datumIzdavanja>
+    <eizv:brojDokumenta>1234/2026/01</eizv:brojDokumenta>
+    <eizv:datumIzdavanja>2026-09-02</eizv:datumIzdavanja>
     <eizv:vrstaDokumenta>380</eizv:vrstaDokumenta>
     <eizv:valutaRacuna>EUR</eizv:valutaRacuna>
     <eizv:vrstaPoslovnogProcesa>P1</eizv:vrstaPoslovnogProcesa>
     <eizv:Izdavatelj>
       <eizv:ime>Tvrtka A d.o.o.</eizv:ime>
       <eizv:oibPorezniBroj>02994650199</eizv:oibPorezniBroj>
-      <eizv:oibOperatera>12345678902</eizv:oibOperatera>
+      <eizv:oibOperatera>99999999994</eizv:oibOperatera>
     </eizv:Izdavatelj>
     <eizv:Primatelj>
       <eizv:ime>Tvrtka B d.o.o.</eizv:ime>

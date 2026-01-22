@@ -22,21 +22,21 @@
   <cbc:ProfileID>P1</cbc:ProfileID>
   <cbc:ID>5-P1-1</cbc:ID>
   <cbc:CopyIndicator>true</cbc:CopyIndicator>
-  <cbc:IssueDate>2025-05-01</cbc:IssueDate>
+  <cbc:IssueDate>2026-05-01</cbc:IssueDate>
   <cbc:IssueTime>12:00:00</cbc:IssueTime>
-  <cbc:DueDate>2025-05-31</cbc:DueDate>
+  <cbc:DueDate>2026-05-31</cbc:DueDate>
   <cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode>
   <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
   <cac:BillingReference>
     <cac:InvoiceDocumentReference>
       <cbc:ID>PREV-001</cbc:ID>
-      <cbc:IssueDate>2024-01-01</cbc:IssueDate>
+      <cbc:IssueDate>2026-01-01</cbc:IssueDate>
     </cac:InvoiceDocumentReference>
   </cac:BillingReference>
   <cac:BillingReference>
     <cac:InvoiceDocumentReference>
       <cbc:ID>PREV-002</cbc:ID>
-      <cbc:IssueDate>2024-02-01</cbc:IssueDate>
+      <cbc:IssueDate>2026-02-01</cbc:IssueDate>
     </cac:InvoiceDocumentReference>
   </cac:BillingReference>
   <cac:ContractDocumentReference>
@@ -44,9 +44,9 @@
   </cac:ContractDocumentReference>
   <cac:AccountingSupplierParty>
     <cac:Party>
-      <cbc:EndpointID schemeID="9934">12345678901</cbc:EndpointID>
+      <cbc:EndpointID schemeID="9934">00000000001</cbc:EndpointID>
       <cac:PartyIdentification>
-        <cbc:ID>9934:12345678901</cbc:ID>
+        <cbc:ID>9934:00000000001</cbc:ID>
       </cac:PartyIdentification>
       <cac:PostalAddress>
         <cbc:StreetName>VRTNI PUT 3</cbc:StreetName>
@@ -57,7 +57,7 @@
         </cac:Country>
       </cac:PostalAddress>
       <cac:PartyTaxScheme>
-        <cbc:CompanyID>HR12345678901</cbc:CompanyID>
+        <cbc:CompanyID>HR00000000001</cbc:CompanyID>
         <cac:TaxScheme>
           <cbc:ID>VAT</cbc:ID>
         </cac:TaxScheme>
@@ -98,7 +98,7 @@
     </cac:Party>
   </cac:AccountingCustomerParty>
   <cac:Delivery>
-    <cbc:ActualDeliveryDate>2025-05-15</cbc:ActualDeliveryDate>
+    <cbc:ActualDeliveryDate>2026-05-15</cbc:ActualDeliveryDate>
   </cac:Delivery>
   <cac:PaymentMeans>
     <cbc:PaymentMeansCode>30</cbc:PaymentMeansCode>
@@ -204,7 +204,7 @@
       </cac:CommodityClassification>
       <cac:ClassifiedTaxCategory>
         <cbc:ID>Z</cbc:ID>
-        <cbc:Name>HR:PDV0</cbc:Name>
+        <cbc:Name>HR:Z</cbc:Name>
         <cbc:Percent>0</cbc:Percent>
         <cac:TaxScheme>
           <cbc:ID>VAT</cbc:ID>

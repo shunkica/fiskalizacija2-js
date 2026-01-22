@@ -17,7 +17,7 @@ import type { XmlSerializable } from "./util";
 export interface IZaglavljeIzvjestavanje {
     /**
      * Datum i vrijeme slanja zahtjeva
-     * @regex datumVrijemeDeci
+     * @restriction datumVrijemeSlanja
      */
     datumVrijemeSlanja: string;
 }
@@ -30,12 +30,12 @@ export type ZaglavljeIzvjestavanjeSerializable = XmlSerializable<IZaglavljeIzvje
 export interface IZaglavljeIsporuka {
     /**
      * Datum i vrijeme slanja zahtjeva
-     * @regex datumVrijemeDeci
+     * @restriction datumVrijemeSlanja
      */
     datumVrijemeSlanja: string;
     /**
      * Vrsta računa, IR
-     * @regex vrstaERacuna
+     * @restriction izvjestavanje_vrstaERacuna
      */
     vrstaRacuna: string;
 }
@@ -49,45 +49,45 @@ export interface INaplata {
     /**
      * Broj dokumenta eRačuna, dio identifikatora eRačuna (BT-1 iz UBL 2.1)
      * @bt BT-1
-     * @regex tekst100
+     * @restriction tekst100
      */
     brojDokumenta: string;
 
     /**
      * Datum izdavanja eRačuna, dio identifikatora eRačuna (BT-2 iz UBL 2.1)
      * @bt BT-2
-     * @regex datum
+     * @restriction datumIzdavanja
      */
     datumIzdavanja: string;
 
     /**
      * OIB ili porezni broj izdavatelja, dio identifikatora eRačuna (BT-31 iz UBL 2.1)
      * @bt BT-31
-     * @regex tekst20
+     * @restriction OIBTip
      */
     oibPorezniBrojIzdavatelja: string;
 
     /**
      * OIB ili porezni broj primatelja
-     * @regex tekst20
+     * @restriction OIBTip
      */
     oibPorezniBrojPrimatelja: string;
 
     /**
      * Datum naplate eRačuna
-     * @regex datum
+     * @restriction datum
      */
     datumNaplate: string;
 
     /**
      * Iznos koji je naplaćen
-     * @regex decimal2
+     * @restriction decimal2
      */
-    naplaceniIznos: number;
+    naplaceniIznos: number | string;
 
     /**
      * Šifra načina plaćanja (T – Transakcijski račun, O – Obračunsko plaćanje, Z – Ostalo).
-     * @regex nacinPlacanja
+     * @restriction nacinPlacanja
      */
     nacinPlacanja: string;
 }
@@ -101,33 +101,33 @@ export interface IOdbijanje {
     /**
      * Broj dokumenta eRačuna, dio identifikatora eRačuna (BT-1 iz UBL 2.1)
      * @bt BT-1
-     * @regex tekst100
+     * @restriction tekst100
      */
     brojDokumenta: string;
 
     /**
      * Datum izdavanja eRačuna, dio identifikatora eRačuna (BT-2 iz UBL 2.1)
      * @bt BT-2
-     * @regex datum
+     * @restriction datumIzdavanja
      */
     datumIzdavanja: string;
 
     /**
      * OIB ili porezni broj izdavatelja, dio identifikatora eRačuna (BT-31 iz UBL 2.1)
      * @bt BT-31
-     * @regex tekst20
+     * @restriction OIBTip
      */
     oibPorezniBrojIzdavatelja: string;
 
     /**
      * OIB ili porezni broj primatelja
-     * @regex tekst20
+     * @restriction OIBTip
      */
     oibPorezniBrojPrimatelja: string;
 
     /**
      * Datum odbijanja eRačuna
-     * @regex datum
+     * @restriction datum
      */
     datumOdbijanja: string;
 
@@ -136,13 +136,13 @@ export interface IOdbijanje {
      * N - Neusklađenost podataka koji ne utječu na obračun poreza
      * U - Neusklađenost podataka koji utječu na obračun poreza
      * O - Ostalo
-     * @regex razlogOdbijanja
+     * @restriction razlogOdbijanja
      */
     vrstaRazlogaOdbijanja: string;
 
     /**
      * Razlog odbijanja eRačuna
-     * @regex tekst1024
+     * @restriction tekst1024
      */
     razlogOdbijanja: string;
 }
@@ -156,14 +156,14 @@ export interface IPrethodniRacun {
     /**
      * Broj dokumenta istog izdavatelja na koji se račun referencira (BT-25 iz UBL 2.1)
      * @bt BT-25
-     * @regex tekst100
+     * @restriction tekst100
      */
     brojDokumenta: string;
 
     /**
      * Datum izdavanja prethodnog računa na koji se novi dokument referencira (BT-26 iz UBL 2.1)
      * @bt BT-26
-     * @regex datum
+     * @restriction datum
      */
     datumIzdavanja: string;
 }
@@ -177,80 +177,84 @@ export interface IStavkaRacuna {
     /**
      * Količina artikala (robe ili usluga) koje se obračunavaju na stavki računa (BT-129 iz UBL 2.1)
      * @bt BT-129
+     * @restriction decimal30i10
      */
     kolicina: number | string;
 
     /**
      * Jedinica mjere koja se primjenjuje na količinu fakturiranu na računu (BT-130 iz UBL 2.1)
      * @bt BT-130
-     * @regex jedinicaMjere
+     * @restriction jedinicaMjere
      */
     jedinicaMjere: string;
 
     /**
      * Ukupan iznos stavke računa, uključujući popuste i troškove na razini stavke kao i druge relevantne poreze (BT-131 iz UBL 2.1)
      * @bt BT-131
-     * @regex decimal2
+     * @restriction decimal2
      */
-    neto: number;
+    neto: number | string;
 
     /**
      * Cijena artikla bez PDV-a, nakon oduzimanja popusta na cijenu artikla (BT-146 iz UBL 2.1)
      * @bt BT-146
+     * @restriction decimal30i10
      */
     artiklNetoCijena: number | string;
 
     /**
      * Jedinična cijena bez PDV-a prije oduzimanja popusta na cijenu artikla (BT-148 iz UBL 2.1)
      * @bt BT-148
-     * @regex decimal
+     * @restriction decimal30i10
      */
     artiklBrutoCijena?: number | string;
 
     /**
      * Broj jedinica artikla na koji se primjenjuje cijena (BT-149 iz UBL 2.1)
      * @bt BT-149
+     * @restriction decimal30i10
      */
     artiklOsnovnaKolicina?: number | string;
 
     /**
      * Šifra jedinica mjere koja se primjenjuje na osnovnu količinu za cijenu artikla. Iste vrijednosti kao i kod Jedinica mjere (BT-150 iz UBL 2.1)
      * @bt BT-150
-     * @regex jedinicaMjere
+     * @restriction jedinicaMjere
      */
     artiklJedinicaMjereZaOsnovnuKolicinu?: string;
 
     /**
      * Šifra kategorije PDV-a za fakturirani artikl po UNCL5305 (BT-151 iz UBL 2.1)
      * @bt BT-151
-     * @regex kategorijaPdv
+     * @restriction kategorijaPdv
      */
     artiklKategorijaPdv: string;
 
     /**
      * Stopa PDV-a prikazana u obliku postotka koji vrijedi za fakturirani artikl (BT-152 iz UBL 2.1)
      * @bt BT-152
+     * @restriction decimal30i10
      */
     artiklStopaPdv?: number | string;
 
     /**
      * Naziv artikla (BT-153 iz UBL 2.1)
      * @bt BT-153
-     * @regex tekst100
+     * @restriction tekst1024
      */
     artiklNaziv: string;
 
     /**
      * Opis artikla (BT-154 iz UBL 2.1)
      * @bt BT-154
-     * @regex tekst1024
+     * @restriction tekst4096
      */
     artiklOpis?: string;
 
     /**
      * Podrška za stavke koje su oslobođene PDV-a ili ne podliježu PDV-u (HR-BT-12 iz EU norme)
      * @bt HR-BT-12
-     * @regex hrKategorijaPdv
+     * @restriction hrKategorijaPdv
      */
     artiklHrOznakaKategorijaPdv?: string;
 
@@ -269,56 +273,56 @@ export interface IRacun {
     /**
      * Broj dokumenta računa, dio identifikatora eRačuna (BT-1 iz UBL 2.1)
      * @bt BT-1
-     * @regex tekst100
+     * @restriction tekst100
      */
     brojDokumenta: string;
 
     /**
      * Datum izdavanja računa, dio identifikatora eRačuna (BT-2 iz UBL 2.1)
      * @bt BT-2
-     * @regex datum
+     * @restriction datumIzdavanja
      */
     datumIzdavanja: string;
 
     /**
      * Šifra vrste dokumenta računa, dio identifikatora eRačuna (BT-3 iz UBL 2.1)
      * @bt BT-3
-     * @regex vrstaDokumenta
+     * @restriction vrstaDokumenta
      */
     vrstaDokumenta: string;
 
     /**
      * Šifra valute po ISO4217 u kojoj se iskazuju svi iznosi na računu, osim za ukupni iznos PDV-a u računovodstvenoj valuti (BT-5 iz UBL 2.1)
      * @bt BT-5
-     * @regex valuta
+     * @restriction valuta
      */
     valutaRacuna: string;
 
     /**
      * Datum kada plaćanje dospijeva na naplatu (BT-9 iz UBL 2.1)
      * @bt BT-9
-     * @regex datum
+     * @restriction datum
      */
     datumDospijecaPlacanja?: string;
 
     /**
      * Identifikator poslovnog procesa u kojem se obavlja transakcija, kako bi se kupcu omogućila obrada na odgovarajući način (BT-23 iz UBL 2.1)
      * @bt BT-23
-     * @regex tekst100
+     * @restriction tekst200
      */
     vrstaPoslovnogProcesa: string;
 
     /**
      * Identifikacija ugovora koja mora biti jedinstvena u kontekstu specifičnog trgovinskog odnosa i za određeno razdoblje (BT-12 iz UBL 2.1)
      * @bt BT-12
-     * @regex tekst100
+     * @restriction tekst1024
      */
     referencaNaUgovor?: string;
 
     /**
      * Datum na koji se obavlja ili dovršava isporuke robe ili usluga (BT-72 iz UBL 2.1)
      * @bt BT-72
-     * @regex datum
+     * @restriction datum
      */
     datumIsporuke?: string;
 
@@ -369,7 +373,7 @@ export interface IRacun {
 
     /**
      * Indikator kopije računa koji pokazuje radi li se o kopiji računa (true) ili ne (false)
-     * @regex ^(true|false)$
+     * @restriction boolean
      */
     indikatorKopije: boolean;
 }
@@ -409,6 +413,7 @@ export interface IEvidentirajNaplatuOdgovor {
 
     /**
      * Datum i vrijeme slanja odgovora
+     * @restriction datumVrijemeSlanja
      */
     datumVrijemeSlanja: string;
 
@@ -453,7 +458,7 @@ export interface IEvidentirajOdbijanjeOdgovor {
 
     /**
      * Datum i vrijeme slanja zahtjeva
-     * @regex datumVrijemeDeci
+     * @restriction datumVrijemeSlanja
      */
     datumVrijemeSlanja: string;
 
@@ -498,7 +503,7 @@ export interface IEvidentirajIsporukuZaKojuNijeIzdanERacunOdgovor {
 
     /**
      * Datum i vrijeme slanja odgovora
-     * @regex datumVrijemeDeci
+     * @restriction datumVrijemeSlanja
      */
     datumVrijemeSlanja: string;
 

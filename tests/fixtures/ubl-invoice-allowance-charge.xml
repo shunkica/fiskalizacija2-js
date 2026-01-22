@@ -4,14 +4,14 @@
   <cbc:CustomizationID>urn:cen.eu:en16931:2017#compliant#urn:mfin.gov.hr:cius-2025:1.0#conformant#urn:mfin.gov.hr:ext-2025:1.0</cbc:CustomizationID>
   <cbc:ProfileID>P1</cbc:ProfileID>
   <cbc:ID>TEST-001</cbc:ID>
-  <cbc:IssueDate>2025-05-01</cbc:IssueDate>
-  <cbc:DueDate>2025-05-31</cbc:DueDate>
+  <cbc:IssueDate>2026-05-01</cbc:IssueDate>
+  <cbc:DueDate>2026-05-31</cbc:DueDate>
   <cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode>
   <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
   <cac:AccountingSupplierParty>
     <cac:Party>
       <cac:PartyTaxScheme>
-        <cbc:CompanyID>HR12345678901</cbc:CompanyID>
+        <cbc:CompanyID>HR00000000001</cbc:CompanyID>
         <cac:TaxScheme>
           <cbc:ID>VAT</cbc:ID>
         </cac:TaxScheme>
@@ -21,7 +21,7 @@
       </cac:PartyLegalEntity>
     </cac:Party>
     <cac:SellerContact>
-      <cbc:ID>12345678901</cbc:ID>
+      <cbc:ID>00000000001</cbc:ID>
     </cac:SellerContact>
   </cac:AccountingSupplierParty>
   <cac:AccountingCustomerParty>

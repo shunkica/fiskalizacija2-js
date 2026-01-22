@@ -87,23 +87,23 @@ describe("ERacun", () => {
 
                 // First subtotal: HR:N
                 expect(eracun.RaspodjelaPdv[0].kategorijaPdv).toBe("E");
-                expect(eracun.RaspodjelaPdv[0].oporeziviIznos).toBe(28.95);
-                expect(eracun.RaspodjelaPdv[0].iznosPoreza).toBe(0.0);
+                expect(eracun.RaspodjelaPdv[0].oporeziviIznos).toBe("28.95");
+                expect(eracun.RaspodjelaPdv[0].iznosPoreza).toBe("0.00");
                 expect(eracun.RaspodjelaPdv[0].stopa).toBe("0");
                 expect(eracun.RaspodjelaPdv[0].tekstRazlogaOslobodenja).toBe("PDV nije obračunat temeljem čl.33 st  3 Zakona o PDVu");
                 expect(eracun.RaspodjelaPdv[0].hrOznakaKategorijaPdv).toBe("HR:N");
 
                 // Second subtotal: HR:PDV25
                 expect(eracun.RaspodjelaPdv[1].kategorijaPdv).toBe("S");
-                expect(eracun.RaspodjelaPdv[1].oporeziviIznos).toBe(322.7);
-                expect(eracun.RaspodjelaPdv[1].iznosPoreza).toBe(80.68);
+                expect(eracun.RaspodjelaPdv[1].oporeziviIznos).toBe("322.70");
+                expect(eracun.RaspodjelaPdv[1].iznosPoreza).toBe("80.68");
                 expect(eracun.RaspodjelaPdv[1].stopa).toBe("25");
                 expect(eracun.RaspodjelaPdv[1].hrOznakaKategorijaPdv).toBe("HR:PDV25");
 
                 // Third subtotal: HR:E
                 expect(eracun.RaspodjelaPdv[2].kategorijaPdv).toBe("E");
-                expect(eracun.RaspodjelaPdv[2].oporeziviIznos).toBe(5.88);
-                expect(eracun.RaspodjelaPdv[2].iznosPoreza).toBe(0.0);
+                expect(eracun.RaspodjelaPdv[2].oporeziviIznos).toBe("5.88");
+                expect(eracun.RaspodjelaPdv[2].iznosPoreza).toBe("0.00");
                 expect(eracun.RaspodjelaPdv[2].stopa).toBe("0");
                 expect(eracun.RaspodjelaPdv[2].tekstRazlogaOslobodenja).toBe("PDV nije obračunat temeljem čl.40 st. 1 Zakona o PDVu");
                 expect(eracun.RaspodjelaPdv[2].hrOznakaKategorijaPdv).toBe("HR:E");
@@ -123,15 +123,15 @@ describe("ERacun", () => {
                 // Should have 1 discount (ChargeIndicator=false)
                 expect(eracun.DokumentPopust).toBeDefined();
                 expect(eracun.DokumentPopust).toHaveLength(1);
-                expect(eracun.DokumentPopust![0].iznosPopust).toBe(50.0);
+                expect(eracun.DokumentPopust![0].iznosPopust).toBe("50.00");
                 expect(eracun.DokumentPopust![0].kategorijaPdv).toBe("S");
 
                 // Should have 2 charges (ChargeIndicator=true)
                 expect(eracun.DokumentTrosak).toBeDefined();
                 expect(eracun.DokumentTrosak).toHaveLength(2);
-                expect(eracun.DokumentTrosak![0].iznosTrosak).toBe(20.0);
+                expect(eracun.DokumentTrosak![0].iznosTrosak).toBe("20.00");
                 expect(eracun.DokumentTrosak![0].kategorijaPdv).toBe("S");
-                expect(eracun.DokumentTrosak![1].iznosTrosak).toBe(10.0);
+                expect(eracun.DokumentTrosak![1].iznosTrosak).toBe("10.00");
                 expect(eracun.DokumentTrosak![1].kategorijaPdv).toBe("S");
             } finally {
                 doc.dispose();

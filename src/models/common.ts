@@ -22,22 +22,21 @@ import type {
 } from "../types";
 import type { ExtractionOptions } from "../util/xml";
 import {
+    normalizeDecimal,
     extractOptionalElement,
     getAttributeValue,
     getBusinessGroupXpath,
     getBusinessTermXpath,
     getElementContent,
-    getElementContentNumber,
     getOptionalAttributeValue,
     getOptionalElementContent,
-    getOptionalElementContentNumber,
-    getOptionalElementContentDecimalString,
     toValidatedDecimalStringOptional,
     xmlEscape
 } from "../util/xml";
 import type { XmlElement } from "libxml2-wasm";
 import { FISK_NS, getFiskNsPrefix, UBL_NS } from "../constants/const";
 import { ValidationError } from "../util/error";
+import { assertRestriction } from "../constants/restrictions";
 
 export class Izdavatelj implements IzdavateljSerializable {
     private readonly _prefix: "efis" | "eizv";
@@ -65,9 +64,9 @@ export class Izdavatelj implements IzdavateljSerializable {
     static fromXmlElement(el: XmlElement): IIzdavatelj {
         const prefix = getFiskNsPrefix(el.namespaceUri);
         return {
-            ime: getElementContent(el, `${prefix}:ime`, FISK_NS, { regexKey: "tekst500" }),
-            oibPorezniBroj: getElementContent(el, `${prefix}:oibPorezniBroj`, FISK_NS, { regexKey: "tekst200" }),
-            oibOperatera: getElementContent(el, `${prefix}:oibOperatera`, FISK_NS, { regexKey: "tekst200" })
+            ime: getElementContent(el, `${prefix}:ime`, FISK_NS, { restrictionName: "tekst1024" }),
+            oibPorezniBroj: getElementContent(el, `${prefix}:oibPorezniBroj`, FISK_NS, { restrictionName: "OIBTip" }),
+            oibOperatera: getElementContent(el, `${prefix}:oibOperatera`, FISK_NS, { restrictionName: "OIBTip" })
         };
     }
 
@@ -87,17 +86,38 @@ export class Izdavatelj implements IzdavateljSerializable {
             }
             throw err;
         }
+
+        let oibPorezniBroj = getOptionalElementContent(groupEl, getBusinessTermXpath("BT-31", type, "BG-4"), UBL_NS, {
+            ...options
+        });
+
+        if (oibPorezniBroj) {
+            if (oibPorezniBroj.startsWith("HR")) {
+                oibPorezniBroj = oibPorezniBroj.substring(2);
+            }
+        } else {
+            oibPorezniBroj = getElementContent(groupEl, getBusinessTermXpath("BT-34", type, "BG-4"), UBL_NS, {
+                ...options
+            });
+        }
+
+        try {
+            assertRestriction(oibPorezniBroj, "OIBTip");
+        } catch (err) {
+            if (err instanceof ValidationError) {
+                if (options?.errors) {
+                    options.errors.push(err);
+                }
+            }
+            if (!options?.lenient) {
+                throw err;
+            }
+        }
+
         return {
-            ime: getElementContent(groupEl, getBusinessTermXpath("BT-27", type, "BG-4"), UBL_NS, { ...options, regexKey: "tekst500" }),
-            // TODO: Iako je u specifikaciji navedeno da u ovo polje može ići OIB ili porezni broj,
-            //       ako se šalje porezni broj, na demo serveru se poruka odbija sa greškom:
-            //       S006: PT nije ovlaštena za dostavu podataka na fiskalizaciju.Inicijalna provjera za valjanost oib-a kod evidentiranja izlaznog eRačuna (Record: 1)
-            //       stoga za sada mičemo "HR" dio iz polja BT-31
-            oibPorezniBroj: getElementContent(groupEl, getBusinessTermXpath("BT-31", type, "BG-4"), UBL_NS, {
-                ...options,
-                regexKey: "tekst200"
-            }).replace(/^HR/, ""),
-            oibOperatera: getElementContent(groupEl, getBusinessTermXpath("HR-BT-5", type, "BG-4"), UBL_NS, { ...options, regexKey: "tekst200" })
+            ime: getElementContent(groupEl, getBusinessTermXpath("BT-27", type, "BG-4"), UBL_NS, { ...options, restrictionName: "tekst1024" }),
+            oibPorezniBroj: oibPorezniBroj,
+            oibOperatera: getElementContent(groupEl, getBusinessTermXpath("HR-BT-5", type, "BG-4"), UBL_NS, { ...options, restrictionName: "OIBTip" })
         };
     }
 }
@@ -125,8 +145,8 @@ export class Primatelj implements PrimateljSerializable {
     static fromXmlElement(el: XmlElement): IPrimatelj {
         const prefix = getFiskNsPrefix(el.namespaceUri);
         return {
-            ime: getElementContent(el, `${prefix}:ime`, FISK_NS, { regexKey: "tekst500" }),
-            oibPorezniBroj: getElementContent(el, `${prefix}:oibPorezniBroj`, FISK_NS, { regexKey: "tekst200" })
+            ime: getElementContent(el, `${prefix}:ime`, FISK_NS, { restrictionName: "tekst1024" }),
+            oibPorezniBroj: getElementContent(el, `${prefix}:oibPorezniBroj`, FISK_NS, { restrictionName: "OIBTip" })
         };
     }
 
@@ -146,14 +166,14 @@ export class Primatelj implements PrimateljSerializable {
             throw err;
         }
         return {
-            ime: getElementContent(groupEl, getBusinessTermXpath("BT-44", type, "BG-7"), UBL_NS, { ...options, regexKey: "tekst500" }),
+            ime: getElementContent(groupEl, getBusinessTermXpath("BT-44", type, "BG-7"), UBL_NS, { ...options, restrictionName: "tekst1024" }),
             // TODO: Iako je u specifikaciji navedeno da u ovo polje može ići OIB ili porezni broj,
             //       ako se šalje porezni broj, na demo serveru se poruka odbija sa greškom:
             //       S006: PT nije ovlaštena za dostavu podataka na fiskalizaciju.Inicijalna provjera za valjanost oib-a kod evidentiranja ulaznog eRačuna (Record: 1)
             //       stoga za sada mičemo "HR" dio iz polja BT-48
             oibPorezniBroj: getElementContent(groupEl, getBusinessTermXpath("BT-48", type, "BG-7"), UBL_NS, {
                 ...options,
-                regexKey: "tekst200"
+                restrictionName: "tekst200"
             }).replace(/^HR/, "")
         };
     }
@@ -189,10 +209,10 @@ export class PrijenosSredstava implements PrijenosSredstavaSerializable {
     static fromXmlElement(el: XmlElement): IPrijenosSredstava {
         const prefix = getFiskNsPrefix(el.namespaceUri);
         return {
-            identifikatorRacunaZaPlacanje: getElementContent(el, `${prefix}:identifikatorRacunaZaPlacanje`, FISK_NS, { regexKey: "tekst34" }),
-            nazivRacunaZaPlacanje: getOptionalElementContent(el, `${prefix}:nazivRacunaZaPlacanje`, FISK_NS, { regexKey: "tekst35" }),
+            identifikatorRacunaZaPlacanje: getElementContent(el, `${prefix}:identifikatorRacunaZaPlacanje`, FISK_NS, { restrictionName: "tekst200" }),
+            nazivRacunaZaPlacanje: getOptionalElementContent(el, `${prefix}:nazivRacunaZaPlacanje`, FISK_NS, { restrictionName: "tekst500" }),
             identifikatorPruzateljaPlatnihUsluga: getOptionalElementContent(el, `${prefix}:identifikatorPruzateljaPlatnihUsluga`, FISK_NS, {
-                regexKey: "tekst25"
+                restrictionName: "tekst200"
             })
         };
     }
@@ -206,15 +226,15 @@ export class PrijenosSredstava implements PrijenosSredstavaSerializable {
             return {
                 identifikatorRacunaZaPlacanje: getElementContent(groupEl, getBusinessTermXpath("BT-84", type, "BG-17"), UBL_NS, {
                     ...options,
-                    regexKey: "tekst34"
+                    restrictionName: "tekst200"
                 }),
                 nazivRacunaZaPlacanje: getOptionalElementContent(groupEl, getBusinessTermXpath("BT-85", type, "BG-17"), UBL_NS, {
                     ...options,
-                    regexKey: "tekst35"
+                    restrictionName: "tekst500"
                 }),
                 identifikatorPruzateljaPlatnihUsluga: getOptionalElementContent(groupEl, getBusinessTermXpath("BT-86", type, "BG-17"), UBL_NS, {
                     ...options,
-                    regexKey: "tekst25"
+                    restrictionName: "tekst200"
                 })
             };
         });
@@ -223,14 +243,14 @@ export class PrijenosSredstava implements PrijenosSredstavaSerializable {
 
 export class DokumentUkupanIznos implements DokumentUkupanIznosSerializable {
     private readonly _prefix: "efis" | "eizv";
-    neto: number;
-    popust?: number | undefined;
-    trosak?: number | undefined;
-    iznosBezPdv: number;
-    pdv: number;
-    iznosSPdv: number;
-    placeniIznos?: number | undefined;
-    iznosKojiDospijevaZaPlacanje: number;
+    neto: number | string;
+    popust?: number | string | undefined;
+    trosak?: number | string | undefined;
+    iznosBezPdv: number | string;
+    pdv: number | string;
+    iznosSPdv: number | string;
+    placeniIznos?: number | string | undefined;
+    iznosKojiDospijevaZaPlacanje: number | string;
 
     constructor(args: IDokumentUkupanIznos, prefix: "efis" | "eizv") {
         this._prefix = prefix;
@@ -247,20 +267,20 @@ export class DokumentUkupanIznos implements DokumentUkupanIznosSerializable {
     toXmlString(): string {
         let res = "";
         res += `<${this._prefix}:DokumentUkupanIznos>`;
-        res += `<${this._prefix}:neto>${this.neto.toFixed(2)}</${this._prefix}:neto>`;
+        res += `<${this._prefix}:neto>${normalizeDecimal(this.neto, 2)}</${this._prefix}:neto>`;
         if (this.popust !== undefined) {
-            res += `<${this._prefix}:popust>${this.popust.toFixed(2)}</${this._prefix}:popust>`;
+            res += `<${this._prefix}:popust>${normalizeDecimal(this.popust, 2)}</${this._prefix}:popust>`;
         }
         if (this.trosak !== undefined) {
-            res += `<${this._prefix}:trosak>${this.trosak.toFixed(2)}</${this._prefix}:trosak>`;
+            res += `<${this._prefix}:trosak>${normalizeDecimal(this.trosak, 2)}</${this._prefix}:trosak>`;
         }
-        res += `<${this._prefix}:iznosBezPdv>${this.iznosBezPdv.toFixed(2)}</${this._prefix}:iznosBezPdv>`;
-        res += `<${this._prefix}:pdv>${this.pdv.toFixed(2)}</${this._prefix}:pdv>`;
-        res += `<${this._prefix}:iznosSPdv>${this.iznosSPdv.toFixed(2)}</${this._prefix}:iznosSPdv>`;
+        res += `<${this._prefix}:iznosBezPdv>${normalizeDecimal(this.iznosBezPdv, 2)}</${this._prefix}:iznosBezPdv>`;
+        res += `<${this._prefix}:pdv>${normalizeDecimal(this.pdv, 2)}</${this._prefix}:pdv>`;
+        res += `<${this._prefix}:iznosSPdv>${normalizeDecimal(this.iznosSPdv, 2)}</${this._prefix}:iznosSPdv>`;
         if (this.placeniIznos !== undefined) {
-            res += `<${this._prefix}:placeniIznos>${this.placeniIznos.toFixed(2)}</${this._prefix}:placeniIznos>`;
+            res += `<${this._prefix}:placeniIznos>${normalizeDecimal(this.placeniIznos, 2)}</${this._prefix}:placeniIznos>`;
         }
-        res += `<${this._prefix}:iznosKojiDospijevaZaPlacanje>${this.iznosKojiDospijevaZaPlacanje.toFixed(2)}</${this._prefix}:iznosKojiDospijevaZaPlacanje>`;
+        res += `<${this._prefix}:iznosKojiDospijevaZaPlacanje>${normalizeDecimal(this.iznosKojiDospijevaZaPlacanje, 2)}</${this._prefix}:iznosKojiDospijevaZaPlacanje>`;
         res += `</${this._prefix}:DokumentUkupanIznos>`;
         return res;
     }
@@ -268,30 +288,30 @@ export class DokumentUkupanIznos implements DokumentUkupanIznosSerializable {
     static fromXmlElement(el: XmlElement): IDokumentUkupanIznos {
         const prefix = getFiskNsPrefix(el.namespaceUri);
         return {
-            neto: getElementContentNumber(el, `${prefix}:neto`, FISK_NS, { regexKey: "decimal2" }),
-            popust: getOptionalElementContentNumber(el, `${prefix}:popust`, FISK_NS, { regexKey: "decimal2" }),
-            trosak: getOptionalElementContentNumber(el, `${prefix}:trosak`, FISK_NS, { regexKey: "decimal2" }),
-            iznosBezPdv: getElementContentNumber(el, `${prefix}:iznosBezPdv`, FISK_NS, { regexKey: "decimal2" }),
-            pdv: getElementContentNumber(el, `${prefix}:pdv`, FISK_NS, { regexKey: "decimal2" }),
-            iznosSPdv: getElementContentNumber(el, `${prefix}:iznosSPdv`, FISK_NS, { regexKey: "decimal2" }),
-            placeniIznos: getOptionalElementContentNumber(el, `${prefix}:placeniIznos`, FISK_NS, { regexKey: "decimal2" }),
-            iznosKojiDospijevaZaPlacanje: getElementContentNumber(el, `${prefix}:iznosKojiDospijevaZaPlacanje`, FISK_NS, { regexKey: "decimal2" })
+            neto: getElementContent(el, `${prefix}:neto`, FISK_NS, { restrictionName: "decimal2" }),
+            popust: getOptionalElementContent(el, `${prefix}:popust`, FISK_NS, { restrictionName: "decimal2" }),
+            trosak: getOptionalElementContent(el, `${prefix}:trosak`, FISK_NS, { restrictionName: "decimal2" }),
+            iznosBezPdv: getElementContent(el, `${prefix}:iznosBezPdv`, FISK_NS, { restrictionName: "decimal2" }),
+            pdv: getElementContent(el, `${prefix}:pdv`, FISK_NS, { restrictionName: "decimal2" }),
+            iznosSPdv: getElementContent(el, `${prefix}:iznosSPdv`, FISK_NS, { restrictionName: "decimal2" }),
+            placeniIznos: getOptionalElementContent(el, `${prefix}:placeniIznos`, FISK_NS, { restrictionName: "decimal2" }),
+            iznosKojiDospijevaZaPlacanje: getElementContent(el, `${prefix}:iznosKojiDospijevaZaPlacanje`, FISK_NS, { restrictionName: "decimal2" })
         };
     }
 
     static fromUblElement(el: XmlElement, type: "Invoice" | "CreditNote", options?: ExtractionOptions): IDokumentUkupanIznos {
         return {
-            neto: getElementContentNumber(el, getBusinessTermXpath("BT-106", type), UBL_NS, { ...options, regexKey: "decimal2" }),
-            popust: getOptionalElementContentNumber(el, getBusinessTermXpath("BT-107", type), UBL_NS, { ...options, regexKey: "decimal2" }),
-            trosak: getOptionalElementContentNumber(el, getBusinessTermXpath("BT-108", type), UBL_NS, { ...options, regexKey: "decimal2" }),
-            iznosBezPdv: getElementContentNumber(el, getBusinessTermXpath("BT-109", type), UBL_NS, { ...options, regexKey: "decimal2" }),
+            neto: getElementContent(el, getBusinessTermXpath("BT-106", type), UBL_NS, { ...options, restrictionName: "decimal2" }),
+            popust: getOptionalElementContent(el, getBusinessTermXpath("BT-107", type), UBL_NS, { ...options, restrictionName: "decimal2" }),
+            trosak: getOptionalElementContent(el, getBusinessTermXpath("BT-108", type), UBL_NS, { ...options, restrictionName: "decimal2" }),
+            iznosBezPdv: getElementContent(el, getBusinessTermXpath("BT-109", type), UBL_NS, { ...options, restrictionName: "decimal2" }),
             /** BT-110 nije obvezan u specifikaciji eRacuna, ali je pdv obvezan u specifikaciji fiskalizacije */
-            pdv: getOptionalElementContentNumber(el, getBusinessTermXpath("BT-110", type), UBL_NS, { ...options, regexKey: "decimal2" }) || 0,
-            iznosSPdv: getElementContentNumber(el, getBusinessTermXpath("BT-112", type), UBL_NS, { ...options, regexKey: "decimal2" }),
-            placeniIznos: getOptionalElementContentNumber(el, getBusinessTermXpath("BT-113", type), UBL_NS, { ...options, regexKey: "decimal2" }),
-            iznosKojiDospijevaZaPlacanje: getElementContentNumber(el, getBusinessTermXpath("BT-115", type), UBL_NS, {
+            pdv: getOptionalElementContent(el, getBusinessTermXpath("BT-110", type), UBL_NS, { ...options, restrictionName: "decimal2" }) || 0,
+            iznosSPdv: getElementContent(el, getBusinessTermXpath("BT-112", type), UBL_NS, { ...options, restrictionName: "decimal2" }),
+            placeniIznos: getOptionalElementContent(el, getBusinessTermXpath("BT-113", type), UBL_NS, { ...options, restrictionName: "decimal2" }),
+            iznosKojiDospijevaZaPlacanje: getElementContent(el, getBusinessTermXpath("BT-115", type), UBL_NS, {
                 ...options,
-                regexKey: "decimal2"
+                restrictionName: "decimal2"
             })
         };
     }
@@ -300,8 +320,8 @@ export class DokumentUkupanIznos implements DokumentUkupanIznosSerializable {
 export class RaspodjelaPdv implements RaspodjelaPdvSerializable {
     private readonly _prefix: "efis" | "eizv";
     kategorijaPdv: string;
-    oporeziviIznos: number;
-    iznosPoreza: number;
+    oporeziviIznos: number | string;
+    iznosPoreza: number | string;
     stopa?: string | undefined;
     razlogOslobodenja?: string | undefined;
     tekstRazlogaOslobodenja?: string | undefined;
@@ -322,8 +342,8 @@ export class RaspodjelaPdv implements RaspodjelaPdvSerializable {
         let res = "";
         res += `<${this._prefix}:RaspodjelaPdv>`;
         res += `<${this._prefix}:kategorijaPdv>${xmlEscape(this.kategorijaPdv)}</${this._prefix}:kategorijaPdv>`;
-        res += `<${this._prefix}:oporeziviIznos>${this.oporeziviIznos.toFixed(2)}</${this._prefix}:oporeziviIznos>`;
-        res += `<${this._prefix}:iznosPoreza>${this.iznosPoreza.toFixed(2)}</${this._prefix}:iznosPoreza>`;
+        res += `<${this._prefix}:oporeziviIznos>${normalizeDecimal(this.oporeziviIznos, 2)}</${this._prefix}:oporeziviIznos>`;
+        res += `<${this._prefix}:iznosPoreza>${normalizeDecimal(this.iznosPoreza, 2)}</${this._prefix}:iznosPoreza>`;
         if (this.stopa !== undefined) {
             res += `<${this._prefix}:stopa>${xmlEscape(this.stopa)}</${this._prefix}:stopa>`;
         }
@@ -343,13 +363,13 @@ export class RaspodjelaPdv implements RaspodjelaPdvSerializable {
     static fromXmlElement(el: XmlElement): IRaspodjelaPdv {
         const prefix = getFiskNsPrefix(el.namespaceUri);
         return {
-            kategorijaPdv: getElementContent(el, `${prefix}:kategorijaPdv`, FISK_NS, { regexKey: "kategorijaPdv" }),
-            oporeziviIznos: getElementContentNumber(el, `${prefix}:oporeziviIznos`, FISK_NS, { regexKey: "decimal2" }),
-            iznosPoreza: getElementContentNumber(el, `${prefix}:iznosPoreza`, FISK_NS, { regexKey: "decimal2" }),
-            stopa: getOptionalElementContentDecimalString(el, `${prefix}:stopa`, FISK_NS, { regexKey: "decimal" }),
-            razlogOslobodenja: getOptionalElementContent(el, `${prefix}:razlogOslobodenja`, FISK_NS, { regexKey: "izuzecePdv" }),
-            tekstRazlogaOslobodenja: getOptionalElementContent(el, `${prefix}:tekstRazlogaOslobodenja`, FISK_NS, { regexKey: "tekst1024" }),
-            hrOznakaKategorijaPdv: getOptionalElementContent(el, `${prefix}:hrOznakaKategorijaPdv`, FISK_NS, { regexKey: "hrKategorijaPdv" })
+            kategorijaPdv: getElementContent(el, `${prefix}:kategorijaPdv`, FISK_NS, { restrictionName: "kategorijaPdv" }),
+            oporeziviIznos: getElementContent(el, `${prefix}:oporeziviIznos`, FISK_NS, { restrictionName: "decimal2" }),
+            iznosPoreza: getElementContent(el, `${prefix}:iznosPoreza`, FISK_NS, { restrictionName: "decimal2" }),
+            stopa: getOptionalElementContent(el, `${prefix}:stopa`, FISK_NS, { restrictionName: "decimal30i10" }),
+            razlogOslobodenja: getOptionalElementContent(el, `${prefix}:razlogOslobodenja`, FISK_NS, { restrictionName: "izuzecePdv" }),
+            tekstRazlogaOslobodenja: getOptionalElementContent(el, `${prefix}:tekstRazlogaOslobodenja`, FISK_NS, { restrictionName: "tekst1024" }),
+            hrOznakaKategorijaPdv: getOptionalElementContent(el, `${prefix}:hrOznakaKategorijaPdv`, FISK_NS, { restrictionName: "hrKategorijaPdv" })
         };
     }
 
@@ -360,31 +380,31 @@ export class RaspodjelaPdv implements RaspodjelaPdvSerializable {
                 return {
                     kategorijaPdv: getElementContent(groupEl, getBusinessTermXpath("HR-BT-18", type, "HR-BG-2"), UBL_NS, {
                         ...options,
-                        regexKey: "kategorijaPdv"
+                        restrictionName: "kategorijaPdv"
                     }),
-                    oporeziviIznos: getElementContentNumber(groupEl, getBusinessTermXpath("HR-BT-16", type, "HR-BG-2"), UBL_NS, {
+                    oporeziviIznos: getElementContent(groupEl, getBusinessTermXpath("HR-BT-16", type, "HR-BG-2"), UBL_NS, {
                         ...options,
-                        regexKey: "decimal2"
+                        restrictionName: "decimal2"
                     }),
-                    iznosPoreza: getElementContentNumber(groupEl, getBusinessTermXpath("HR-BT-17", type, "HR-BG-2"), UBL_NS, {
+                    iznosPoreza: getElementContent(groupEl, getBusinessTermXpath("HR-BT-17", type, "HR-BG-2"), UBL_NS, {
                         ...options,
-                        regexKey: "decimal2"
+                        restrictionName: "decimal2"
                     }),
-                    stopa: getOptionalElementContentDecimalString(groupEl, getBusinessTermXpath("HR-BT-19", type, "HR-BG-2"), UBL_NS, {
+                    stopa: getOptionalElementContent(groupEl, getBusinessTermXpath("HR-BT-19", type, "HR-BG-2"), UBL_NS, {
                         ...options,
-                        regexKey: "decimal"
+                        restrictionName: "decimal30i10"
                     }),
                     razlogOslobodenja: getOptionalElementContent(groupEl, getBusinessTermXpath("HR-BT-21", type, "HR-BG-2"), UBL_NS, {
                         ...options,
-                        regexKey: "izuzecePdv"
+                        restrictionName: "izuzecePdv"
                     }),
                     tekstRazlogaOslobodenja: getOptionalElementContent(groupEl, getBusinessTermXpath("HR-BT-20", type, "HR-BG-2"), UBL_NS, {
                         ...options,
-                        regexKey: "tekst1024"
+                        restrictionName: "tekst1024"
                     }),
                     hrOznakaKategorijaPdv: getOptionalElementContent(groupEl, getBusinessTermXpath("HR-BT-22", type, "HR-BG-2"), UBL_NS, {
                         ...options,
-                        regexKey: "hrKategorijaPdv"
+                        restrictionName: "hrKategorijaPdv"
                     })
                 };
             });
@@ -408,27 +428,27 @@ export class RaspodjelaPdv implements RaspodjelaPdvSerializable {
             return {
                 kategorijaPdv: getElementContent(groupEl, getBusinessTermXpath("BT-118", type, "BG-23"), UBL_NS, {
                     ...options,
-                    regexKey: "kategorijaPdv"
+                    restrictionName: "kategorijaPdv"
                 }),
-                oporeziviIznos: getElementContentNumber(groupEl, getBusinessTermXpath("BT-116", type, "BG-23"), UBL_NS, {
+                oporeziviIznos: getElementContent(groupEl, getBusinessTermXpath("BT-116", type, "BG-23"), UBL_NS, {
                     ...options,
-                    regexKey: "decimal2"
+                    restrictionName: "decimal2"
                 }),
-                iznosPoreza: getElementContentNumber(groupEl, getBusinessTermXpath("BT-117", type, "BG-23"), UBL_NS, {
+                iznosPoreza: getElementContent(groupEl, getBusinessTermXpath("BT-117", type, "BG-23"), UBL_NS, {
                     ...options,
-                    regexKey: "decimal2"
+                    restrictionName: "decimal2"
                 }),
-                stopa: getOptionalElementContentDecimalString(groupEl, getBusinessTermXpath("BT-119", type, "BG-23"), UBL_NS, {
+                stopa: getOptionalElementContent(groupEl, getBusinessTermXpath("BT-119", type, "BG-23"), UBL_NS, {
                     ...options,
-                    regexKey: "decimal"
+                    restrictionName: "decimal30i10"
                 }),
                 razlogOslobodenja: getOptionalElementContent(groupEl, getBusinessTermXpath("BT-121", type, "BG-23"), UBL_NS, {
                     ...options,
-                    regexKey: "izuzecePdv"
+                    restrictionName: "izuzecePdv"
                 }),
                 tekstRazlogaOslobodenja: getOptionalElementContent(groupEl, getBusinessTermXpath("BT-120", type, "BG-23"), UBL_NS, {
                     ...options,
-                    regexKey: "tekst1024"
+                    restrictionName: "tekst1024"
                 }),
                 hrOznakaKategorijaPdv: undefined
             };
@@ -464,15 +484,15 @@ export class ArtiklIdentifikatorKlasifikacija implements ArtiklIdentifikatorKlas
     static fromXmlElement(el: XmlElement): IArtiklIdentifikatorKlasifikacija {
         const prefix = getFiskNsPrefix(el.namespaceUri);
         return {
-            identifikatorKlasifikacije: getElementContent(el, `${prefix}:identifikatorKlasifikacije`, FISK_NS, { regexKey: "tekst10" }),
-            identifikatorSheme: getElementContent(el, `${prefix}:identifikatorSheme`, FISK_NS, { regexKey: "klasifikacijaArtikla" }),
-            verzijaSheme: getOptionalElementContent(el, `${prefix}:verzijaSheme`, FISK_NS, { regexKey: "tekst10" })
+            identifikatorKlasifikacije: getElementContent(el, `${prefix}:identifikatorKlasifikacije`, FISK_NS, { restrictionName: "tekst10" }),
+            identifikatorSheme: getElementContent(el, `${prefix}:identifikatorSheme`, FISK_NS, { restrictionName: "klasifikacijaArtikla" }),
+            verzijaSheme: getOptionalElementContent(el, `${prefix}:verzijaSheme`, FISK_NS, { restrictionName: "tekst10" })
         };
     }
 
     static fromUblElement(el: XmlElement, _type: "Invoice" | "CreditNote", options?: ExtractionOptions) {
         return {
-            identifikatorKlasifikacije: getElementContent(el, ".", UBL_NS, { ...options, regexKey: "tekst10" }),
+            identifikatorKlasifikacije: getElementContent(el, ".", UBL_NS, { ...options, restrictionName: "tekst10" }),
             identifikatorSheme: getAttributeValue(el, "listID", UBL_NS),
             verzijaSheme: getOptionalAttributeValue(el, "listVersionID", UBL_NS) || undefined
         };
@@ -510,8 +530,9 @@ export class Odgovor implements OdgovorSerializable {
         const { lenient = false, errors } = options || {};
         const prefix = getFiskNsPrefix(el.namespaceUri);
         return {
-            idZahtjeva: getElementContent(el, `${prefix}:idZahtjeva`, FISK_NS, { regexKey: "uuid", lenient, errors }),
-            prihvacenZahtjev: getElementContent(el, `${prefix}:prihvacenZahtjev`, FISK_NS, { regexKey: "boolean", lenient, errors }) === "true",
+            idZahtjeva: getElementContent(el, `${prefix}:idZahtjeva`, FISK_NS, { restrictionName: "uuid", lenient, errors }),
+            prihvacenZahtjev:
+                getElementContent(el, `${prefix}:prihvacenZahtjev`, FISK_NS, { restrictionName: "boolean", lenient, errors }) === "true",
             greska: extractOptionalElement(el, `${prefix}:greska`, FISK_NS, greskaEl => Greska.fromXmlElement(greskaEl, options))
         };
     }
@@ -543,17 +564,18 @@ export class Greska implements GreskaSerializable {
     static fromXmlElement(el: XmlElement, options?: { lenient?: boolean; errors?: ValidationError[] }): IGreska {
         const { lenient = false, errors } = options || {};
         const prefix = getFiskNsPrefix(el.namespaceUri);
+        const greskaRestriction = prefix === "efis" ? "fiskalizacija_greska" : "izvjestavanje_greska";
         return {
-            sifra: getElementContent(el, `${prefix}:sifra`, FISK_NS, { regexKey: "greska", lenient, errors }),
-            redniBrojZapisa: getElementContent(el, `${prefix}:redniBrojZapisa`, FISK_NS, { regexKey: "redniBroj", lenient, errors }),
-            opis: getElementContent(el, `${prefix}:opis`, FISK_NS, { regexKey: "tekst1024", lenient, errors })
+            sifra: getElementContent(el, `${prefix}:sifra`, FISK_NS, { restrictionName: greskaRestriction, lenient, errors }),
+            redniBrojZapisa: getElementContent(el, `${prefix}:redniBrojZapisa`, FISK_NS, { restrictionName: "integer", lenient, errors }),
+            opis: getElementContent(el, `${prefix}:opis`, FISK_NS, { restrictionName: "tekst1024", lenient, errors })
         };
     }
 }
 
 export class DokumentPopust implements DokumentPopustSerializable {
     private readonly _prefix: "efis" | "eizv";
-    iznosPopust: number;
+    iznosPopust: number | string;
     kategorijaPdv: string;
     stopaPdv?: string | undefined;
     tekstRazlogaPopusta?: string | undefined;
@@ -571,7 +593,7 @@ export class DokumentPopust implements DokumentPopustSerializable {
     toXmlString(): string {
         let res = "";
         res += `<${this._prefix}:DokumentPopust>`;
-        res += `<${this._prefix}:iznosPopust>${this.iznosPopust.toFixed(2)}</${this._prefix}:iznosPopust>`;
+        res += `<${this._prefix}:iznosPopust>${normalizeDecimal(this.iznosPopust, 2)}</${this._prefix}:iznosPopust>`;
         res += `<${this._prefix}:kategorijaPdv>${xmlEscape(this.kategorijaPdv)}</${this._prefix}:kategorijaPdv>`;
         if (this.stopaPdv !== undefined) {
             res += `<${this._prefix}:stopaPdv>${xmlEscape(this.stopaPdv)}</${this._prefix}:stopaPdv>`;
@@ -589,11 +611,11 @@ export class DokumentPopust implements DokumentPopustSerializable {
     static fromXmlElement(el: XmlElement): IDokumentPopust {
         const prefix = getFiskNsPrefix(el.namespaceUri);
         return {
-            iznosPopust: getElementContentNumber(el, `${prefix}:iznosPopust`, FISK_NS, { regexKey: "decimal2" }),
-            kategorijaPdv: getElementContent(el, `${prefix}:kategorijaPdv`, FISK_NS, { regexKey: "kategorijaPdv" }),
-            stopaPdv: getOptionalElementContentDecimalString(el, `${prefix}:stopaPdv`, FISK_NS, { regexKey: "decimal" }),
-            tekstRazlogaPopusta: getOptionalElementContent(el, `${prefix}:tekstRazlogaPopusta`, FISK_NS, { regexKey: "tekst1024" }),
-            razlogPopusta: getOptionalElementContent(el, `${prefix}:razlogPopusta`, FISK_NS, { regexKey: "razlogPopusta" })
+            iznosPopust: getElementContent(el, `${prefix}:iznosPopust`, FISK_NS, { restrictionName: "decimal2" }),
+            kategorijaPdv: getElementContent(el, `${prefix}:kategorijaPdv`, FISK_NS, { restrictionName: "kategorijaPdv" }),
+            stopaPdv: getOptionalElementContent(el, `${prefix}:stopaPdv`, FISK_NS, { restrictionName: "decimal30i10" }),
+            tekstRazlogaPopusta: getOptionalElementContent(el, `${prefix}:tekstRazlogaPopusta`, FISK_NS, { restrictionName: "tekst1024" }),
+            razlogPopusta: getOptionalElementContent(el, `${prefix}:razlogPopusta`, FISK_NS, { restrictionName: "razlogPopusta" })
         };
     }
 
@@ -605,7 +627,7 @@ export class DokumentPopust implements DokumentPopustSerializable {
         // Filter only AllowanceCharge elements where ChargeIndicator is false (discounts)
         const filteredGroups = groups.filter(groupEl => {
             const chargeIndicator = getOptionalElementContent(groupEl, "cbc:ChargeIndicator", UBL_NS, {
-                regexKey: "boolean"
+                restrictionName: "boolean"
             });
             return chargeIndicator === "false";
         });
@@ -614,25 +636,25 @@ export class DokumentPopust implements DokumentPopustSerializable {
         }
         return filteredGroups.map(groupEl => {
             return {
-                iznosPopust: getElementContentNumber(groupEl, getBusinessTermXpath("BT-92", type, "BG-20"), UBL_NS, {
+                iznosPopust: getElementContent(groupEl, getBusinessTermXpath("BT-92", type, "BG-20"), UBL_NS, {
                     ...options,
-                    regexKey: "decimal2"
+                    restrictionName: "decimal2"
                 }),
                 kategorijaPdv: getElementContent(groupEl, getBusinessTermXpath("BT-95", type, "BG-20"), UBL_NS, {
                     ...options,
-                    regexKey: "kategorijaPdv"
+                    restrictionName: "kategorijaPdv"
                 }),
-                stopaPdv: getOptionalElementContentDecimalString(groupEl, getBusinessTermXpath("BT-96", type, "BG-20"), UBL_NS, {
+                stopaPdv: getOptionalElementContent(groupEl, getBusinessTermXpath("BT-96", type, "BG-20"), UBL_NS, {
                     ...options,
-                    regexKey: "decimal"
+                    restrictionName: "decimal30i10"
                 }),
                 tekstRazlogaPopusta: getOptionalElementContent(groupEl, getBusinessTermXpath("BT-97", type, "BG-20"), UBL_NS, {
                     ...options,
-                    regexKey: "tekst1024"
+                    restrictionName: "tekst1024"
                 }),
                 razlogPopusta: getOptionalElementContent(groupEl, getBusinessTermXpath("BT-98", type, "BG-20"), UBL_NS, {
                     ...options,
-                    regexKey: "razlogPopusta"
+                    restrictionName: "razlogPopusta"
                 })
             };
         });
@@ -641,7 +663,7 @@ export class DokumentPopust implements DokumentPopustSerializable {
 
 export class DokumentTrosak implements DokumentTrosakSerializable {
     private readonly _prefix: "efis" | "eizv";
-    iznosTrosak: number;
+    iznosTrosak: number | string;
     kategorijaPdv: string;
     hrOznakaPorezneKategorije?: string | undefined;
     stopaPdv?: string | undefined;
@@ -661,7 +683,7 @@ export class DokumentTrosak implements DokumentTrosakSerializable {
     toXmlString(): string {
         let res = "";
         res += `<${this._prefix}:DokumentTrosak>`;
-        res += `<${this._prefix}:iznosTrosak>${this.iznosTrosak.toFixed(2)}</${this._prefix}:iznosTrosak>`;
+        res += `<${this._prefix}:iznosTrosak>${normalizeDecimal(this.iznosTrosak, 2)}</${this._prefix}:iznosTrosak>`;
         res += `<${this._prefix}:kategorijaPdv>${xmlEscape(this.kategorijaPdv)}</${this._prefix}:kategorijaPdv>`;
         if (this.hrOznakaPorezneKategorije !== undefined) {
             res += `<${this._prefix}:hrOznakaPorezneKategorije>${xmlEscape(this.hrOznakaPorezneKategorije)}</${this._prefix}:hrOznakaPorezneKategorije>`;
@@ -682,12 +704,16 @@ export class DokumentTrosak implements DokumentTrosakSerializable {
     static fromXmlElement(el: XmlElement): IDokumentTrosak {
         const prefix = getFiskNsPrefix(el.namespaceUri);
         return {
-            iznosTrosak: getElementContentNumber(el, `${prefix}:iznosTrosak`, FISK_NS, { regexKey: "decimal2" }),
-            kategorijaPdv: getElementContent(el, `${prefix}:kategorijaPdv`, FISK_NS, { regexKey: "kategorijaPdv" }),
-            hrOznakaPorezneKategorije: getOptionalElementContent(el, `${prefix}:hrOznakaPorezneKategorije`, FISK_NS, { regexKey: "hrKategorijaPdv" }),
-            stopaPdv: getOptionalElementContentDecimalString(el, `${prefix}:stopaPdv`, FISK_NS, { regexKey: "decimal" }),
-            tekstRazlogaOslobodenjaPdv: getOptionalElementContent(el, `${prefix}:tekstRazlogaOslobodenjaPdv`, FISK_NS, { regexKey: "tekst1024" }),
-            razlogOslobodenjaPdv: getOptionalElementContent(el, `${prefix}:razlogOslobodenjaPdv`, FISK_NS, { regexKey: "izuzecePdv" })
+            iznosTrosak: getElementContent(el, `${prefix}:iznosTrosak`, FISK_NS, { restrictionName: "decimal2" }),
+            kategorijaPdv: getElementContent(el, `${prefix}:kategorijaPdv`, FISK_NS, { restrictionName: "kategorijaPdv" }),
+            hrOznakaPorezneKategorije: getOptionalElementContent(el, `${prefix}:hrOznakaPorezneKategorije`, FISK_NS, {
+                restrictionName: "hrKategorijaPdv"
+            }),
+            stopaPdv: getOptionalElementContent(el, `${prefix}:stopaPdv`, FISK_NS, { restrictionName: "decimal30i10" }),
+            tekstRazlogaOslobodenjaPdv: getOptionalElementContent(el, `${prefix}:tekstRazlogaOslobodenjaPdv`, FISK_NS, {
+                restrictionName: "tekst1024"
+            }),
+            razlogOslobodenjaPdv: getOptionalElementContent(el, `${prefix}:razlogOslobodenjaPdv`, FISK_NS, { restrictionName: "izuzecePdv" })
         };
     }
 
@@ -699,7 +725,7 @@ export class DokumentTrosak implements DokumentTrosakSerializable {
         // Filter only AllowanceCharge elements where ChargeIndicator is true (charges)
         const filteredGroups = groups.filter(groupEl => {
             const chargeIndicator = getOptionalElementContent(groupEl, "cbc:ChargeIndicator", UBL_NS, {
-                regexKey: "boolean"
+                restrictionName: "boolean"
             });
             return chargeIndicator === "true";
         });
@@ -708,29 +734,29 @@ export class DokumentTrosak implements DokumentTrosakSerializable {
         }
         return filteredGroups.map(groupEl => {
             return {
-                iznosTrosak: getElementContentNumber(groupEl, getBusinessTermXpath("BT-99", type, "BG-21"), UBL_NS, {
+                iznosTrosak: getElementContent(groupEl, getBusinessTermXpath("BT-99", type, "BG-21"), UBL_NS, {
                     ...options,
-                    regexKey: "decimal2"
+                    restrictionName: "decimal2"
                 }),
                 kategorijaPdv: getElementContent(groupEl, getBusinessTermXpath("BT-102", type, "BG-21"), UBL_NS, {
                     ...options,
-                    regexKey: "kategorijaPdv"
+                    restrictionName: "kategorijaPdv"
                 }),
                 hrOznakaPorezneKategorije: getOptionalElementContent(groupEl, getBusinessTermXpath("HR-BT-6", type, "BG-21"), UBL_NS, {
                     ...options,
-                    regexKey: "hrKategorijaPdv"
+                    restrictionName: "hrKategorijaPdv"
                 }),
-                stopaPdv: getOptionalElementContentDecimalString(groupEl, getBusinessTermXpath("BT-103", type, "BG-21"), UBL_NS, {
+                stopaPdv: getOptionalElementContent(groupEl, getBusinessTermXpath("BT-103", type, "BG-21"), UBL_NS, {
                     ...options,
-                    regexKey: "decimal"
+                    restrictionName: "decimal30i10"
                 }),
                 tekstRazlogaOslobodenjaPdv: getOptionalElementContent(groupEl, getBusinessTermXpath("HR-BT-7", type, "BG-21"), UBL_NS, {
                     ...options,
-                    regexKey: "tekst1024"
+                    restrictionName: "tekst1024"
                 }),
                 razlogOslobodenjaPdv: getOptionalElementContent(groupEl, getBusinessTermXpath("HR-BT-8", type, "BG-21"), UBL_NS, {
                     ...options,
-                    regexKey: "izuzecePdv"
+                    restrictionName: "izuzecePdv"
                 })
             };
         });

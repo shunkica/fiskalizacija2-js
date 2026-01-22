@@ -39,10 +39,12 @@
     },
     "dependencies": {
         "libxml2-wasm": "^0.6.0",
+        "luxon": "^3.7.2",
         "xml-crypto": "git+https://github.com/node-saml/xml-crypto.git#73db72d"
     },
     "devDependencies": {
         "@microsoft/api-extractor": "^7.53.1",
+        "@types/luxon": "^3.7.1",
         "@types/node": "^18",
         "@typescript-eslint/eslint-plugin": "^8.46.2",
         "@typescript-eslint/parser": "^8.46.2",
@@ -55,6 +57,11 @@
         "tsup": "^8.5.0",
         "typescript": "^5.9.3",
         "vitest": "^3.2.4"
+    },
+    "overrides": {
+        "vitest": {
+            "vite": "^6.0.0"
+        }
     },
     "engines": {
         "node": ">=18.0.0"

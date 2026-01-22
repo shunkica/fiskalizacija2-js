@@ -178,7 +178,7 @@ describe("XmlSigner", () => {
             // Original content should still be present
             expect(signedXml).toContain("EvidentirajERacunZahtjev");
             expect(signedXml).toContain("<efis:Zaglavlje>");
-            expect(signedXml).toContain("<efis:datumVrijemeSlanja>2025-06-26T12:00:00.0000</efis:datumVrijemeSlanja>");
+            expect(signedXml).toContain("<efis:datumVrijemeSlanja>2026-06-26T12:00:00.0000</efis:datumVrijemeSlanja>");
             expect(signedXml).toContain("<efis:vrstaERacuna>I</efis:vrstaERacuna>");
         });
 

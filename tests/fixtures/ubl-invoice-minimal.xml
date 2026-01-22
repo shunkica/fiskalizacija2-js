@@ -8,8 +8,8 @@ urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2 http://
   <cbc:CustomizationID>urn:cen.eu:en16931:2017#compliant#urn:mfin.gov.hr:cius-2025:1.0#conformant#urn:mfin.gov.hr:ext-2025:1.0</cbc:CustomizationID>
   <cbc:ProfileID>P1</cbc:ProfileID>
   <cbc:ID>MINIMAL-001</cbc:ID>
-  <cbc:IssueDate>2024-01-15</cbc:IssueDate>
-  <cbc:DueDate>2025-05-31</cbc:DueDate>
+  <cbc:IssueDate>2026-01-15</cbc:IssueDate>
+  <cbc:DueDate>2026-05-31</cbc:DueDate>
   <cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode>
   <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
   <cac:AccountingSupplierParty>
@@ -30,7 +30,7 @@ urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2 http://
       </cac:PartyLegalEntity>
     </cac:Party>
     <cac:SellerContact>
-      <cbc:ID>12345678900</cbc:ID>
+      <cbc:ID>11111111119</cbc:ID>
     </cac:SellerContact>
   </cac:AccountingSupplierParty>
   <cac:AccountingCustomerParty>

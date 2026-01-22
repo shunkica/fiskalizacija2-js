@@ -6,17 +6,17 @@ import type { XmlSerializable } from "./util";
 export interface IGreska {
     /**
      * Šifra greške
-     * @regex greska
+     * @restriction izvjestavanje_greska | fiskalizacija_greska
      */
     sifra: string;
     /**
      * Redni broj zapisa u kojem je došlo do greške
-     * @regex redniBroj
+     * @restriction integer
      */
     redniBrojZapisa: string;
     /**
      * Opis greške
-     * @regex tekst1024
+     * @restriction tekst1024
      */
     opis: string;
 }
@@ -31,12 +31,12 @@ export type GreskaSerializable = XmlSerializable<IGreska>;
 export interface IOdgovor {
     /**
      * Jedinstveni identifikator primljenog zahtjeva
-     * @regex uuid
+     * @restriction uuid
      */
     idZahtjeva: string;
     /**
      * Indikator prihvaćanja zahtjeva
-     * @regex boolean
+     * @restriction boolean
      */
     prihvacenZahtjev: boolean;
     /**
@@ -54,20 +54,20 @@ export interface IArtiklIdentifikatorKlasifikacija {
     /**
      * Vrijednost iz klasifikacije artikla po njegovom tipu ili prirodi.
      * @bt BT-158
-     * @regex tekst10
+     * @restriction tekst10
      */
     identifikatorKlasifikacije: string;
 
     /**
      * Kod za klasifikaciju artikla po njegovom tipu ili prirodi po UNTDID 7143.
      * Identifikator sheme, označava klasifikaciju koja se koristi. Koristi se KPD klasifikacija, oznaka koja se unosi je 'CG'.
-     * @regex klasifikacijaArtikla
+     * @restriction klasifikacijaArtikla
      */
     identifikatorSheme: string;
 
     /**
      * Verzija sheme.
-     * @regex tekst10
+     * @restriction tekst10
      */
     verzijaSheme?: string;
 }
@@ -81,58 +81,58 @@ export interface IDokumentUkupanIznos {
     /**
      * Zbroj svih neto iznosa stavki računa koji su navedene na računu.
      * @bt BT-106
-     * @regex decimal2
+     * @restriction decimal2
      */
-    neto: number;
+    neto: number | string;
 
     /**
      * Zbroj svih popusta na razini dokumenta na računu.
      * @bt BT-107
-     * @regex decimal2
+     * @restriction decimal2
      */
-    popust?: number;
+    popust?: number | string;
 
     /**
      * Zbroj svih troškova na razini dokumenta na računu.
      * @bt BT-108
-     * @regex decimal2
+     * @restriction decimal2
      */
-    trosak?: number;
+    trosak?: number | string;
 
     /**
      * Ukupan iznos na računu bez PDV-a.
      * @bt BT-109
-     * @regex decimal2
+     * @restriction decimal2
      */
-    iznosBezPdv: number;
+    iznosBezPdv: number | string;
 
     /**
      * Ukupni iznos PDVa za račun.
      * @bt BT-110
-     * @regex decimal2
+     * @restriction decimal2
      */
-    pdv: number;
+    pdv: number | string;
 
     /**
      * Ukupni iznos računa s uključenim PDV-om.
      * @bt BT-112
-     * @regex decimal2
+     * @restriction decimal2
      */
-    iznosSPdv: number;
+    iznosSPdv: number | string;
 
     /**
      * Zbroj iznosa koji su plaćeni unaprijed.
      * @bt BT-113
-     * @regex decimal2
+     * @restriction decimal2
      */
-    placeniIznos?: number;
+    placeniIznos?: number | string;
 
     /**
      * Nepodmireni iznos za koji se zahtijeva plaćanje.
      * @bt BT-115
-     * @regex decimal2
+     * @restriction decimal2
      */
-    iznosKojiDospijevaZaPlacanje: number;
+    iznosKojiDospijevaZaPlacanje: number | string;
 }
 
 export type DokumentUkupanIznosSerializable = XmlSerializable<IDokumentUkupanIznos>;
@@ -145,21 +145,21 @@ export interface IIzdavatelj {
     /**
      * Puno ime pod kojim je izdavatelj registriran u nacionalnom registru pravnih osoba ili kao porezni obveznik ili na neki drugi način trguje kao osoba ili osobe.
      * @bt BT-27
-     * @regex tekst500
+     * @restriction tekst1024
      */
     ime: string;
 
     /**
      * OIB izdavatelja, dio identifikatora eRačuna.
      * @bt BT-31
-     * @regex tekst200
+     * @restriction OIBTip
      */
     oibPorezniBroj: string;
 
     /**
      * OIB operatera sukladno Zakonu o fiskalizaciji.
      * @bt HR-BT-5
-     * @regex tekst200
+     * @restriction OIBTip
      */
     oibOperatera: string;
 }
@@ -174,21 +174,21 @@ export interface IPrijenosSredstava {
     /**
      * Jedinstveni identifikator financijskog platnog računa, kod pružatelja platnih usluga, na koji se plaćanje treba izvršiti.
      * @bt BT-84
-     * @regex tekst34
+     * @restriction tekst200
      */
     identifikatorRacunaZaPlacanje: string;
 
     /**
      * Naziv računa za plaćanje, kod pružatelja platnih usluga, na koji se plaćanje treba izvršiti.
      * @bt BT-85
-     * @regex tekst35
+     * @restriction tekst500
      */
     nazivRacunaZaPlacanje?: string;
 
     /**
      * Identifikator pružatelja platnih usluga (npr. BIC ili nacionalni klirinški kod).
      * @bt BT-86
-     * @regex tekst25
+     * @restriction tekst200
      */
     identifikatorPruzateljaPlatnihUsluga?: string;
 }
@@ -203,14 +203,14 @@ export interface IPrimatelj {
     /**
      * Puno ime primatelja
      * @bt BT-44
-     * @regex tekst500
+     * @restriction tekst1024
      */
     ime: string;
 
     /**
      * Za porezne obveznike u RH je polje obavezno i izričito OIB
      * @bt BT-48
-     * @regex tekst200
+     * @restriction OIBTip
      */
     oibPorezniBroj: string;
 }
@@ -225,48 +225,49 @@ export interface IRaspodjelaPdv {
     /**
      * Šifra kategorije PDV-a po UNCL5305 (BT-118 iz UBL 2.1 ili HR-BT-18 ako se koristi).
      * @bt BT-118
-     * @regex kategorijaPdv
+     * @restriction kategorijaPdv
      */
     kategorijaPdv: string;
 
     /**
      * Zbroj svih oporezivih iznosa koji podliježu određenom kodu kategorije PDV-a i stopi kategorije PDV-a, ako je primjenjiva stopa kategorije PDV-a (BT-116 iz UBL 2.1 ili HR-BT-16 ako se koristi).
      * @bt BT-116
-     * @regex decimal2
+     * @restriction decimal2
      */
-    oporeziviIznos: number;
+    oporeziviIznos: number | string;
 
     /**
      * Ukupni iznos PDV-a za pojedinu kategoriju PDV-a (BT-117 iz UBL 2.1 ili HR-BT-17 ako se koristi).
      * @bt BT-117
-     * @regex decimal2
+     * @restriction decimal2
      */
-    iznosPoreza: number;
+    iznosPoreza: number | string;
 
     /**
      * Stopa PDV-a prikazana kao postotak koji se primjenjuje na relevantnu kategoriju PDV-a (BT-119 iz UBL 2.1 ili HR-BT-19 ako se koristi).
      * @bt BT-119
+     * @restriction decimal30i10
      */
     stopa?: number | string;
 
     /**
      * Šifra razloga za izuzeće iznosa od PDV-a po VATEX. Podatak je obvezan ako je kategorijaPdv jednaka prijenos porezne obveze ('AE') ili tekstRazlogaOslobodenja postoji (BT-121 iz UBL 2.1 ili HR-BT-21 ako se koristi).
      * @bt BT-121
-     * @regex izuzecePdv
+     * @restriction izuzecePdv
      */
     razlogOslobodenja?: string;
 
     /**
      * Tekst razloga za izuzeće od PDV-a. Podatak je obvezan ako je kategorijaPdv jednaka prijenos porezne obveze ('AE') ili razlogOslobodenja postoji (BT-120 iz UBL 2.1 ili HR-BT-20 ako se koristi).
      * @bt BT-120
-     * @regex tekst1024
+     * @restriction tekst1024
      */
     tekstRazlogaOslobodenja?: string;
 
     /**
      * Šifra hrvatske kategorije PDV-a (HR-BT-22 iz EU norme).
      * @bt HR-BT-22
-     * @regex hrKategorijaPdv
+     * @restriction hrKategorijaPdv
      */
     hrOznakaKategorijaPdv?: string;
 }
@@ -281,35 +282,35 @@ export interface IDokumentPopust {
     /**
      * Iznos popusta, bez PDV-a.
      * @bt BT-92
-     * @regex decimal2
+     * @restriction decimal2
      */
-    iznosPopust: number;
+    iznosPopust: number | string;
 
     /**
      * Kodirana identifikacija kategorije PDV-a koja se primjenjuje na popust na razini dokumenta.
      * @bt BT-95
-     * @regex kategorijaPdv
+     * @restriction kategorijaPdv
      */
     kategorijaPdv: string;
 
     /**
      * Stopa PDV-a prikazana kao postotak koji se primjenjuje na popust na razini dokumenta.
      * @bt BT-96
-     * @regex decimal
+     * @restriction decimal30i10
      */
     stopaPdv?: number | string;
 
     /**
      * Razlog za popust na razini dokumenta izražen u obliku teksta.
      * @bt BT-97
-     * @regex tekst1024
+     * @restriction tekst1024
      */
     tekstRazlogaPopusta?: string;
 
     /**
      * Razlog za popust na razini dokumenta, izražen u obliku koda.
      * @bt BT-98
-     * @regex razlogPopusta
+     * @restriction razlogPopusta
      */
     razlogPopusta?: string;
 }
@@ -324,42 +325,42 @@ export interface IDokumentTrosak {
     /**
      * Iznos troška, bez PDV-a.
      * @bt BT-99
-     * @regex decimal2
+     * @restriction decimal2
      */
-    iznosTrosak: number;
+    iznosTrosak: number | string;
 
     /**
      * Kodirana identifikacija kategorije PDV-a koja se primjenjuje na trošak na razini dokumenta.
      * @bt BT-102
-     * @regex kategorijaPdv
+     * @restriction kategorijaPdv
      */
     kategorijaPdv: string;
 
     /**
      * Podrška za stavke koje ne podliježu PDV-u.
      * @bt HR-BT-6
-     * @regex hrKategorijaPdv
+     * @restriction hrKategorijaPdv
      */
     hrOznakaPorezneKategorije?: string;
 
     /**
      * Stopa PDV-a prikazana kao postotak na koji se primjenjuje trošak na razini dokumenta.
      * @bt BT-103
-     * @regex decimal
+     * @restriction decimal30i10
      */
     stopaPdv?: number | string;
 
     /**
      * Razlog oslobođenja od PDV-a izražen kao tekst.
      * @bt HR-BT-7
-     * @regex tekst1024
+     * @restriction tekst1024
      */
     tekstRazlogaOslobodenjaPdv?: string;
 
     /**
      * Razlog oslobođenja od PDV-a izražen kao kod.
      * @bt HR-BT-8
-     * @regex izuzecePdv
+     * @restriction izuzecePdv
      */
     razlogOslobodenjaPdv?: string;
 }

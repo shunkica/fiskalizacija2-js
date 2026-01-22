@@ -61,8 +61,8 @@
   <cbc:CustomizationID>urn:cen.eu:en16931:2017#compliant#urn:mfin.gov.hr:cius-2025:1.0#conformant#urn:mfin.gov.hr:ext-2025:1.0</cbc:CustomizationID>
   <cbc:ProfileID>P1</cbc:ProfileID>
   <cbc:ID>HRTAX-001</cbc:ID>
-  <cbc:IssueDate>2024-01-15</cbc:IssueDate>
-  <cbc:DueDate>2025-05-31</cbc:DueDate>
+  <cbc:IssueDate>2026-01-15</cbc:IssueDate>
+  <cbc:DueDate>2026-05-31</cbc:DueDate>
   <cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode>
   <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
   <cac:AccountingSupplierParty>
@@ -73,7 +73,7 @@
         </cac:Country>
       </cac:PostalAddress>
       <cac:PartyTaxScheme>
-        <cbc:CompanyID>HR33333333333</cbc:CompanyID>
+        <cbc:CompanyID>HR99999999994</cbc:CompanyID>
         <cac:TaxScheme>
           <cbc:ID>VAT</cbc:ID>
         </cac:TaxScheme>
@@ -83,7 +83,7 @@
       </cac:PartyLegalEntity>
     </cac:Party>
     <cac:SellerContact>
-      <cbc:ID>11111111111</cbc:ID>
+      <cbc:ID>99999999994</cbc:ID>
     </cac:SellerContact>
   </cac:AccountingSupplierParty>
   <cac:AccountingCustomerParty>

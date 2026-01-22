@@ -1,6 +1,6 @@
 import type { XmlElement } from "libxml2-wasm";
-import type { RegexKey } from "../constants/regex";
-import { REGEX_TRUNCATE, REGEX } from "../constants/regex";
+import type { RestrictionName } from "../constants/restrictions";
+import { assertRestriction, RESTRICTIONS } from "../constants/restrictions";
 import { XmlDocument } from "libxml2-wasm";
 import { BUSINESS_TERMS } from "../constants/businessTerms";
 import { BUSINESS_GROUPS } from "../constants/businessGroups";
@@ -28,24 +28,48 @@ export function getBusinessGroupXpath(id: keyof typeof BUSINESS_GROUPS, type: "I
 }
 
 export interface ExtractionOptions {
-    regexKey?: RegexKey;
+    restrictionName?: RestrictionName;
     lenient?: boolean;
     errors?: ValidationError[];
 }
 
-function normalizeContent(content: string, regexKey: string | undefined): string {
+export function normalizeDecimal(value: string | number, maxFractionDigits: number): string {
+    const str = typeof value === "number" ? value.toString() : value.trim();
+    if (str.indexOf(".") === -1) {
+        return str;
+    }
+    const [integerPart, fractionPart] = str.split(".", 2);
+    if (integerPart.startsWith("-") || integerPart.startsWith("+")) {
+        if (!/^\d+$/.test(integerPart.substring(1))) {
+            throw new ValidationError(`Neispravan broj`, value);
+        }
+    } else {
+        if (!/^\d+$/.test(integerPart)) {
+            throw new ValidationError(`Neispravan broj`, value);
+        }
+    }
+    if (!/^\d+$/.test(fractionPart)) {
+        throw new ValidationError(`Neispravan broj`, value);
+    }
+    if (fractionPart.length <= maxFractionDigits) {
+        return str;
+    }
+    return `${integerPart}.${fractionPart.substring(0, maxFractionDigits)}`;
+}
+
+function normalizeContent(content: string, restrictionName?: RestrictionName): string {
     let result = content.trim();
-    if (content && regexKey && regexKey in REGEX_TRUNCATE) {
-        const maxLength = REGEX_TRUNCATE[regexKey as keyof typeof REGEX_TRUNCATE];
-        if (result.length > maxLength) {
-            result = result.substring(0, maxLength);
+    if (restrictionName) {
+        const restriction = RESTRICTIONS[restrictionName];
+        if (restriction.type === "string" && restriction.maxLength && result.length > restriction.maxLength) {
+            result = result.substring(0, restriction.maxLength);
         }
     }
     return result;
 }
 
 export function getElementContent(parentEl: XmlElement, tag: string, ns: Record<string, string>, options: ExtractionOptions = {}): string {
-    const { regexKey, lenient, errors } = options;
+    const { restrictionName, lenient, errors } = options;
     const el = parentEl.get(tag, ns) as XmlElement | null;
     if (!el) {
         const err = new ValidationError(`Element '${tag}' nije pronađen u elementu '${parentEl.prefix}:${parentEl.name}'`, undefined);
@@ -57,14 +81,19 @@ export function getElementContent(parentEl: XmlElement, tag: string, ns: Record<
         }
         throw err;
     }
-    const trimmedContent = normalizeContent(el.content, regexKey);
-    if (regexKey && !REGEX[regexKey].test(trimmedContent)) {
-        const err = new ValidationError(`Element '${tag}' ne zadovoljava regex ${REGEX[regexKey]}`, trimmedContent);
-        if (lenient) {
-            if (errors) {
-                errors.push(err);
+    const trimmedContent = normalizeContent(el.content, restrictionName);
+    if (restrictionName) {
+        try {
+            assertRestriction(trimmedContent, restrictionName);
+        } catch (err) {
+            if (err instanceof ValidationError) {
+                if (errors) {
+                    errors.push(err);
+                }
+                if (lenient) {
+                    return trimmedContent;
+                }
             }
-        } else {
             throw err;
         }
     }
@@ -77,118 +106,28 @@ export function getOptionalElementContent(
     ns: Record<string, string>,
     options: ExtractionOptions = {}
 ): string | undefined {
-    const { regexKey, lenient, errors } = options;
+    const { restrictionName, lenient, errors } = options;
     const el = parentEl.get(tag, ns) as XmlElement | null;
     if (!el) {
         return undefined;
     }
-    const trimmedContent = normalizeContent(el.content, regexKey);
-    if (regexKey && !REGEX[regexKey].test(trimmedContent)) {
-        const err = new ValidationError(`Element '${tag}' ne zadovoljava regex ${REGEX[regexKey]}`, trimmedContent);
-        if (lenient) {
-            if (errors) {
-                errors.push(err);
+    const trimmedContent = normalizeContent(el.content, restrictionName);
+    if (restrictionName) {
+        try {
+            assertRestriction(trimmedContent, restrictionName);
+        } catch (err) {
+            if (err instanceof ValidationError) {
+                if (errors) {
+                    errors.push(err);
+                }
+                if (lenient) {
+                    return trimmedContent;
+                }
             }
-        } else {
             throw err;
         }
     }
     return trimmedContent;
-}
-
-export function getElementContentNumber(parentEl: XmlElement, tag: string, ns: Record<string, string>, options: ExtractionOptions = {}): number {
-    const content = getElementContent(parentEl, tag, ns, options);
-    const num = Number(content);
-    if (isNaN(num)) {
-        const err = new ValidationError(`Element '${tag}' ne sadrži valjani broj: ${content}`, content);
-        if (options.lenient) {
-            if (options.errors) {
-                options.errors.push(err);
-            }
-            return 0;
-        } else {
-            throw err;
-        }
-    }
-    return num;
-}
-
-export function getOptionalElementContentNumber(
-    parentEl: XmlElement,
-    tag: string,
-    ns: Record<string, string>,
-    options: ExtractionOptions = {}
-): number | undefined {
-    const content = getOptionalElementContent(parentEl, tag, ns, options);
-    if (content === undefined) {
-        return undefined;
-    }
-    const num = Number(content);
-    if (isNaN(num)) {
-        const err = new ValidationError(`Element '${tag}' ne sadrži valjani broj: ${content}`, content);
-        if (options.lenient) {
-            if (options.errors) {
-                options.errors.push(err);
-            }
-            return undefined;
-        } else {
-            throw err;
-        }
-    }
-    return num;
-}
-
-/**
- * Extracts element content as a validated decimal string (preserves original representation)
- */
-export function getElementContentDecimalString(
-    parentEl: XmlElement,
-    tag: string,
-    ns: Record<string, string>,
-    options: ExtractionOptions = {}
-): string {
-    const content = getElementContent(parentEl, tag, ns, options);
-    const num = Number(content);
-    if (isNaN(num)) {
-        const err = new ValidationError(`Element '${tag}' ne sadrži valjani broj: ${content}`, content);
-        if (options.lenient) {
-            if (options.errors) {
-                options.errors.push(err);
-            }
-            return "0";
-        } else {
-            throw err;
-        }
-    }
-    return content;
-}
-
-/**
- * Extracts optional element content as a validated decimal string (preserves original representation)
- */
-export function getOptionalElementContentDecimalString(
-    parentEl: XmlElement,
-    tag: string,
-    ns: Record<string, string>,
-    options: ExtractionOptions = {}
-): string | undefined {
-    const content = getOptionalElementContent(parentEl, tag, ns, options);
-    if (content === undefined) {
-        return undefined;
-    }
-    const num = Number(content);
-    if (isNaN(num)) {
-        const err = new ValidationError(`Element '${tag}' ne sadrži valjani broj: ${content}`, content);
-        if (options.lenient) {
-            if (options.errors) {
-                options.errors.push(err);
-            }
-            return undefined;
-        } else {
-            throw err;
-        }
-    }
-    return content;
 }
 
 export function extractElement<T>(parentEl: XmlElement, tag: string, ns: Record<string, string>, fn: (el: XmlElement) => T): T {
@@ -232,29 +171,29 @@ export function getOptionalAttributeValue(
     el: XmlElement,
     name: string,
     ns: Record<string, string>,
-    regexKey?: keyof typeof REGEX
+    restrictionName?: keyof typeof RESTRICTIONS
 ): string | undefined {
     const xpath = `@${name}`;
     const attrs = el.find(xpath, ns);
     if (!attrs || attrs.length === 0) {
         return undefined;
     }
-    const value = attrs[0].content;
-    if (regexKey && !REGEX[regexKey].test(value)) {
-        throw new ValidationError(`Atribut '${name}' ne zadovoljava regex ${REGEX[regexKey]}`, value);
+    const value = String(attrs[0].content);
+    if (restrictionName) {
+        assertRestriction(value, restrictionName);
     }
     return value;
 }
 
-export function getAttributeValue(el: XmlElement, name: string, ns: Record<string, string>, regexKey?: keyof typeof REGEX): string {
+export function getAttributeValue(el: XmlElement, name: string, ns: Record<string, string>, restrictionName?: keyof typeof RESTRICTIONS): string {
     const xpath = `@${name}`;
     const attrs = el.find(xpath, ns);
     if (!attrs || attrs.length === 0) {
         throw new ValidationError(`Atribut '${name}' nije pronađen u elementu '${el.prefix}:${el.name}'`, undefined);
     }
     const value = attrs[0].content;
-    if (regexKey && !REGEX[regexKey].test(value)) {
-        throw new ValidationError(`Atribut '${name}' ne zadovoljava regex ${REGEX[regexKey]}`, value);
+    if (restrictionName) {
+        assertRestriction(String(value), restrictionName);
     }
     return value;
 }

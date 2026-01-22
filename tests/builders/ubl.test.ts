@@ -24,7 +24,7 @@ const sbdInvoiceXml = `<?xml version="1.0" encoding="UTF-8"?>
       <TypeVersion>2.1</TypeVersion>
       <InstanceIdentifier>MINIMAL-001</InstanceIdentifier>
       <Type>Invoice</Type>
-      <CreationDateAndTime>2024-01-15T00:00:00Z</CreationDateAndTime>
+      <CreationDateAndTime>2026-01-15T00:00:00Z</CreationDateAndTime>
     </DocumentIdentification>
   </StandardBusinessDocumentHeader>
   ${ublInvoiceXml}
@@ -132,11 +132,11 @@ describe("getERacunFromUbl", () => {
             const result = getERacunFromUbl(XmlTestProvider.ublInvoiceInvalid, { lenient: true });
             expect(result).toBeDefined();
             expect(result.brojDokumenta).toBe("INVALID-001");
-            expect(result.datumIzdavanja).toBe("2024-01-15");
+            expect(result.datumIzdavanja).toBe("2026-01-15");
             // Check that required but missing fields are empty or default
             expect(result.Izdavatelj.ime).toBe("");
             expect(result.StavkaERacuna).toEqual([]);
-            expect(result.DokumentUkupanIznos.neto).toBe(0);
+            expect(result.DokumentUkupanIznos.neto).toBe("");
         });
 
         it("should report ValidationErrors even when lenient is true", () => {
@@ -155,7 +155,7 @@ describe("getERacunFromUbl", () => {
 
         it("should handle regex validation failure lenietly", () => {
             const ublWithInvalidDate = XmlTestProvider.ublInvoiceMinimal.replace(
-                "<cbc:IssueDate>2024-01-15</cbc:IssueDate>",
+                "<cbc:IssueDate>2026-01-15</cbc:IssueDate>",
                 "<cbc:IssueDate>INVALID-DATE</cbc:IssueDate>"
             );
             const result = getERacunFromUbl(ublWithInvalidDate, { lenient: true });
@@ -256,11 +256,11 @@ describe("getRacunFromUbl", () => {
             const result = getRacunFromUbl(XmlTestProvider.ublInvoiceInvalid, { lenient: true });
             expect(result).toBeDefined();
             expect(result.brojDokumenta).toBe("INVALID-001");
-            expect(result.datumIzdavanja).toBe("2024-01-15");
+            expect(result.datumIzdavanja).toBe("2026-01-15");
             // Check that required but missing fields are empty or default
             expect(result.Izdavatelj.ime).toBe("");
             expect(result.StavkaRacuna).toEqual([]);
-            expect(result.DokumentUkupanIznos.neto).toBe(0);
+            expect(result.DokumentUkupanIznos.neto).toBe("");
         });
 
         it("should report ValidationErrors even when lenient is true", () => {

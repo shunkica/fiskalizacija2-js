@@ -40,10 +40,10 @@ describe("XML Content Functions", () => {
             });
         });
 
-        it("should truncate content when regexKey is provided and has truncate limit", () => {
+        it("should truncate content when restrictionName is provided and has truncate limit", () => {
             usingXmlDocument(testXml, doc => {
                 // tekst10 has limit of 10
-                const result = getElementContent(doc.root, "too-long", {}, { regexKey: "tekst10" });
+                const result = getElementContent(doc.root, "too-long", {}, { restrictionName: "tekst10" });
                 expect(result).toBe("this is a ");
                 expect(result).toHaveLength(10);
             });
@@ -112,7 +112,7 @@ describe("XML Attribute Functions", () => {
             usingXmlDocument(testXml, doc => {
                 const element = doc.get("element", {}) as XmlElement;
 
-                const result = getOptionalAttributeValue(element, "id", namespaces, "redniBroj");
+                const result = getOptionalAttributeValue(element, "id", namespaces, "integer");
                 expect(result).toBe("123");
             });
         });
@@ -122,7 +122,7 @@ describe("XML Attribute Functions", () => {
                 const element = doc.get("element", {}) as XmlElement;
 
                 expect(() => {
-                    getOptionalAttributeValue(element, "test:name", namespaces, "redniBroj");
+                    getOptionalAttributeValue(element, "test:name", namespaces, "integer");
                 }).toThrow(ValidationError);
             });
         });
@@ -151,7 +151,7 @@ describe("XML Attribute Functions", () => {
             usingXmlDocument(testXml, doc => {
                 const element = doc.get("element", {}) as XmlElement;
 
-                const result = getAttributeValue(element, "id", namespaces, "redniBroj");
+                const result = getAttributeValue(element, "id", namespaces, "integer");
                 expect(result).toBe("123");
             });
         });
@@ -161,7 +161,7 @@ describe("XML Attribute Functions", () => {
                 const element = doc.get("element", {}) as XmlElement;
 
                 expect(() => {
-                    getAttributeValue(element, "test:name", namespaces, "redniBroj");
+                    getAttributeValue(element, "test:name", namespaces, "integer");
                 }).toThrow(ValidationError);
             });
         });

@@ -34,13 +34,13 @@ export class XmlTestProvider {
         path.join(__dirname, "EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev.xml"),
         "utf8"
     );
-    static EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev_brojDokumenta = "1234/2024/01";
+    static EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev_brojDokumenta = "1234/2026/01";
 
     static EvidentirajNaplatuZahtjev = fs.readFileSync(path.join(__dirname, "EvidentirajNaplatuZahtjev.xml"), "utf8");
-    static EvidentirajNaplatuZahtjev_brojDokumenta = "1234-2024-06";
+    static EvidentirajNaplatuZahtjev_brojDokumenta = "1234-2026-06";
 
     static EvidentirajOdbijanjeZahtjev = fs.readFileSync(path.join(__dirname, "EvidentirajOdbijanjeZahtjev.xml"), "utf8");
-    static EvidentirajOdbijanjeZahtjev_brojDokumenta = "1234/2024/06";
+    static EvidentirajOdbijanjeZahtjev_brojDokumenta = "1234/2026/06";
 
     static mockEvidentirajERacunZahtjev(brojDokumenta: string, oib: string, vrsta: "I" | "U" = "I"): IEvidentirajERacunZahtjev {
         const datum = new Date().toISOString().split("T")[0];
@@ -70,7 +70,7 @@ export class XmlTestProvider {
                     valutaERacuna: "EUR",
                     datumDospijecaPlacanja: datum,
                     vrstaPoslovnogProcesa: "P1",
-                    referencaNaUgovor: "UG-2024-001",
+                    referencaNaUgovor: "UG-2026-001",
                     datumIsporuke: datum,
                     PrethodniERacun: [
                         {
@@ -172,7 +172,7 @@ export class XmlTestProvider {
                     valutaRacuna: "EUR",
                     datumDospijecaPlacanja: datum,
                     vrstaPoslovnogProcesa: "P1",
-                    referencaNaUgovor: "UG-2024-002",
+                    referencaNaUgovor: "UG-2026-002",
                     datumIsporuke: datum,
                     PrethodniRacun: [
                         {
