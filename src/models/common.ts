@@ -38,6 +38,70 @@ import { FISK_NS, getFiskNsPrefix, UBL_NS } from "../constants/const";
 import { ValidationError } from "../util/error";
 import { assertRestriction } from "../constants/restrictions";
 
+/**
+ * Dohvaća OIB iz UBL dokumenta. Pokušava prvo CompanyID s HR prefiksom,
+ * zatim EndpointID sa schemeID="9934". Baca grešku ako ni jedno nije dostupno.
+ */
+function extractOibFromUbl(
+    groupEl: XmlElement,
+    type: "Invoice" | "CreditNote",
+    btCompanyId: "BT-31" | "BT-48",
+    btEndpointId: "BT-34" | "BT-49",
+    bgGroup: "BG-4" | "BG-7",
+    options?: ExtractionOptions
+): string {
+    // 1. Pokušaj CompanyID s HR prefiksom i valjanim OIB-om
+    const companyId = getOptionalElementContent(groupEl, getBusinessTermXpath(btCompanyId, type, bgGroup), UBL_NS, {
+        ...options
+    });
+    if (companyId && companyId.startsWith("HR")) {
+        const candidate = companyId.substring(2);
+        try {
+            assertRestriction(candidate, "OIBTip");
+            return candidate;
+        } catch {
+            // Nevažeći OIB u CompanyID, pokušaj EndpointID
+        }
+    }
+
+    // 2. Pokušaj EndpointID sa schemeID="9934"
+    const endpointEl = groupEl.get(getBusinessTermXpath(btEndpointId, type, bgGroup), UBL_NS) as XmlElement | null;
+    if (endpointEl) {
+        const schemeId = getOptionalAttributeValue(endpointEl, "schemeID", UBL_NS);
+        if (schemeId === "9934") {
+            const candidate = endpointEl.content?.trim();
+            if (candidate) {
+                try {
+                    assertRestriction(candidate, "OIBTip");
+                } catch (err) {
+                    if (err instanceof ValidationError) {
+                        if (options?.errors) {
+                            options.errors.push(err);
+                        }
+                    }
+                    if (!options?.lenient) {
+                        throw err;
+                    }
+                }
+                return candidate;
+            }
+        }
+    }
+
+    // 3. Ni CompanyID ni EndpointID nisu dali OIB
+    const err = new ValidationError(
+        `OIB nije pronađen ni u polju '${btCompanyId}' (CompanyID s HR prefiksom) ni u polju '${btEndpointId}' (EndpointID sa schemeID=9934)`,
+        undefined
+    );
+    if (options?.lenient) {
+        if (options.errors) {
+            options.errors.push(err);
+        }
+        return "";
+    }
+    throw err;
+}
+
 export class Izdavatelj implements IzdavateljSerializable {
     private readonly _prefix: "efis" | "eizv";
     ime: string;
@@ -87,36 +151,11 @@ export class Izdavatelj implements IzdavateljSerializable {
             throw err;
         }
 
-        let oibPorezniBroj = getOptionalElementContent(groupEl, getBusinessTermXpath("BT-31", type, "BG-4"), UBL_NS, {
-            ...options
-        });
-
-        if (oibPorezniBroj) {
-            if (oibPorezniBroj.startsWith("HR")) {
-                oibPorezniBroj = oibPorezniBroj.substring(2);
-            }
-        } else {
-            oibPorezniBroj = getElementContent(groupEl, getBusinessTermXpath("BT-34", type, "BG-4"), UBL_NS, {
-                ...options
-            });
-        }
-
-        try {
-            assertRestriction(oibPorezniBroj, "OIBTip");
-        } catch (err) {
-            if (err instanceof ValidationError) {
-                if (options?.errors) {
-                    options.errors.push(err);
-                }
-            }
-            if (!options?.lenient) {
-                throw err;
-            }
-        }
+        const oibPorezniBroj = extractOibFromUbl(groupEl, type, "BT-31", "BT-34", "BG-4", options);
 
         return {
             ime: getElementContent(groupEl, getBusinessTermXpath("BT-27", type, "BG-4"), UBL_NS, { ...options, restrictionName: "tekst1024" }),
-            oibPorezniBroj: oibPorezniBroj,
+            oibPorezniBroj,
             oibOperatera: getElementContent(groupEl, getBusinessTermXpath("HR-BT-5", type, "BG-4"), UBL_NS, { ...options, restrictionName: "OIBTip" })
         };
     }
@@ -165,16 +204,11 @@ export class Primatelj implements PrimateljSerializable {
             }
             throw err;
         }
+        const oibPorezniBroj = extractOibFromUbl(groupEl, type, "BT-48", "BT-49", "BG-7", options);
+
         return {
             ime: getElementContent(groupEl, getBusinessTermXpath("BT-44", type, "BG-7"), UBL_NS, { ...options, restrictionName: "tekst1024" }),
-            // TODO: Iako je u specifikaciji navedeno da u ovo polje može ići OIB ili porezni broj,
-            //       ako se šalje porezni broj, na demo serveru se poruka odbija sa greškom:
-            //       S006: PT nije ovlaštena za dostavu podataka na fiskalizaciju.Inicijalna provjera za valjanost oib-a kod evidentiranja ulaznog eRačuna (Record: 1)
-            //       stoga za sada mičemo "HR" dio iz polja BT-48
-            oibPorezniBroj: getElementContent(groupEl, getBusinessTermXpath("BT-48", type, "BG-7"), UBL_NS, {
-                ...options,
-                restrictionName: "tekst200"
-            }).replace(/^HR/, "")
+            oibPorezniBroj
         };
     }
 }

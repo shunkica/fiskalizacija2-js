@@ -110,12 +110,7 @@ export class XmlTestValidator {
         //expect(er.Izdavatelj.oibPorezniBroj).toBe("HR11111111119");
         expect(er.Izdavatelj.oibPorezniBroj).toBe("11111111119");
         expect(er.Primatelj.ime).toBe("Minimal Customer");
-        // TODO: Iako je u specifikaciji navedeno da u ovo polje može ići OIB ili porezni broj,
-        //       ako se šalje porezni broj, na demo serveru se poruka odbija sa greškom:
-        //       S006: PT nije ovlaštena za dostavu podataka na fiskalizaciju.Inicijalna provjera za valjanost oib-a kod evidentiranja ulaznog eRačuna (Record: 1)
-        //       stoga za sada mičemo "HR" dio iz polja BT-48
-        //expect(er.Primatelj.oibPorezniBroj).toBe("HR22222222222");
-        expect(er.Primatelj.oibPorezniBroj).toBe("22222222222");
+        expect(er.Primatelj.oibPorezniBroj).toBe("22222222226");
         expect(er.PrijenosSredstava).toBeUndefined();
         expect(er.DokumentUkupanIznos.neto).toBe("50.00");
         expect(er.DokumentUkupanIznos.popust).toBeUndefined();

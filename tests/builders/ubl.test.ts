@@ -14,10 +14,10 @@ const sbdInvoiceXml = `<?xml version="1.0" encoding="UTF-8"?>
   <StandardBusinessDocumentHeader>
     <HeaderVersion>1.0</HeaderVersion>
     <Sender>
-      <Identifier Authority="HR:OIB">11111111119</Identifier>
+      <Identifier Authority="iso6523-actorid-upis">9934:11111111119</Identifier>
     </Sender>
     <Receiver>
-      <Identifier Authority="HR:OIB">22222222222</Identifier>
+      <Identifier Authority="iso6523-actorid-upis">9934:22222222226</Identifier>
     </Receiver>
     <DocumentIdentification>
       <Standard>urn:oasis:names:specification:ubl:schema:xsd:Invoice-2</Standard>
