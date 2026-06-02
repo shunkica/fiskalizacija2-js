@@ -92,7 +92,7 @@ export class FiskalizacijaClient {
                 result.error = parseError(error);
             }
 
-            usingXmlDocument(XmlDocument.fromString(data), (doc: XmlDocument) => {
+            usingXmlDocument(data, (doc: XmlDocument) => {
                 const odgovorElement = doc.get(config.xpath, FISK_NS) as XmlElement;
                 if (!odgovorElement) {
                     throw new ValidationError(`HTTP ${statusCode} | ${config.xpath}`, data);

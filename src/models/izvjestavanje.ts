@@ -79,12 +79,8 @@ export class EvidentirajNaplatuZahtjev implements EvidentirajNaplatuZahtjevSeria
     }
 
     public static fromXml(xml: string | Uint8Array | XmlDocument | XmlElement): IEvidentirajNaplatuZahtjev {
-        if (typeof xml === "string") {
-            return usingXmlDocument(XmlDocument.fromString(xml), doc => {
-                return EvidentirajNaplatuZahtjev.fromXml(doc);
-            });
-        } else if (Buffer.isBuffer(xml)) {
-            return usingXmlDocument(XmlDocument.fromBuffer(xml), doc => {
+        if (typeof xml === "string" || Buffer.isBuffer(xml)) {
+            return usingXmlDocument(xml, doc => {
                 return EvidentirajNaplatuZahtjev.fromXml(doc);
             });
         } else if (xml instanceof XmlDocument) {
@@ -135,12 +131,8 @@ export class EvidentirajOdbijanjeZahtjev implements EvidentirajOdbijanjeZahtjevS
     }
 
     public static fromXml(xml: string | Uint8Array | XmlDocument | XmlElement): IEvidentirajOdbijanjeZahtjev {
-        if (typeof xml === "string") {
-            return usingXmlDocument(XmlDocument.fromString(xml), doc => {
-                return EvidentirajOdbijanjeZahtjev.fromXml(doc);
-            });
-        } else if (Buffer.isBuffer(xml)) {
-            return usingXmlDocument(XmlDocument.fromBuffer(xml), doc => {
+        if (typeof xml === "string" || Buffer.isBuffer(xml)) {
+            return usingXmlDocument(xml, doc => {
                 return EvidentirajOdbijanjeZahtjev.fromXml(doc);
             });
         } else if (xml instanceof XmlDocument) {
@@ -191,12 +183,8 @@ export class EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev implements Evidenti
     }
 
     public static fromXml(xml: string | Uint8Array | XmlDocument | XmlElement): IEvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev {
-        if (typeof xml === "string") {
-            return usingXmlDocument(XmlDocument.fromString(xml), doc => {
-                return EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev.fromXml(doc);
-            });
-        } else if (Buffer.isBuffer(xml)) {
-            return usingXmlDocument(XmlDocument.fromBuffer(xml), doc => {
+        if (typeof xml === "string" || Buffer.isBuffer(xml)) {
+            return usingXmlDocument(xml, doc => {
                 return EvidentirajIsporukuZaKojuNijeIzdanERacunZahtjev.fromXml(doc);
             });
         } else if (xml instanceof XmlDocument) {

@@ -1,7 +1,7 @@
 import type { XmlElement } from "libxml2-wasm";
 import type { RestrictionName } from "../constants/restrictions";
 import { assertRestriction, RESTRICTIONS } from "../constants/restrictions";
-import { XmlDocument } from "libxml2-wasm";
+import { ParseOption, XmlDocument } from "libxml2-wasm";
 import { BUSINESS_TERMS } from "../constants/businessTerms";
 import { BUSINESS_GROUPS } from "../constants/businessGroups";
 import { ValidationError } from "./error";
@@ -210,9 +210,9 @@ export function usingXmlDocument<T>(doc: string | Uint8Array | XmlDocument, fn: 
         throw new Error("XML document is required for processing");
     }
     if (typeof doc === "string") {
-        doc = XmlDocument.fromString(doc);
+        doc = XmlDocument.fromString(doc, { option: ParseOption.XML_PARSE_HUGE });
     } else if (doc instanceof Uint8Array) {
-        doc = XmlDocument.fromBuffer(doc);
+        doc = XmlDocument.fromBuffer(doc, { option: ParseOption.XML_PARSE_HUGE });
     }
     try {
         return fn(doc);

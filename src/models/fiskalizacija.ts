@@ -56,12 +56,8 @@ export class EvidentirajERacunZahtjev implements EvidentirajERacunZahtjevSeriali
     }
 
     public static fromXml(xml: string | Uint8Array | XmlDocument | XmlElement): IEvidentirajERacunZahtjev {
-        if (typeof xml === "string") {
-            return usingXmlDocument(XmlDocument.fromString(xml), doc => {
-                return EvidentirajERacunZahtjev.fromXml(doc);
-            });
-        } else if (Buffer.isBuffer(xml)) {
-            return usingXmlDocument(XmlDocument.fromBuffer(xml), doc => {
+        if (typeof xml === "string" || Buffer.isBuffer(xml)) {
+            return usingXmlDocument(xml, doc => {
                 return EvidentirajERacunZahtjev.fromXml(doc);
             });
         } else if (xml instanceof XmlDocument) {
